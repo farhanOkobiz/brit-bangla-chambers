@@ -1,0 +1,122 @@
+'use client';
+
+import { useState } from 'react';
+import { notFound } from 'next/navigation';
+
+const advocates = [
+  {
+    id: 1,
+    name: 'Mohammad Rahman',
+    image: 'https://cdn.pixabay.com/photo/2022/08/14/01/46/lawyer-7384762_640.jpg',
+    designation: 'Senior Advocate, Supreme Court',
+  },
+  // Add more advocates as needed
+];
+
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
+export default function BookingPage({ params }: Props) {
+  const id = Number(params.id)
+  const advocate = advocates.find(a => a.id === id);
+  if (!advocate) notFound();
+
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    date: '',
+    message: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(`Booking submitted for ${advocate.name}`);
+    // TODO: Send to backend API
+  };
+
+  return (
+    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-16 px-6 md:px-12 text-white flex justify-center">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg w-full max-w-3xl p-10 space-y-8">
+        {/* Advocate Info */}
+        <div className="flex items-center gap-6">
+          <img
+            src={advocate.image}
+            alt={advocate.name}
+            className="w-20 h-20 rounded-full border-2 border-purple-500 object-cover"
+          />
+          <div>
+            <h2 className="text-2xl font-bold">{advocate.name}</h2>
+            <p className="text-purple-300">{advocate.designation}</p>
+          </div>
+        </div>
+
+        {/* Booking Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Full Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value={form.phone}
+            onChange={handleChange}
+            required
+            className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+          />
+
+          <input
+            type="datetime-local"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            required
+            className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+          />
+
+          <textarea
+            name="message"
+            rows={4}
+            placeholder="Message (optional)"
+            value={form.message}
+            onChange={handleChange}
+            className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+          ></textarea>
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-600 hover:to-purple-600 py-3 rounded-md font-bold text-lg shadow-lg transition"
+          >
+            Confirm Booking
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
