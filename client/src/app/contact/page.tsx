@@ -1,4 +1,30 @@
+'use client'
+import { useState } from "react";
+
 export default function ContactPage() {
+const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    nid: '',
+    presentAddress: '',
+    permanentAddress: '',
+    issueType: '',
+    message: '',
+    date: '',
+  });
+  
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // TODO: Send to backend API
+  };
+
     return (
       <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-16 px-6 md:px-12 text-white">
         {/* Title */}
@@ -26,60 +52,120 @@ export default function ContactPage() {
   
         {/* Contact Form */}
         <div className="max-w-3xl mx-auto bg-white/5 p-8 rounded-xl border border-white/10 backdrop-blur">
-          <form className="space-y-6">
-            {/* Name */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">Full Name</label>
-              <input
-                type="text"
-                placeholder="Your name"
-                className="w-full px-4 py-3 bg-slate-800 text-white border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-  
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">Email Address</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 bg-slate-800 text-white border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-  
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">Phone Number</label>
-              <input
-                type="tel"
-                placeholder="01XXXXXXXXX"
-                className="w-full px-4 py-3 bg-slate-800 text-white border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-  
-            {/* Message */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">Your Message</label>
-              <textarea
-                rows={5}
-                placeholder="Write your message here..."
-                className="w-full px-4 py-3 bg-slate-800 text-white border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-  
-            {/* Submit Button */}
-            <div className="text-center">
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 text-white px-8 py-3 rounded-md font-semibold transition shadow-md"
-              >
-                Send Message
-              </button>
-            </div>
-          </form>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name & Email */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Full Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Phone & NID */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={form.phone}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+            <input
+              type="text"
+              name="nid"
+              placeholder="NID Card Number"
+              value={form.nid}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Present & Permanent Address */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="presentAddress"
+              placeholder="Present Address"
+              value={form.presentAddress}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+            <input
+              type="text"
+              name="permanentAddress"
+              placeholder="Permanent Address"
+              value={form.permanentAddress}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Issue Type */}
+          <select
+            name="issueType"
+            value={form.issueType}
+            onChange={handleChange}
+            required
+            className="bg-purple-900 text-white border border-white/20 p-3 rounded-md w-full"
+          >
+            <option value="">Select Issue Type</option>
+            <option value="criminal">Criminal</option>
+            <option value="family">Family</option>
+            <option value="property">Property</option>
+            <option value="immigration">Immigration</option>
+            <option value="business">Business</option>
+            <option value="other">Other</option>
+          </select>
+
+
+          {/* Issue Description */}
+          <textarea
+            name="message"
+            rows={4}
+            placeholder="Describe the Issue"
+            value={form.message}
+            onChange={handleChange}
+            required
+            className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+          ></textarea>
+
+          {/* Date & Time */}
+          <input
+            type="datetime-local"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            required
+            className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+          />
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-600 hover:to-purple-600 py-3 rounded-md font-bold text-lg shadow-lg transition"
+          >
+            Confirm Booking
+          </button>
+        </form>
         </div>
       </section>
     );
