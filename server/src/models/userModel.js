@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
- 
+
     role: {
       type: String,
       enum: ["client", "advocate", "super_admin"],
@@ -71,38 +71,6 @@ userSchema.methods.isPasswordCorrect = async function (userPassword) {
     return await argon2.verify(this.password_hash, userPassword);
   } catch (error) {
     throw new Error("Password comparison failed");
-  }
-};
-
-// Access token method
-userSchema.methods.generateAccessToken = function () {
-  try {
-    return jwt.sign(
-      {
-        _id: this._id,
-        email: this.email,
-        role: this.role,
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
-    );
-  } catch (error) {
-    throw new Error("Access token generation failed");
-  }
-};
-
-// Refresh token method
-userSchema.methods.generateRefreshToken = function () {
-  try {
-    return jwt.sign(
-      {
-        _id: this._id,
-      },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
-    );
-  } catch (error) {
-    throw new Error("Refresh token generation failed");
   }
 };
 
