@@ -42,7 +42,7 @@ export const loginUser = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
-    // 6. Send response
+  
     return res
       .status(200)
       .cookie("accessToken", accessToken, cookieOptions)
