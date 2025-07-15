@@ -7,11 +7,11 @@ export default function ContactPage() {
   return (
     <section className="min-h-screen py-16 px-6 md:px-12 bg-gray-100">
       {/* Title */}
-      <div className="max-w-4xl mx-auto text-center mb-6">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-800">
+      <div className="mx-auto text-center mb-6 md:mb-8 lg:mb-12">
+        <h2 className="text-gray-700 text-2xl md:text-3xl lg:text-5xl font-bold">
           Contact Us
-        </h1>
-        <p className="text-gray-600 text-lg">
+        </h2>
+        <p className="mt-2 text-base md:text-lg text-center text-gray-600">
           Reach out for consultations, inquiries, or legal guidance. We’re here
           to help.
         </p>
@@ -31,8 +31,7 @@ export default function ContactPage() {
       </div>
 
       {/* Contact Form */}
-
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow">
+      <div className="max-w-3xl mx-auto bg-white p-4 md:p-8 rounded-xl border border-gray-200 shadow">
         <ContactForm />
       </div>
     </section>

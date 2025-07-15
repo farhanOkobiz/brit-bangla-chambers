@@ -72,7 +72,7 @@ export default function AdvocatesSection() {
             <div className="mt-6 text-center">
               <Link
                 href={`/advocates/${advocate.id}`}
-                className="inline-block px-6 py-3 rounded-lg font-semibold transition shadow-md"
+                className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition"
               >
                 View Profile
               </Link>
@@ -84,7 +84,7 @@ export default function AdvocatesSection() {
       <div className="text-center mt-8 md:mt-12 lg:mt-16">
         <Link
           href="/advocates"
-          className="inline-block px-6 py-3 rounded-lg font-semibold transition shadow-md"
+          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition"
         >
           See All Advocates
         </Link>

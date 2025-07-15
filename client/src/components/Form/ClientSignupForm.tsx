@@ -68,8 +68,8 @@ export default function ClientSignupForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-12">
-      <h2 className="text-3xl font-semibold text-center mb-10">
+    <div className="max-w-3xl mx-auto ">
+      <h2 className="text-3xl font-semibold text-center mb-6 ">
         Register as Client
       </h2>
 

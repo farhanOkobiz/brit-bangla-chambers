@@ -9,8 +9,8 @@ export default function SignUppage() {
   const [activeTab, setActiveTab] = useState<"client" | "advocate">("client");
 
   return (
-    <section className="min-h-screen bg-gray-100 py-12 px-4 md:px-8 lg:px-16">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-8">
+    <section className="min-h-screen bg-gray-100 py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-4 md:p-8">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Choose Registration Type
         </h2>
@@ -42,7 +42,7 @@ export default function SignUppage() {
         {/* Forms */}
         {activeTab === "client" ? <ClientSignupForm /> : <AdvocateSignupForm />}
 
-        <p className="text-center text-gray-600 text-sm">
+        <p className="text-center text-gray-600 text-sm mt-6">
           Don&apos;t have an account?{" "}
           <Link href="/login" className="text-blue-600 hover:underline">
             Login here

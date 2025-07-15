@@ -1,5 +1,7 @@
 // app/help-center/page.tsx
 
+import Link from "next/link";
+
 const data = [
   {
     title: "📅 Booking Consultations",
@@ -25,43 +27,41 @@ const data = [
     title: "💳 Payment & Fees",
     desc: "Information about consultation fees and payment methods.",
   },
-]
+];
 
 export default function HelpCenterPage() {
-    return (
-      <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-16 px-6 md:px-12">
-        <div className="max-w-5xl mx-auto text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-              Help Center
-            </span>
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Find answers to common questions or reach out to our support team.
-          </p>
-        </div>
-  
-        <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-3">
-          {data?.map((item, i) => (
-            <div
-              key={i}
-              className="bg-white/5 p-6 rounded-xl border border-white/10 backdrop-blur hover:scale-[1.02] transition"
-            >
-              <h2 className="text-xl font-semibold mb-2">{item.title}</h2>
-              <p className="text-gray-300 text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-  
-        <div className="text-center mt-16">
-          <a
-            href="/contact"
-            className="inline-block px-6 py-3 rounded-lg text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 font-semibold transition shadow-md"
+  return (
+    <section className="bg-gray-100 min-h-screen py-16 px-6 md:px-12">
+      <div className="mx-auto text-center mb-6 md:mb-8 lg:mb-12">
+        <h2 className="text-gray-700 text-2xl md:text-3xl lg:text-5xl font-bold">
+          Help Center
+        </h2>
+        <p className="mt-2 text-base md:text-lg text-center text-gray-600">
+          Find answers to common questions or reach out to our support team.
+        </p>
+      </div>
+
+      <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-3">
+        {data.map((item, i) => (
+          <div
+            key={i}
+            className="bg-white p-6 rounded-xl border border-gray-200 shadow hover:shadow-lg transition hover:scale-[1.02]"
           >
-            Contact Support
-          </a>
-        </div>
-      </section>
-    );
-  }
-  
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              {item.title}
+            </h2>
+            <p className="text-gray-600 text-sm">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div className="text-center mt-6 md:mt-8 lg:mt-12">
+        <Link
+          href="/contact"
+          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800"
+        >
+          Contact Support
+        </Link>
+      </div>
+    </section>
+  );
+}

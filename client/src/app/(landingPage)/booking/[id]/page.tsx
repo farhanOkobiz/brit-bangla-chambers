@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { notFound } from 'next/navigation';
+import { useState } from "react";
+import { notFound } from "next/navigation";
 
 const advocates = [
   {
     id: 1,
-    name: 'Mohammad Rahman',
-    image: 'https://cdn.pixabay.com/photo/2022/08/14/01/46/lawyer-7384762_640.jpg',
-    designation: 'Senior Advocate, Supreme Court',
+    name: "Mohammad Rahman",
+    image:
+      "https://cdn.pixabay.com/photo/2022/08/14/01/46/lawyer-7384762_640.jpg",
+    designation: "Senior Advocate, Supreme Court",
   },
   // Add more advocates as needed
 ];
@@ -20,24 +21,25 @@ interface Props {
 }
 
 export default function BookingPage({ params }: Props) {
-  const id = Number(params.id)
-  const advocate = advocates.find(a => a.id === id);
+  const id = Number(params.id);
+  const advocate = advocates.find((a) => a.id === id);
   if (!advocate) notFound();
 
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    nid: '',
-    presentAddress: '',
-    permanentAddress: '',
-    issueType: '',
-    message: '',
-    date: '',
+    name: "",
+    email: "",
+    phone: "",
+    nid: "",
+    presentAddress: "",
+    permanentAddress: "",
+    issueType: "",
+    message: "",
+    date: "",
   });
-  
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -148,7 +150,6 @@ export default function BookingPage({ params }: Props) {
             <option value="other">Other</option>
           </select>
 
-
           {/* Issue Description */}
           <textarea
             name="message"
@@ -178,7 +179,6 @@ export default function BookingPage({ params }: Props) {
             Confirm Booking
           </button>
         </form>
-
       </div>
     </section>
   );
