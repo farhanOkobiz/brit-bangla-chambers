@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import connectDB from './config/db.js';
 import router from './routes/index.js';
 import helmet from 'helmet'
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,9 +25,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(helment());
+app.use(helmet());
   
 app.use(bodyParser.json());
+
+
+// Serve static files (uploaded images)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Import routes
 app.use('/api/v1',router)
