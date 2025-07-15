@@ -35,17 +35,27 @@ export const loginUser = async (req, res) => {
     const refreshToken = generateRefreshToken({ _id: existUser._id });
 
     // 5. Return user info + tokens
-    return res.status(200).json({
-      message: "Login successful",
-      user: {
-        _id: existUser._id,
-        full_name: existUser.full_name,
-        email: existUser.email,
-        role: existUser.role,
-      },
-      accessToken,
-      refreshToken,
-    });
+     const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({
+        message: "Login successful",
+
+        user: {
+          _id: existUser._id,
+          full_name: existUser.full_name,
+          email: existUser.email,
+          role: existUser.role,
+        },
+        accessToken,
+        refreshToken,
+      });
   } catch (error) {
     // Input validation error
     if (
