@@ -1,0 +1,279 @@
+"use client";
+
+import React, { useState } from "react";
+
+export default function ClientSignupForm() {
+  const [formData, setFormData] = useState({
+    role: "client",
+    full_name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    nidNumber: "",
+    dateOfBirth: "",
+    gender: "",
+    profilePhoto: "",
+    presentAddress: "",
+    permanentAddress: "",
+    terms: false,
+  });
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.full_name.trim())
+      newErrors.full_name = "Full name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Email is invalid";
+
+    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
+    else if (!/^\+?\d{7,15}$/.test(formData.phone))
+      newErrors.phone = "Phone number is invalid";
+
+    if (!formData.password) newErrors.password = "Password is required";
+    else if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+
+    if (formData.password !== formData.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    if (!formData.terms) newErrors.terms = "You must accept the terms";
+
+    return newErrors;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
+      console.log("Client Signup Data:", formData);
+      // TODO: send to backend
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto ">
+      <h2 className="text-3xl font-semibold text-center mb-6 ">
+        Register as Client
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid md:grid-cols-2 gap-6">
+          <Input
+            label="Full Name"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleChange}
+            required
+            error={errors.full_name}
+          />
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            error={errors.email}
+          />
+
+          <Input
+            label="Phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+            placeholder="+8801234567890"
+            error={errors.phone}
+          />
+          <Input
+            label="Date of Birth"
+            name="dateOfBirth"
+            type="date"
+            value={formData.dateOfBirth}
+            onChange={handleChange}
+          />
+
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            error={errors.password}
+          />
+          <Input
+            label="Confirm Password"
+            name="confirmPassword"
+            type="password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+            error={errors.confirmPassword}
+          />
+
+          <Select
+            label="Gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            options={[
+              { value: "", label: "Select Gender" },
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "other", label: "Other" },
+            ]}
+          />
+
+          <Input
+            label="Profile Photo URL"
+            name="profilePhoto"
+            value={formData.profilePhoto}
+            onChange={handleChange}
+          />
+          <Input
+            label="NID Number"
+            name="nidNumber"
+            value={formData.nidNumber}
+            onChange={handleChange}
+          />
+          <Input
+            label="Present Address"
+            name="presentAddress"
+            value={formData.presentAddress}
+            onChange={handleChange}
+          />
+          <Input
+            label="Permanent Address"
+            name="permanentAddress"
+            value={formData.permanentAddress}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Terms */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            name="terms"
+            checked={formData.terms}
+            onChange={handleChange}
+            id="terms"
+            className="mr-2"
+          />
+          <label htmlFor="terms" className="text-sm text-gray-600">
+            I agree to the{" "}
+            <a
+              href="/terms"
+              className="text-blue-600 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Terms and Conditions
+            </a>
+          </label>
+        </div>
+        {errors.terms && <p className="text-red-600 text-sm">{errors.terms}</p>}
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition"
+        >
+          Sign Up
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// Reusable Input
+function Input({
+  label,
+  name,
+  type = "text",
+  value,
+  onChange,
+  required = false,
+  placeholder = "",
+  error,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  placeholder?: string;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        placeholder={placeholder}
+        className={`mt-1 w-full px-4 py-3 border rounded-md text-sm bg-white ${
+          error ? "border-red-500" : "border-gray-300"
+        }`}
+      />
+      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+    </div>
+  );
+}
+
+// Reusable Select
+function Select({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
+      >
+        {options.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}

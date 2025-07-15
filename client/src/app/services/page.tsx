@@ -1,60 +1,103 @@
-'use client';
+"use client";
 
-import { Briefcase, Scale, Globe, Building, Users } from 'lucide-react';
+import { Briefcase, Scale, Globe, Building, Users } from "lucide-react";
+import Link from "next/link";
 
-const services = [
+const servicesData = [
   {
-    icon: <Scale size={32} />,
-    title: 'Criminal Law',
-    description: 'Expert legal advice and representation for criminal cases.',
+    category: "Legal Aid",
+    subcategory: "Criminal Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2023/12/10/19/08/judgment-8442199_640.png", // add image URL if available
+    title: "Criminal Law",
+    description: "Expert legal advice and representation for criminal cases.",
   },
   {
-    icon: <Users size={32} />,
-    title: 'Family Law',
-    description: 'Support with divorce, child custody, and family disputes.',
+    category: "Legal Aid",
+    subcategory: "Family Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2023/12/10/19/08/judgment-8442199_640.png", // add image URL if available
+    title: "Family Law",
+    description: "Support with divorce, child custody, and family disputes.",
   },
   {
-    icon: <Building size={32} />,
-    title: 'Property & Land Law',
-    description: 'Guidance on land disputes, registration, and property transfers.',
+    category: "Legal Aid",
+    subcategory: "Property & Land Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2023/12/10/19/08/judgment-8442199_640.png", // add image URL if available
+    title: "Property & Land Law",
+    description:
+      "Guidance on land disputes, registration, and property transfers.",
   },
   {
-    icon: <Globe size={32} />,
-    title: 'Immigration & Visa',
-    description: 'Visa processing, immigration advice and legal help.',
+    category: "Legal Aid",
+    subcategory: "Immigration & Visa",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2023/12/10/19/08/judgment-8442199_640.png", // add image URL if available
+    title: "Immigration & Visa",
+    description: "Visa processing, immigration advice and legal help.",
   },
   {
-    icon: <Briefcase size={32} />,
-    title: 'Business Law',
-    description: 'Legal consultation for startups, contracts, and business compliance.',
+    category: "Legal Aid",
+    subcategory: "Business Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2023/12/10/19/08/judgment-8442199_640.png", // add image URL if available
+    title: "Business Law",
+    description:
+      "Legal consultation for startups, contracts, and business compliance.",
   },
 ];
 
 export default function ServicesPage() {
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white py-16 px-6 md:px-12">
-      <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-4">Our Services</h1>
-        <p className="text-gray-300 mb-12">We provide a wide range of legal and consultancy services tailored to your needs.</p>
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {services.map((service, index) => (
-            <div key={index} className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all">
-              <div className="mb-4 text-purple-400">{service.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-300">{service.description}</p>
-            </div>
-          ))}
-        </div>
+    <section className="bg-gray-100 py-6 px-4 md:py-10 md:px-8 lg:py-16 lg:px-12 mx-auto">
+      <div className="mx-auto text-center mb-6 md:mb-8 lg:mb-12">
+        <h2 className="text-gray-700 text-2xl md:text-3xl lg:text-5xl font-bold">
+          Our Services
+        </h2>
+        <p className="mt-2 text-base md:text-lg text-center text-gray-600">
+          We provide a range of legal and consultancy services tailored to your
+          needs.
+        </p>
       </div>
-      <div className="text-center mt-16">
-          <a
-            href="/contact"
-            className="inline-block px-6 py-3 rounded-lg text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 font-semibold transition shadow-md"
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+        {servicesData.map((service, index) => (
+          <div
+            key={index}
+            className="bg-white p-6 rounded-xl border border-gray-300 shadow hover:shadow-lg transition"
           >
-            Contact Support
-          </a>
-        </div>
+            <div className="mb-4 flex justify-center">
+              <img
+                src={service.serviceImage}
+                alt={service.title}
+                className="w-16 h-16 object-cover rounded-md"
+              />
+            </div>
+
+            {/* Category and Subcategory */}
+            <p className="text-xs text-gray-500 text-center mb-1 uppercase tracking-wide">
+              {service.category} &mdash; {service.subcategory}
+            </p>
+
+            <h3 className="text-lg text-gray-700 font-medium text-center">
+              {service.title}
+            </h3>
+            <p className="text-sm text-gray-600 text-center mt-2">
+              {service.description}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="text-center mt-6 md:mt-8 lg:mt-12">
+        <Link
+          href="/contact"
+          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800"
+        >
+          Contact Support
+        </Link>
+      </div>
     </section>
   );
 }
