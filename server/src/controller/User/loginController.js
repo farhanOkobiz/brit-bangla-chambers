@@ -12,7 +12,7 @@ export const loginUser = async (req, res) => {
     // 1. Validate inputs
     validatorInputs(email, password);
 
-    // 2. Find user
+    // 2. Find user (no populate needed)
     const existUser = await User.findOne({ email });
     if (!existUser) {
       return res.status(404).json({ message: "User not found" });
@@ -24,7 +24,7 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid user credentials" });
     }
 
-    // 4. Generate access & refresh tokens using the correct variable
+    // 4. Generate tokens
     const payload = {
       _id: existUser._id,
       email: existUser.email,
@@ -34,19 +34,21 @@ export const loginUser = async (req, res) => {
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken({ _id: existUser._id });
 
-    // 5. Return user info + tokens
-     const options = {
+    // 5. Cookie options
+    const cookieOptions = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production", // set true in production
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
+    // 6. Send response
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, cookieOptions)
+      .cookie("refreshToken", refreshToken, cookieOptions)
       .json({
         message: "Login successful",
-
         user: {
           _id: existUser._id,
           full_name: existUser.full_name,
@@ -57,7 +59,6 @@ export const loginUser = async (req, res) => {
         refreshToken,
       });
   } catch (error) {
-    // Input validation error
     if (
       error.message.includes("required") ||
       error.message.includes("format") ||
@@ -66,7 +67,6 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: error.message });
     }
 
-    // Server/internal error
     return res
       .status(500)
       .json({ message: "Server error", error: error.message });
