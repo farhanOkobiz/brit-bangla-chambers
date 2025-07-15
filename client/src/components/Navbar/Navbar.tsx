@@ -1,81 +1,124 @@
-'use client';
+"use client"
 
-import Link from 'next/link';
-import { useState } from 'react';
-import Image from 'next/image';
-import Logo from "@/assets/logo/logo.jpeg"
+import { useState } from "react"
+import Link from "next/link"
+import { Menu, User, LogOut } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import Image from "next/image"
+import Logo from "@/assets/logo/logo.jpeg" 
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+interface NavbarProps {
+  user?: {
+    id: string
+    email: string
+    name: string
+    role: "user" | "admin"
+  } | null
+}
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/services', label: 'Services' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/contact', label: 'Contact' },
-  ];
+export function Navbar({ user }: NavbarProps) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const navItems = [
+    { href: "/", label: "Home" },
+    { href: "/services", label: "Services" },
+    { href: "/portfolio", label: "Portfolio" },
+    { href: "/help-center", label: "Help center" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ]
+
+  const handleLogout = () => {
+    console.log("Logging out...")
+    window.location.reload()
+  }
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo with image */}
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between mx-auto">
         <Link href="/" className="flex items-center space-x-2">
           <Image
             src={Logo}
             alt="Logo"
             width={50}
             height={50}
-            className="object-contain"
+            className="object-contain rounded-lg"
           />
         </Link>
 
-        {/* Desktop Menu */}
-        <nav className="hidden md:flex gap-8">
-          {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
-            >
-              {link.label}
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} className="text-sm font-medium transition-colors hover:text-primary">
+              {item.label}
             </Link>
           ))}
-        </nav>
+        </div>
 
-        {/* Mobile Hamburger */}
-        <div className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-          <svg
-            className="w-6 h-6 text-gray-800"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {isOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+        {/* User Actions */}
+        <div className="flex items-center space-x-4">
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline">{user.name}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
+                {user.role === "admin" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin">Admin Panel</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile Menu */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" className="md:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <div className="flex flex-col space-y-4 mt-8">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-lg font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white shadow-md px-4 pb-4 space-y-2">
-          {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="block text-gray-700 hover:text-blue-600 font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
-    </header>
-  );
+    </nav>
+  )
 }
+
+export default Navbar
