@@ -1,8 +1,18 @@
-import validator from "validator"; 
-import Category from "../models/Category.js"; 
+import validator from "validator";
+import fs from "fs";
+import path from "path";
+import Category from "../models/Category.js";
+
+// Helper function to extract filename from URL
+const getFilenameFromUrl = (url) => {
+  const parts = url.split("/uploads/");
+  return parts.length > 1 ? parts[1] : null;
+};
 
 // Create a new category
-exports.createCategory = async (req, res) => {
+export const createCategory = async (req, res) => {
+  let newImageFilename = null;
+
   try {
     const { name, description, link } = req.body;
 
@@ -10,15 +20,24 @@ exports.createCategory = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
+    // Store filename for cleanup
+    newImageFilename = req.file.filename;
+
     // Construct full image URL
-    const image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const image = `${req.protocol}://${req.get("host")}/uploads/${newImageFilename}`;
 
-   if (link && !validator.isURL(link)) {
-     return res.status(400).json({ error: "Invalid URL format for link" });
-   }
+    // Validate URL format if link exists
+    if (link && !validator.isURL(link)) {
+      // Cleanup uploaded file if validation fails
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ error: "Invalid URL format for link" });
+    }
 
+    // Check for duplicate category
     const existing = await Category.findOne({ name });
     if (existing) {
+      // Cleanup uploaded file if duplicate exists
+      fs.unlinkSync(req.file.path);
       return res.status(400).json({ error: "Category already exists" });
     }
 
@@ -30,6 +49,12 @@ exports.createCategory = async (req, res) => {
       category: newCategory,
     });
   } catch (error) {
+    // Cleanup uploaded file on error
+    if (newImageFilename) {
+      const filePath = path.join("uploads", newImageFilename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
     console.error("Create Category Error:", error);
     res.status(500).json({ error: "Server error" });
   }
@@ -46,7 +71,6 @@ exports.getAllCategories = async (req, res) => {
   }
 };
 
-
 // Get single category by ID
 exports.getCategoryById = async (req, res) => {
   try {
@@ -62,35 +86,104 @@ exports.getCategoryById = async (req, res) => {
 };
 
 // Update a category
-exports.updateCategory = async (req, res) => {
+export const updateCategory = async (req, res) => {
+  let newImageFilename = null;
+  let oldImagePath = null;
+
   try {
+    const { id } = req.params;
     const { name, description, link } = req.body;
 
-    const updated = await Category.findByIdAndUpdate(
-      req.params.id,
-      { name, description, link },
-      { new: true }
-    );
+    // Validate link format if provided
+    if (link && !validator.isURL(link)) {
+      return res.status(400).json({ error: "Invalid URL format for link" });
+    }
 
-    if (!updated) {
-      return res.status(404).json({ error: 'Category not found' });
+    // Check for duplicate name (excluding current category)
+    if (name) {
+      const existing = await Category.findOne({ name, _id: { $ne: id } });
+      if (existing) {
+        return res.status(400).json({ error: "Category name already in use" });
+      }
+    }
+
+    // Get existing category
+    const existingCategory = await Category.findById(id);
+    if (!existingCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    // Store old image path for cleanup
+    if (existingCategory.image) {
+      const filename = getFilenameFromUrl(existingCategory.image);
+      if (filename) oldImagePath = path.join("uploads", filename);
+    }
+
+    // Prepare update data
+    const updateData = {
+      name: name || existingCategory.name,
+      description: description || existingCategory.description,
+      link: link || existingCategory.link,
+      image: existingCategory.image,
+    };
+
+    // Handle new image upload
+    if (req.file) {
+      newImageFilename = req.file.filename;
+      updateData.image = `${req.protocol}://${req.get("host")}/uploads/${newImageFilename}`;
+    }
+
+    // Update the category
+    const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    // Cleanup old image after successful update
+    if (req.file && oldImagePath && fs.existsSync(oldImagePath)) {
+      fs.unlink(oldImagePath, (err) => {
+        if (err) console.error("Old image deletion error:", err);
+      });
     }
 
     res.status(200).json({
-      message: 'Category updated successfully',
-      category: updated,
+      message: "Category updated successfully",
+      category: updatedCategory,
     });
   } catch (error) {
-    console.error('Update Category Error:', error);
-    res.status(500).json({ error: 'Server error' });
+    // Cleanup new uploaded file on error
+    if (newImageFilename) {
+      const filePath = path.join("uploads", newImageFilename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    console.error("Update Category Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
-exports.deleteCategory = async (req, res) => {
+
+// Delete a category
+export const deleteCategory = async (req, res) => {
   try {
-    const deleted = await Category.findByIdAndDelete(req.params.id);
-    if (!deleted) {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
       return res.status(404).json({ error: "Category not found" });
     }
+
+    // Delete associated image file
+    if (category.image) {
+      const filename = getFilenameFromUrl(category.image);
+      if (filename) {
+        const filePath = path.join("uploads", filename);
+        if (fs.existsSync(filePath)) {
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Image deletion error:", err);
+          });
+        }
+      }
+    }
+
+    // Delete the category document
+    await Category.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
