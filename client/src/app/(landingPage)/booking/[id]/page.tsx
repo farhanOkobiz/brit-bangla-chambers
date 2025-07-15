@@ -28,9 +28,14 @@ export default function BookingPage({ params }: Props) {
     name: '',
     email: '',
     phone: '',
-    date: '',
+    nid: '',
+    presentAddress: '',
+    permanentAddress: '',
+    issueType: '',
     message: '',
+    date: '',
   });
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -60,6 +65,7 @@ export default function BookingPage({ params }: Props) {
 
         {/* Booking Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name & Email */}
           <div className="grid md:grid-cols-2 gap-6">
             <input
               type="text"
@@ -68,7 +74,7 @@ export default function BookingPage({ params }: Props) {
               value={form.name}
               onChange={handleChange}
               required
-              className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
             />
             <input
               type="email"
@@ -77,38 +83,94 @@ export default function BookingPage({ params }: Props) {
               value={form.email}
               onChange={handleChange}
               required
-              className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
             />
           </div>
 
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Phone Number"
-            value={form.phone}
+          {/* Phone & NID */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={form.phone}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+            <input
+              type="text"
+              name="nid"
+              placeholder="NID Card Number"
+              value={form.nid}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Present & Permanent Address */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="presentAddress"
+              placeholder="Present Address"
+              value={form.presentAddress}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+            <input
+              type="text"
+              name="permanentAddress"
+              placeholder="Permanent Address"
+              value={form.permanentAddress}
+              onChange={handleChange}
+              required
+              className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Issue Type */}
+          <select
+            name="issueType"
+            value={form.issueType}
             onChange={handleChange}
             required
-            className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
-          />
+            className="bg-purple-900 text-white border border-white/20 p-3 rounded-md w-full"
+          >
+            <option value="">Select Issue Type</option>
+            <option value="criminal">Criminal</option>
+            <option value="family">Family</option>
+            <option value="property">Property</option>
+            <option value="immigration">Immigration</option>
+            <option value="business">Business</option>
+            <option value="other">Other</option>
+          </select>
 
+
+          {/* Issue Description */}
+          <textarea
+            name="message"
+            rows={4}
+            placeholder="Describe the Issue"
+            value={form.message}
+            onChange={handleChange}
+            required
+            className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+          ></textarea>
+
+          {/* Date & Time */}
           <input
             type="datetime-local"
             name="date"
             value={form.date}
             onChange={handleChange}
             required
-            className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
+            className="bg-purple-900 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
           />
 
-          <textarea
-            name="message"
-            rows={4}
-            placeholder="Message (optional)"
-            value={form.message}
-            onChange={handleChange}
-            className="bg-white/10 border border-white/20 p-3 rounded-md w-full text-white placeholder-gray-400"
-          ></textarea>
-
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-600 hover:to-purple-600 py-3 rounded-md font-bold text-lg shadow-lg transition"
@@ -116,6 +178,7 @@ export default function BookingPage({ params }: Props) {
             Confirm Booking
           </button>
         </form>
+
       </div>
     </section>
   );
