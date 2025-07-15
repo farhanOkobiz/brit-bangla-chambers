@@ -4,10 +4,10 @@ const CategorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String },
-    image: { type: String },
-    link: { type: String },
+    image: { type: String }, // Full URL to image (served from /uploads or CDN)
+    link: { type: String }, // Optional external or internal URL
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Category", CategorySchema);
+export default mongoose.model("Category", CategorySchema);
