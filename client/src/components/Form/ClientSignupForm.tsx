@@ -68,11 +68,10 @@ export default function ClientSignupForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-12">
-      <h2 className="text-3xl font-semibold text-center mb-10">
+    <div className="max-w-3xl mx-auto ">
+      <h2 className="text-gray-700 text-xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-8 text-center">
         Register as Client
       </h2>
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
           <Input
