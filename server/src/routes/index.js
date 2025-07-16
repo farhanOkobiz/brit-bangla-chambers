@@ -8,4 +8,5 @@ const router = Router();
 router.use('/test', testRoutes);
 router.use('/auth', authRoutes);
 
+
 export default router;
