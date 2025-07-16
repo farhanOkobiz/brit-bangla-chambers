@@ -1,10 +1,10 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import connectDB from './config/db.js';
 import router from './routes/index.js';
-import helmet from 'helmet'
+import  path  from 'path';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,16 +17,18 @@ connectDB();
 const corsOptions = {
   origin: process.env.CLIENT_URL,
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-  preflightContinue: false,
   credentials: true,
-  optionsSuccessStatus: 204,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
-app.use(helment());
   
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(cookieParser());
+
+
+// Serve static files (uploaded images)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Import routes
 app.use('/api/v1',router)
