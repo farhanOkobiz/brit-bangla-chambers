@@ -1,10 +1,10 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
 import connectDB from "./config/db.js";
 import router from "./routes/index.js";
 import path from "path";
-import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 
 const app = express();
@@ -24,8 +24,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(express.json());
-app.use(cookieParser());
+app.use(bodyParser.json());
 
 // Serve static files (uploaded images)
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +33,14 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Import routes
 app.use("/api/v1", router);
+
+// category routes
+import categoryRoute from "./routes/api/categoryRoute.js";
+app.use("/api/v1/category", categoryRoute);
+
+// sub-category routes
+import subCategoryRoute from "./routes/api/subCategoryRoute.js";
+app.use("/api/v1/sub-category", subCategoryRoute);
 
 // Root route
 app.get("/", (req, res) => {

@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
 
-const SubcategorySchema = new mongoose.Schema(
+const { Schema, model } = mongoose;
+
+const SubcategorySchema = new Schema(
   {
     categoryId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
-    name: { type: String, required: true },
-    description: { type: String },
+    name: { type: String, required: true, unique: true },
     image: { type: String },
+    description: { type: String },
     link: { type: String },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Subcategory", SubcategorySchema);
+export default model("Subcategory", SubcategorySchema);
