@@ -1,6 +1,7 @@
 import validator from "validator";
 import fs from "fs";
 import path from "path";
+import mongoose from "mongoose";
 import Subcategory from "../models/subCategorySchema.js";
 
 // Helper function to extract filename from URL
@@ -10,75 +11,118 @@ const getFilenameFromUrl = (url) => {
 };
 
 // Create a new Subcategory
-export const createSubcategory = async (req, res) => {
+export const createSubCategory = async (req, res) => {
   let newImageFilename = null;
 
   try {
-    const { name, description, link } = req.body;
+    const { name, description, link, categoryId } = req.body;
+
+    // Validate required fields
+    if (!name || !categoryId) {
+      return res.status(400).json({
+        error: "Name and categoryId are required",
+      });
+    }
 
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
+    // Validate categoryId
+    if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ error: "Invalid category ID" });
+    }
+
     // Store filename for cleanup
     newImageFilename = req.file.filename;
-
-    // Construct full image URL
     const image = `${req.protocol}://${req.get("host")}/uploads/${newImageFilename}`;
 
-    // Validate URL format if link exists
+    // Validate URL format
     if (link && !validator.isURL(link)) {
-      // Cleanup uploaded file if validation fails
       fs.unlinkSync(req.file.path);
       return res.status(400).json({ error: "Invalid URL format for link" });
     }
 
-    // Check for duplicate Subcategory
-    const existing = await Subcategory.findOne({ name });
+    // Check for duplicate subcategory name in the same category
+    const existing = await Subcategory.findOne({ name, categoryId });
     if (existing) {
-      // Cleanup uploaded file if duplicate exists
       fs.unlinkSync(req.file.path);
-      return res.status(400).json({ error: "Subcategory already exists" });
+      return res.status(400).json({
+        error: "Subcategory name already exists in this category",
+      });
     }
 
-    const newSubcategory = new Subcategory({ name, description, image, link });
+    const newSubcategory = new Subcategory({
+      name,
+      description,
+      image,
+      link,
+      categoryId,
+    });
+
     await newSubcategory.save();
 
     res.status(201).json({
       message: "Subcategory created successfully",
-      Subcategory: newSubcategory,
+      subcategory: newSubcategory,
     });
   } catch (error) {
-    // Cleanup uploaded file on error
     if (newImageFilename) {
       const filePath = path.join("uploads", newImageFilename);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
-
     console.error("Create Subcategory Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// Get all categories
-exports.getAllCategories = async (req, res) => {
+// Get all subcategories
+export const getAllSubCategories = async (req, res) => {
   try {
-    const categories = await Subcategory.find().sort({ createdAt: -1 });
-    res.status(200).json(categories);
+    const subcategories = await Subcategory.find()
+      .sort({ createdAt: -1 })
+      .populate("categoryId", "name");
+
+    res.status(200).json(subcategories);
   } catch (error) {
-    console.error("Get Categories Error:", error);
+    console.error("Get Subcategories Error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Get subcategories by category
+export const getSubCategoriesByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ error: "Invalid category ID" });
+    }
+
+    const subcategories = await Subcategory.find({ categoryId })
+      .sort({ createdAt: -1 })
+      .populate("categoryId", "name");
+
+    res.status(200).json(subcategories);
+  } catch (error) {
+    console.error("Get Subcategories Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
 // Get single Subcategory by ID
-exports.getSubcategoryById = async (req, res) => {
+export const getSubCategoryById = async (req, res) => {
   try {
-    const Subcategory = await Subcategory.findById(req.params.id);
-    if (!Subcategory) {
+    const subcategory = await Subcategory.findById(req.params.id).populate(
+      "categoryId",
+      "name image"
+    );
+
+    if (!subcategory) {
       return res.status(404).json({ error: "Subcategory not found" });
     }
-    res.status(200).json(Subcategory);
+
+    res.status(200).json(subcategory);
   } catch (error) {
     console.error("Get Subcategory Error:", error);
     res.status(500).json({ error: "Server error" });
@@ -86,34 +130,46 @@ exports.getSubcategoryById = async (req, res) => {
 };
 
 // Update a Subcategory
-export const updateSubcategory = async (req, res) => {
+export const updateSubCategory = async (req, res) => {
   let newImageFilename = null;
   let oldImagePath = null;
 
   try {
     const { id } = req.params;
-    const { name, description, link } = req.body;
+    const { name, description, link, categoryId } = req.body;
 
-    // Validate link format if provided
+    // Validate categoryId if provided
+    if (categoryId && !mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ error: "Invalid category ID" });
+    }
+
+    // Validate URL format
     if (link && !validator.isURL(link)) {
       return res.status(400).json({ error: "Invalid URL format for link" });
     }
 
-    // Check for duplicate name (excluding current Subcategory)
-    if (name) {
-      const existing = await Subcategory.findOne({ name, _id: { $ne: id } });
-      if (existing) {
-        return res.status(400).json({ error: "Subcategory name already in use" });
-      }
-    }
-
-    // Get existing Subcategory
     const existingSubcategory = await Subcategory.findById(id);
     if (!existingSubcategory) {
       return res.status(404).json({ error: "Subcategory not found" });
     }
 
-    // Store old image path for cleanup
+    // Check for duplicate name in the same category
+    if (name) {
+      const targetCategoryId = categoryId || existingSubcategory.categoryId;
+      const existing = await Subcategory.findOne({
+        name,
+        categoryId: targetCategoryId,
+        _id: { $ne: id },
+      });
+
+      if (existing) {
+        return res.status(400).json({
+          error: "Subcategory name already exists in this category",
+        });
+      }
+    }
+
+    // Store old image path
     if (existingSubcategory.image) {
       const filename = getFilenameFromUrl(existingSubcategory.image);
       if (filename) oldImagePath = path.join("uploads", filename);
@@ -124,6 +180,7 @@ export const updateSubcategory = async (req, res) => {
       name: name || existingSubcategory.name,
       description: description || existingSubcategory.description,
       link: link || existingSubcategory.link,
+      categoryId: categoryId || existingSubcategory.categoryId,
       image: existingSubcategory.image,
     };
 
@@ -133,12 +190,13 @@ export const updateSubcategory = async (req, res) => {
       updateData.image = `${req.protocol}://${req.get("host")}/uploads/${newImageFilename}`;
     }
 
-    // Update the Subcategory
-    const updatedSubcategory = await Subcategory.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const updatedSubcategory = await Subcategory.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    ).populate("categoryId", "name");
 
-    // Cleanup old image after successful update
+    // Delete old image after successful update
     if (req.file && oldImagePath && fs.existsSync(oldImagePath)) {
       fs.unlink(oldImagePath, (err) => {
         if (err) console.error("Old image deletion error:", err);
@@ -147,31 +205,29 @@ export const updateSubcategory = async (req, res) => {
 
     res.status(200).json({
       message: "Subcategory updated successfully",
-      Subcategory: updatedSubcategory,
+      subcategory: updatedSubcategory,
     });
   } catch (error) {
-    // Cleanup new uploaded file on error
     if (newImageFilename) {
       const filePath = path.join("uploads", newImageFilename);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
-
     console.error("Update Subcategory Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
 // Delete a Subcategory
-export const deleteSubcategory = async (req, res) => {
+export const deleteSubCategory = async (req, res) => {
   try {
-    const Subcategory = await Subcategory.findById(req.params.id);
-    if (!Subcategory) {
+    const subcategory = await Subcategory.findById(req.params.id);
+    if (!subcategory) {
       return res.status(404).json({ error: "Subcategory not found" });
     }
 
-    // Delete associated image file
-    if (Subcategory.image) {
-      const filename = getFilenameFromUrl(Subcategory.image);
+    // Delete associated image
+    if (subcategory.image) {
+      const filename = getFilenameFromUrl(subcategory.image);
       if (filename) {
         const filePath = path.join("uploads", filename);
         if (fs.existsSync(filePath)) {
@@ -182,7 +238,6 @@ export const deleteSubcategory = async (req, res) => {
       }
     }
 
-    // Delete the Subcategory document
     await Subcategory.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Subcategory deleted successfully" });

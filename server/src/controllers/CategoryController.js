@@ -164,16 +164,19 @@ export const updateCategory = async (req, res) => {
 // Delete a category
 export const deleteCategory = async (req, res) => {
   try {
+    console.log("hit deleteCategory");
     const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).json({ error: "Category not found" });
     }
+    console.log("Category found:", category.image);
 
     // Delete associated image file
     if (category.image) {
       const filename = getFilenameFromUrl(category.image);
       if (filename) {
         const filePath = path.join("uploads", filename);
+        console
         if (fs.existsSync(filePath)) {
           fs.unlink(filePath, (err) => {
             if (err) console.error("Image deletion error:", err);
