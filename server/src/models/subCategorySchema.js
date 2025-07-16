@@ -6,13 +6,24 @@ const SubcategorySchema = new Schema(
   {
     categoryId: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "Category", // assumes you have a Category model
       required: true,
     },
-    name: { type: String, required: true, unique: true },
-    image: { type: String },
-    description: { type: String },
-    link: { type: String },
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    image: {
+      type: String, // store image URL
+    },
+    description: {
+      type: String,
+    },
+    link: {
+      type: String,
+    },
   },
   {
     timestamps: true,
