@@ -1,13 +1,17 @@
 import mongoose from "mongoose";
 
-const CategorySchema = new mongoose.Schema(
+const { Schema, model } = mongoose;
+
+const CategorySchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
-    description: { type: String },
-    image: { type: String }, // Full URL to image (served from /uploads or CDN)
-    link: { type: String }, // Optional external or internal URL
+    image: { type: String },
+    details: { type: String },
+    link: { type: String },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model("Category", CategorySchema);
+export default model("Category", CategorySchema);
