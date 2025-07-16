@@ -1,11 +1,16 @@
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+// Define __filename and __dirname manually
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, "..", "uploads");
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Multer storage config
@@ -29,7 +34,7 @@ const imageFilter = (req, file, cb) => {
   );
 
   if (mimeType && extName) {
-    return cb(null, true);
+    cb(null, true);
   } else {
     cb(new Error("Only image files are allowed!"));
   }
@@ -44,4 +49,4 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+export default upload;
