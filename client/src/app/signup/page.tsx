@@ -11,10 +11,9 @@ export default function SignUppage() {
   return (
     <section className="min-h-screen bg-gray-100 py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-4 md:p-8">
-        <h2 className="text-2xl font-semibold text-center mb-6">
+        <h2 className="text-gray-700 text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8 text-center">
           Choose Registration Type
         </h2>
-
         {/* Tab Buttons */}
         <div className="flex justify-center gap-4 mb-6">
           <button

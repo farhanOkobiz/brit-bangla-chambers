@@ -42,8 +42,8 @@ export default function AdvocateSignupForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto ">
-      <h2 className="text-3xl font-semibold text-center mb-6">
+    <div className="max-w-3xl mx-auto">
+      <h2 className="text-gray-700 text-xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-8 text-center">
         Register as Advocate
       </h2>
 

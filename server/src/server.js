@@ -24,15 +24,12 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-
 app.use(bodyParser.json());
 
 // Serve static files (uploaded images)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-
 
 // Import routes
 app.use("/api/v1", router);
@@ -43,8 +40,6 @@ app.use("/api/v1", router);
 app.get("/", (req, res) => {
   res.send("Brit Bangla Chambers Server is running!");
 });
-
-
 
 // Start server
 app.listen(PORT, () => {
