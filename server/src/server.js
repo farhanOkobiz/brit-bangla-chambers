@@ -39,18 +39,6 @@ app.use("/api/v1", router);
 
 
 
-// category routes
-import categoryRoute from "./routes/api/categoryRoute.js"; 
-app.use("/api/v1/category", categoryRoute);
-
-
-
-// sub-category routes
-import subCategoryRoute from "./routes/api/subCategoryRoute.js";  
-app.use("/api/v1/sub-category", subCategoryRoute);
-
-
-
 // Root route
 app.get("/", (req, res) => {
   res.send("Brit Bangla Chambers Server is running!");
