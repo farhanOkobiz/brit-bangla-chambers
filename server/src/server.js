@@ -23,7 +23,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(express.json());
 app.use(bodyParser.json());
 
 // Serve static files (uploaded images)

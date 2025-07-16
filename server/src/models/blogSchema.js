@@ -15,7 +15,10 @@ const BlogSchema = new Schema(
 
     tags: [{ type: String }],
 
-    published_at: { type: Date },
+    published_at: { type: Date,
+      default: Date.now,
+      required: true,
+     },
 
     status: {
       type: String,
