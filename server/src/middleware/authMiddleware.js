@@ -32,5 +32,5 @@ export const protect = (roles = []) => {
 };
 
 export const checkClient = protect('client');
-export const checkAdmin = protect('super_admin');
+export const checkAdmin = protect('admin');
 export const checkAdvocate = protect('advocate');

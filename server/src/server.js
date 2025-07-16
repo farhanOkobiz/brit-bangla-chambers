@@ -1,22 +1,32 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
 import connectDB from "./config/db.js";
 import router from "./routes/index.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import cookieParser from "cookie-parser";
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
+
 connectDB();
 
 // Middleware
 
+const allowedOrigins = process.env.CLIENT_URLS.split(',');
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -25,7 +35,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-app.use(bodyParser.json());
+
 
 // Serve static files (uploaded images)
 const __filename = fileURLToPath(import.meta.url);

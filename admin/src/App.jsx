@@ -1,9 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import AdvocateDashboard from './pages/AdvocateDashboard';
-import Unauthorized from './pages/Unauthorized';
+import Login from '../pages/Login';
+import AdminDashboard from '../pages/AdminDashboard';
+import AdvocateDashboard from '../pages/AdvocateDashboard';
+import Unauthorized from '../components/Unauthorized';
 import ProtectedRoute from '../auth/ProtectedRoute';
 
 export default function App() {
@@ -11,16 +10,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
+        
         <Route
           path="/admin/dashboard"
           element={
@@ -36,6 +26,14 @@ export default function App() {
             <ProtectedRoute requiredRole="advocate">
               <AdvocateDashboard />
             </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/unauthorized"
+          element={
+          <Unauthorized />
+
           }
         />
 

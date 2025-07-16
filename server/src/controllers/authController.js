@@ -21,6 +21,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
+    console.log('Login attempt:', req.body);
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
@@ -41,7 +42,7 @@ export const login = async (req, res) => {
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });
-    res.json({ user });
+    res.json({ token,user });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -111,5 +112,30 @@ export const verifyOtp = async (req, res) => {
     return res.json({ message: 'OTP verified successfully', user });
   } else {
     return res.status(400).json({ message: 'Invalid or expired OTP' });
+  }
+};
+
+//return role 
+export const checkAuth = (req, res) => {
+  console.log('Checking authentication', req.body);
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    return res.json({ ok: true, role: decoded.role });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
+export const showAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json({ ok: true, users });
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ ok: false, message: 'Failed to fetch users' });
   }
 };
