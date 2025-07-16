@@ -1,7 +1,7 @@
 import validator from "validator";
 import fs from "fs";
 import path from "path";
-import Category from "../models/Category.js";
+import Category from "../models/categorySchema.js";
 
 // Helper function to extract filename from URL
 const getFilenameFromUrl = (url) => {
@@ -61,27 +61,27 @@ export const createCategory = async (req, res) => {
 };
 
 // Get all categories
-exports.getAllCategories = async (req, res) => {
+export const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find().sort({ createdAt: -1 });
     res.status(200).json(categories);
   } catch (error) {
-    console.error('Get Categories Error:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Get Categories Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
 // Get single category by ID
-exports.getCategoryById = async (req, res) => {
+export const getCategoryById = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
+      return res.status(404).json({ error: "Category not found" });
     }
     res.status(200).json(category);
   } catch (error) {
-    console.error('Get Category Error:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Get Category Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -164,16 +164,19 @@ export const updateCategory = async (req, res) => {
 // Delete a category
 export const deleteCategory = async (req, res) => {
   try {
+    console.log("hit deleteCategory");
     const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).json({ error: "Category not found" });
     }
+    console.log("Category found:", category.image);
 
     // Delete associated image file
     if (category.image) {
       const filename = getFilenameFromUrl(category.image);
       if (filename) {
         const filePath = path.join("uploads", filename);
+        console
         if (fs.existsSync(filePath)) {
           fs.unlink(filePath, (err) => {
             if (err) console.error("Image deletion error:", err);
