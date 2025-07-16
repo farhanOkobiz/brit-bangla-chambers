@@ -14,7 +14,7 @@ export const createCategory = async (req, res) => {
   let newImageFilename = null;
 
   try {
-    const { name, description, link } = req.body;
+    const { name, details, link } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -41,7 +41,7 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ error: "Category already exists" });
     }
 
-    const newCategory = new Category({ name, description, image, link });
+    const newCategory = new Category({ name, details, image, link });
     await newCategory.save();
 
     res.status(201).json({
@@ -66,8 +66,8 @@ exports.getAllCategories = async (req, res) => {
     const categories = await Category.find().sort({ createdAt: -1 });
     res.status(200).json(categories);
   } catch (error) {
-    console.error('Get Categories Error:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Get Categories Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -76,12 +76,12 @@ exports.getCategoryById = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
+      return res.status(404).json({ error: "Category not found" });
     }
     res.status(200).json(category);
   } catch (error) {
-    console.error('Get Category Error:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Get Category Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -92,7 +92,7 @@ export const updateCategory = async (req, res) => {
 
   try {
     const { id } = req.params;
-    const { name, description, link } = req.body;
+    const { name, details, link } = req.body;
 
     // Validate link format if provided
     if (link && !validator.isURL(link)) {
@@ -122,7 +122,7 @@ export const updateCategory = async (req, res) => {
     // Prepare update data
     const updateData = {
       name: name || existingCategory.name,
-      description: description || existingCategory.description,
+      details: details || existingCategory.details,
       link: link || existingCategory.link,
       image: existingCategory.image,
     };

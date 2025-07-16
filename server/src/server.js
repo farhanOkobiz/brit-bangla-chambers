@@ -7,6 +7,10 @@ import router from './routes/index.js';
 import  path  from 'path';
 import cookieParser from 'cookie-parser';
 
+import { fileURLToPath } from "url";
+
+
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -29,6 +33,9 @@ app.use(cookieParser());
 
 
 // Serve static files (uploaded images)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Import routes
