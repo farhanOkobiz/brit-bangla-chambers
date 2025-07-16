@@ -2,8 +2,13 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const CategorySchema = new Schema(
+const SubcategorySchema = new Schema(
   {
+    catagoryId: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
     name: { type: String, required: true, unique: true },
     image: { type: String },
     description: { type: String },
@@ -14,4 +19,4 @@ const CategorySchema = new Schema(
   }
 );
 
-export default model("Category", CategorySchema);
+export default model("Subcategory", SubcategorySchema);

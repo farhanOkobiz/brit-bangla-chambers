@@ -35,6 +35,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Import routes
 app.use("/api/v1", router);
 
+// category routes
+import categoryRoute from "./routes/api/categoryRoute.js"; 
+app.use("/api/v1/category", categoryRoute);
+
 // Root route
 app.get("/", (req, res) => {
   res.send("Brit Bangla Chambers Server is running!");

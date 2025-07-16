@@ -1,7 +1,7 @@
 import validator from "validator";
 import fs from "fs";
 import path from "path";
-import Category from "../models/Category.js";
+import Category from "../models/categorySchema.js";
 
 // Helper function to extract filename from URL
 const getFilenameFromUrl = (url) => {
@@ -14,11 +14,7 @@ export const createCategory = async (req, res) => {
   let newImageFilename = null;
 
   try {
-<<<<<<< HEAD
-    const { name, details, link } = req.body;
-=======
     const { name, description, link } = req.body;
->>>>>>> riyad
 
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -45,11 +41,7 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ error: "Category already exists" });
     }
 
-<<<<<<< HEAD
-    const newCategory = new Category({ name, details, image, link });
-=======
     const newCategory = new Category({ name, description, image, link });
->>>>>>> riyad
     await newCategory.save();
 
     res.status(201).json({
@@ -69,7 +61,7 @@ export const createCategory = async (req, res) => {
 };
 
 // Get all categories
-exports.getAllCategories = async (req, res) => {
+export const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find().sort({ createdAt: -1 });
     res.status(200).json(categories);
@@ -80,7 +72,7 @@ exports.getAllCategories = async (req, res) => {
 };
 
 // Get single category by ID
-exports.getCategoryById = async (req, res) => {
+export const getCategoryById = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category) {
@@ -100,11 +92,7 @@ export const updateCategory = async (req, res) => {
 
   try {
     const { id } = req.params;
-<<<<<<< HEAD
-    const { name, details, link } = req.body;
-=======
     const { name, description, link } = req.body;
->>>>>>> riyad
 
     // Validate link format if provided
     if (link && !validator.isURL(link)) {
@@ -134,11 +122,7 @@ export const updateCategory = async (req, res) => {
     // Prepare update data
     const updateData = {
       name: name || existingCategory.name,
-<<<<<<< HEAD
-      details: details || existingCategory.details,
-=======
       description: description || existingCategory.description,
->>>>>>> riyad
       link: link || existingCategory.link,
       image: existingCategory.image,
     };
