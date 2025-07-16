@@ -1,5 +1,6 @@
 "use client";
 
+import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
 
 export default function ClientSignupForm() {
@@ -10,24 +11,26 @@ export default function ClientSignupForm() {
     phone: "",
     password: "",
     confirmPassword: "",
-    nidNumber: "",
-    dateOfBirth: "",
-    gender: "",
-    profilePhoto: "",
-    presentAddress: "",
-    permanentAddress: "",
+    // nidNumber: "",
+    // dateOfBirth: "",
+    // gender: "",
+    // profilePhoto: "",
+    // presentAddress: "",
+    // permanentAddress: "",
     terms: false,
   });
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     });
   };
 
@@ -39,10 +42,6 @@ export default function ClientSignupForm() {
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email is invalid";
-
-    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
-    else if (!/^\+?\d{7,15}$/.test(formData.phone))
-      newErrors.phone = "Phone number is invalid";
 
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 6)
@@ -56,14 +55,17 @@ export default function ClientSignupForm() {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Client Signup Data:", formData);
       // TODO: send to backend
+      const res = await apiFetch(`${BASE_URL}/auth/register`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
     }
   };
 
@@ -101,13 +103,13 @@ export default function ClientSignupForm() {
             placeholder="+8801234567890"
             error={errors.phone}
           />
-          <Input
+          {/* <Input
             label="Date of Birth"
             name="dateOfBirth"
             type="date"
             value={formData.dateOfBirth}
             onChange={handleChange}
-          />
+          /> */}
 
           <Input
             label="Password"
@@ -128,7 +130,7 @@ export default function ClientSignupForm() {
             error={errors.confirmPassword}
           />
 
-          <Select
+          {/* <Select
             label="Gender"
             name="gender"
             value={formData.gender}
@@ -139,32 +141,32 @@ export default function ClientSignupForm() {
               { value: "female", label: "Female" },
               { value: "other", label: "Other" },
             ]}
-          />
+          /> */}
 
-          <Input
+          {/* <Input
             label="Profile Photo URL"
             name="profilePhoto"
             value={formData.profilePhoto}
             onChange={handleChange}
-          />
-          <Input
+          /> */}
+          {/* <Input
             label="NID Number"
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          />
-          <Input
+          /> */}
+          {/* <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
-          />
-          <Input
+          /> */}
+          {/* <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
             onChange={handleChange}
-          />
+          /> */}
         </div>
 
         {/* Terms */}
@@ -194,7 +196,7 @@ export default function ClientSignupForm() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition"
+          className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition cursor-pointer"
         >
           Sign Up
         </button>
