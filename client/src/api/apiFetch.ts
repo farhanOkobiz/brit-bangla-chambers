@@ -4,28 +4,28 @@ export async function apiFetch(
   options: RequestInit & { headers?: Record<string, string> } = {}
 ) {
   let res = await fetch(url, {
-    credentials: 'include',
+    credentials: "include",
     headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
     },
-    ...options
+    ...options,
   });
   // If 401, try to refresh token and retry once
   if (res.status === 401) {
-    const refreshRes = await fetch('/api/v1/auth/refresh', {
-      method: 'POST',
-      credentials: 'include'
+    const refreshRes = await fetch("/api/v1/auth/refresh", {
+      method: "POST",
+      credentials: "include",
     });
     if (refreshRes.ok) {
       // Retry original request
       res = await fetch(url, {
-        credentials: 'include',
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
-          ...(options.headers || {})
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
         },
-        ...options
+        ...options,
       });
     }
   }
