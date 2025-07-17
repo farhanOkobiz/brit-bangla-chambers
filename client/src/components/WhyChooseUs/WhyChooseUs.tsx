@@ -1,0 +1,59 @@
+// WhyChooseUs.tsx
+
+import React from "react";
+
+const WhyChooseUs: React.FC = () => {
+  return (
+    <section className="relative bg-opacity-75 py-20 overflow-hidden">
+      {/* Background Image/Overlay - Adjust as needed */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: 'url("/images/whyChooseUs/whyChooseUs.jpg")',
+          filter: "brightness(0.6)",
+        }} // Replace with your actual image
+      ></div>
+
+      <div className="absolute inset-0 bg-[#5a2e2e] opacity-80 z-0 rounded-lg"></div>
+
+      {/* Content Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+        <div className="text-center mb-12">
+          <p className="text-sm uppercase tracking-widest text-gray-200">
+            WHAT WE ARE EXPERT AT
+          </p>
+          <h2 className="text-4xl sm:text-5xl font-bold mt-2">
+            Why Clients Choose Us?
+          </h2>
+          <div className="w-16 h-1 bg-white mx-auto mt-4"></div>{" "}
+          {/* Separator line */}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Left Text Column */}
+          <div>
+            <p className="text-lg leading-relaxed">
+              Far far away, behind the word mountains, far from the countries
+              Vokalia and Consonantia, there live the blind texts. Separated
+              they live in Bookmarksgrove right at the coast of the Semantics, a
+              large language ocean. A small river named Duden flows by their
+              place.
+            </p>
+          </div>
+
+          {/* Right Text Column */}
+          <div>
+            <p className="text-lg leading-relaxed">
+              A wonderful serenity has taken possession of my entire soul, like
+              these sweet mornings of spring which I enjoy with my whole heart.
+              I am alone, and feel the charm of existence in this spot, which
+              was created for the bliss of souls like mine.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default WhyChooseUs;

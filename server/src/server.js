@@ -17,14 +17,14 @@ connectDB();
 
 // Middleware
 
-const allowedOrigins = process.env.CLIENT_URLS.split(',');
+const allowedOrigins = process.env.CLIENT_URLS.split(",");
 
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
@@ -34,9 +34,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-
-
-
 // Serve static files (uploaded images)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,8 +41,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Import routes
 app.use("/api/v1", router);
-
-
 
 // Root route
 app.get("/", (req, res) => {

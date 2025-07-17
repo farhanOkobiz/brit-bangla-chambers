@@ -1,189 +1,130 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { TrendingUp, Settings, Users, BarChart3, Lightbulb, Shield, ArrowRight } from "lucide-react"
-import Link from "next/link"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  TrendingUp,
+  Settings,
+  Users,
+  BarChart3,
+  Lightbulb,
+  Shield,
+  ArrowRight,
+} from "lucide-react";
+import Link from "next/link";
+
+interface ServiceCardProps {
+  serviceImage: string;
+  title: string;
+  description: string;
+}
 
 const services = [
   {
-    id: 1,
-    title: "Strategic Planning & Analysis",
+    category: "Legal Aid",
+    subcategory: "Family Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2024/04/06/17/58/ai-generated-8679746_640.jpg",
+    title: "Divorce Filing Assistance",
     description:
-      "Comprehensive strategic planning services to define your business direction, identify opportunities, and create actionable roadmaps for sustainable growth.",
-    icon: TrendingUp,
-    features: ["Market Analysis", "Competitive Intelligence", "Growth Strategy", "Risk Assessment"],
-    duration: "4-8 weeks",
-    price: "Starting from $5,000",
-    featured: true,
+      "Professional legal support for filing and managing divorce cases.",
   },
   {
-    id: 2,
-    title: "Digital Transformation",
+    category: "Legal Aid",
+    subcategory: "Criminal Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2024/04/06/17/58/ai-generated-8679746_640.jpg",
+    title: "Criminal Defense Services",
     description:
-      "End-to-end digital transformation consulting to modernize your operations, enhance customer experience, and drive innovation.",
-    icon: Settings,
-    features: ["Technology Assessment", "Process Digitization", "Change Management", "Training & Support"],
-    duration: "8-16 weeks",
-    price: "Starting from $10,000",
-    featured: true,
+      "Expert defense representation for individuals facing criminal charges.",
   },
   {
-    id: 3,
-    title: "Organizational Development",
+    category: "Legal Aid",
+    subcategory: "Immigration Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2024/04/06/17/58/ai-generated-8679746_640.jpg",
+    title: "Immigration Legal Support",
     description:
-      "Build high-performing teams and optimize organizational structure to improve efficiency, culture, and employee engagement.",
-    icon: Users,
-    features: ["Team Building", "Leadership Development", "Culture Transformation", "Performance Management"],
-    duration: "6-12 weeks",
-    price: "Starting from $7,500",
-    featured: false,
+      "Guidance and representation for visa applications, asylum, and citizenship.",
   },
   {
-    id: 4,
-    title: "Business Process Optimization",
+    category: "Legal Aid",
+    subcategory: "Business Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2024/04/06/17/58/ai-generated-8679746_640.jpg",
+    title: "Business Formation Consulting",
     description:
-      "Streamline operations, eliminate inefficiencies, and implement best practices to reduce costs and improve productivity.",
-    icon: BarChart3,
-    features: ["Process Mapping", "Workflow Optimization", "Automation Solutions", "Quality Improvement"],
-    duration: "4-10 weeks",
-    price: "Starting from $6,000",
-    featured: false,
+      "Legal help for starting a business, including documentation and registration.",
   },
   {
-    id: 5,
-    title: "Innovation & Product Development",
+    category: "Legal Aid",
+    subcategory: "Property Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2024/04/06/17/58/ai-generated-8679746_640.jpg",
+    title: "Property Dispute Resolution",
     description:
-      "Drive innovation initiatives, develop new products/services, and create competitive advantages in your market.",
-    icon: Lightbulb,
-    features: ["Innovation Strategy", "Product Roadmap", "Market Validation", "Launch Planning"],
-    duration: "6-14 weeks",
-    price: "Starting from $8,500",
-    featured: false,
+      "Assistance with property conflicts, land registry, and legal ownership.",
   },
   {
-    id: 6,
-    title: "Risk Management & Compliance",
+    category: "Legal Aid",
+    subcategory: "Employment Law",
+    serviceImage:
+      "https://cdn.pixabay.com/photo/2024/04/06/17/58/ai-generated-8679746_640.jpg",
+    title: "Workplace Rights Protection",
     description:
-      "Identify, assess, and mitigate business risks while ensuring regulatory compliance and building resilient operations.",
-    icon: Shield,
-    features: ["Risk Assessment", "Compliance Audit", "Policy Development", "Crisis Management"],
-    duration: "3-8 weeks",
-    price: "Starting from $4,500",
-    featured: false,
+      "Support for employment disputes, unfair dismissal, and workplace harassment cases.",
   },
-]
+];
+
+const ServiceCard: React.FC<ServiceCardProps> = ({
+  serviceImage,
+  title,
+  description,
+}) => {
+  return (
+    <div className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center text-center border-b-4 border-transparent hover:border-[#d69292] transition-colors duration-300">
+      <img
+        src={serviceImage}
+        alt={title}
+        className="w-20 h-20 object-cover rounded-full mb-6"
+      />
+      <h3 className="text-xl font-bold text-gray-800 mb-3">{title}</h3>
+      <p className="text-gray-600 leading-relaxed mb-6 flex-grow">
+        {description}
+      </p>
+      <Link
+        href="#"
+        className="text-[#d69292] font-semibold flex items-center group"
+      >
+        LEARN MORE
+        <span className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200">
+          &rarr;
+        </span>
+      </Link>
+    </div>
+  );
+};
 
 export function Services() {
-  const featuredServices = services.filter((service) => service.featured)
-  const otherServices = services.filter((service) => !service.featured)
-
   return (
-    <section className="py-24 bg-white">
-      <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Consulting Services</h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Comprehensive consulting solutions tailored to your business needs. From strategy to implementation, we`&apos;`re
-            your trusted partner for growth.
-          </p>
-        </div>
+    <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto mb-12 text-center">
+        <p className="text-lg text-gray-600 mb-2">Legal Practices Area</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+          What We Are Expert At
+        </h2>
+        <div className="w-24 h-1 bg-[#d69292] mx-auto mt-4"></div>
+      </div>
 
-        {/* Featured Services */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-semibold text-center mb-8">Featured Services</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featuredServices.map((service) => {
-              const IconComponent = service.icon
-              return (
-                <Card
-                  key={service.id}
-                  className="relative overflow-hidden border-2 border-purple-100 hover:border-purple-300 transition-all duration-300 hover:shadow-lg"
-                >
-                  <Badge className="absolute top-4 right-4 bg-purple-600">Featured</Badge>
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-purple-100 rounded-lg">
-                        <IconComponent className="h-6 w-6 text-purple-600" />
-                      </div>
-                      <CardTitle className="text-xl">{service.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-gray-600">{service.description}</p>
-
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Key Features:</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {service.features.map((feature, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">
-                            {feature}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center text-sm text-gray-500">
-                      <span>Duration: {service.duration}</span>
-                      <span className="font-medium text-purple-600">{service.price}</span>
-                    </div>
-
-                    <Button className="w-full" asChild>
-                      <Link href={`/services/${service.id}`}>
-                        Book Consultation
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Other Services */}
-        <div>
-          <h3 className="text-2xl font-semibold text-center mb-8">Additional Services</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {otherServices.map((service) => {
-              const IconComponent = service.icon
-              return (
-                <Card key={service.id} className="hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <IconComponent className="h-5 w-5 text-gray-600" />
-                      </div>
-                      <CardTitle className="text-lg">{service.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-gray-600 text-sm">{service.description}</p>
-
-                    <div className="flex justify-between items-center text-xs text-gray-500">
-                      <span>{service.duration}</span>
-                      <span className="font-medium text-gray-700">{service.price}</span>
-                    </div>
-
-                    <Button variant="outline" size="sm" className="w-full bg-transparent" asChild>
-                      <Link href={`/services/${service.id}`}>Learn More</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <Button size="lg" asChild>
-            <Link href="/services">
-              View All Services
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {services.map((service, index) => (
+          <ServiceCard
+            key={index}
+            serviceImage={service.serviceImage}
+            title={service.title}
+            description={service.description}
+          />
+        ))}
       </div>
     </section>
-  )
+  );
 }

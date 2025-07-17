@@ -7,6 +7,7 @@ export default function Navbar() {
     // Reset auth state
     setAuthed(false);
     setRole(null); // Clear role on logout
+    
   };
 
   return (

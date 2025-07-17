@@ -37,7 +37,7 @@ const handleSubmit = async (e) => {
     } else {
       setError(res.data?.message || 'Invalid credentials');
     }
-  } catch (err) {
+  } catch (error) {
     setError('Login failed. Please try again.');
   }
 };
