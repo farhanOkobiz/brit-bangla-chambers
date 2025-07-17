@@ -9,7 +9,7 @@ const ServiceSchema = new Schema(
     serviceImage: { type: String },
     title: { type: String, required: true },
     description: { type: String },
-    created_by: { type: Types.ObjectId, ref: "SuperAdmin", required: true },
+    created_by: { type: Types.ObjectId, ref: "userSchema", required: true },
     created_at: { type: Date, default: Date.now },
   },
   {
