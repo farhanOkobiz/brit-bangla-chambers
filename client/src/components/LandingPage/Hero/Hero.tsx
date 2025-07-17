@@ -10,7 +10,7 @@ export function HeroSection() {
         backgroundImage: `url('/images/banner/banner-image.jpg')`,
       }}
     >
-      <div className="absolute inset-0 bg-[#3c2c2c] bg-opacity-60"></div>
+      <div className="absolute inset-0 bg-[#3c2c2c] "></div>
 
       <div className="relative z-10 text-center px-4">
         <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-8">
