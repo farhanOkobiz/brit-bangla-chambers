@@ -1,10 +1,18 @@
 // src/pages/Dashboard.jsx
 import { Card } from "antd";
+import AdminSidebar from "../components/SideBar";
 
 function Dashboard() {
   return (
     <Card title="Dashboard">
-      <p>Welcome to the Admin Panel</p>
+       <div>
+        <aside>
+          <AdminSidebar/>
+        </aside>
+        <div>
+          where components will go
+        </div>
+       </div>
     </Card>
   );
 }

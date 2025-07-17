@@ -3,10 +3,18 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const menuItems = [
-  { label: 'Dashboard', path: '/admin/dashboard' },
-  { label: 'Users', path: '/admin/users' },
-  { label: 'Cases', path: '/admin/cases' },
-  { label: 'Settings', path: '/admin/settings' },
+  { label: "Dashboard", path: "/admin/dashboard" },
+  { label: "Users", path: "/admin/users" },
+  { label: "Cases", path: "/admin/cases" },
+  {
+    label: "categories",
+    path: "/dashboard/categories",
+  },
+  {
+    label: "subcategories",
+    path: "/dashboard/sub-categories",
+  },
+  { label: "Settings", path: "/admin/settings" },
 ];
 
 const AdminSidebar = () => {
