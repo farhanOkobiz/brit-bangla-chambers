@@ -5,12 +5,12 @@ import Link from "next/link";
 export function HeroSection() {
   return (
     <section
-      className="relative h-[60vh] md:h-[80vh] bg-cover bg-center flex items-center justify-center text-white"
+      className="relative h-[60vh] md:h-[80vh] bg-cover bg-center flex items-center justify-center text-white overflow-hidden"
       style={{
         backgroundImage: `url('/images/banner/banner-image.jpg')`,
       }}
     >
-      <div className="absolute inset-0 bg-[#3c2c2c] "></div>
+      {/* <div className="absolute inset-0 bg-[#3c2c2c] "></div> */}
 
       <div className="relative z-10 text-center px-4">
         <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-8">

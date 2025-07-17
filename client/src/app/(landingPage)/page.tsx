@@ -1,10 +1,12 @@
 import AboutUs from "@/components/LandingPage/aboutus/AboutUs";
-import Advocates from "@/components/LandingPage/advocates/Advocates";
 import { HeroSection } from "@/components/LandingPage/hero/Hero";
 import OurExpertise from "@/components/LandingPage/ourExpertise/OurExpertise";
-import Partners from "@/components/LandingPage/partners/Partners";
+import Partners from "@/components/LandingPage/advocates/Advocates";
 import { Services } from "@/components/LandingPage/Services/Services";
 import StatsAndGrowth from "@/components/LandingPage/statsAndGrowth/StatsAndGrowth";
+import Advocates from "@/components/LandingPage/advocates/Advocates";
+import Blogs from "@/components/blogs/Blogs";
+import WhyChooseUs from "@/components/WhyChooseUs/WhyChooseUs";
 
 export default function Home() {
   return (
@@ -14,8 +16,9 @@ export default function Home() {
       <Services></Services>
       <OurExpertise />
       <StatsAndGrowth />
-      <Partners />
       <Advocates />
+      <WhyChooseUs />
+      <Blogs />
     </div>
   );
 }
