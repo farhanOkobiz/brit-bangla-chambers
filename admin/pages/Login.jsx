@@ -46,7 +46,7 @@ const handleSubmit = async (e) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center bg-amber-700 border-amber-300">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
