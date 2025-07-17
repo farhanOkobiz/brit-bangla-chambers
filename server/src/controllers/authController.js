@@ -4,12 +4,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "BritBangla_jwt_secret";
-const JWT_REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET || "BritBangla_JWT_REFRESH_SECRET";
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "BritBangla_JWT_REFRESH_SECRET";
 
 export const register = async (req, res) => {
-  console.log("Registering user:", req.body);
-
   try {
     const { full_name, email, phone, password } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
@@ -33,16 +30,33 @@ export const login = async (req, res) => {
     console.log('Login attempt:', req.body);
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+
+    if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Check if OTP is verified
+    if (!user.otp_verified) {
+      return res.status(470).json({
+        message: "OTP verification required",
+        userId: user._id,
+        email: user.email,
+      });
+    }
+
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
       expiresIn: "15m",
     });
+
     const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
       expiresIn: "30d",
     });
+
     // Set cookies
     res.cookie("token", token, {
       httpOnly: true,
@@ -50,17 +64,20 @@ export const login = async (req, res) => {
       sameSite: "strict",
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
-    res.json({ token,user });
+
+    res.json({ token, user });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const refresh = (req, res) => {
   // Get refreshToken from cookies
@@ -96,6 +113,7 @@ export const refresh = (req, res) => {
 };
 
 export const sendOtp = async (req, res) => {
+  console.log("Sending OTP to email:", req.body);
   const { email } = req.body;
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
@@ -125,6 +143,29 @@ export const verifyOtp = async (req, res) => {
     user.otp = undefined;
     user.otp_expiry = undefined;
     await user.save();
+
+    // Issue tokens
+    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+      expiresIn: "15m",
+    });
+    const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
+      expiresIn: "30d",
+    });
+
+    // Set cookies
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
     return res.json({ message: "OTP verified successfully", user });
   } else {
     return res.status(400).json({ message: "Invalid or expired OTP" });
@@ -133,7 +174,6 @@ export const verifyOtp = async (req, res) => {
 
 //return role 
 export const checkAuth = (req, res) => {
-  console.log('Checking authentication', req.body);
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ message: 'No token provided' });
 
@@ -155,3 +195,29 @@ export const showAllUsers = async (req, res) => {
     res.status(500).json({ ok: false, message: 'Failed to fetch users' });
   }
 };
+
+// Get own profile (from cookie token)
+export const getOwnProfile = async (req, res) => {
+  try {
+    const token = req.cookies?.token;
+    if (!token) return res.status(401).json({ message: 'No token provided' });
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ user });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid token' });
+  }
+}
+// Get user by ID
+export const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch user' });
+  }
+}
