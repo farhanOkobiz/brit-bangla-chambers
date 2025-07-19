@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { Outlet } from "react-router-dom";
-import AdminSidebar from "../components/SideBar";
+import AdminSidebar from "../components/AdminSideBar";
 
 const Dashboard = () => {
   return (

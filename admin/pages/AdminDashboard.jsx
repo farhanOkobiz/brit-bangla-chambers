@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { Card } from "antd";
-import AdminSidebar from "../components/SideBar";
+import AdminSidebar from "../components/AdminSideBar";
 
 function Dashboard() {
   return (

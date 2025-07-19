@@ -1,14 +1,14 @@
 // src/pages/Dashboard.jsx
 import { Card } from "antd";
-import AdminLayout from "./AdminLayout";
+import AdvocateLayout from "./AdvocateLayout";
 
 function Dashboard() {
   return (
-    <AdminLayout>
+    <AdvocateLayout>
     <Card title="Dashboard">
       <p>Welcome to the Advocate Panel</p>
     </Card>
-    </AdminLayout>
+    </AdvocateLayout>
   );
 }
 

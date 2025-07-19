@@ -1,4 +1,4 @@
-import AdminSidebar from '../components/SideBar';
+import AdminSidebar from '../components/AdvocateSidebar';
 
 const AdminLayout = ({ children }) => {
   return (
