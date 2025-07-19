@@ -32,7 +32,7 @@ const handleSubmit = async (e) => {
       } else if (role === 'advocate') {
         navigate('/advocate/dashboard');
       } else {
-        navigate('/unauthorized');
+        // navigate('/unauthorized');
       }
     } else {
       setError(res.data?.message || 'Invalid credentials');
