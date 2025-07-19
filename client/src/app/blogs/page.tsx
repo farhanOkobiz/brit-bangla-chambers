@@ -3,7 +3,7 @@ import { useGetBlogsQuery } from "@/redux/api/blogApi";
 import Link from "next/link";
 import React from "react";
 
-function Blogs() {
+export default function BlogPage() {
   const { data: blogs } = useGetBlogsQuery(undefined);
 
   return (
@@ -35,7 +35,7 @@ function Blogs() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogs?.data?.data.slice(0, 3).map((blog: any, idx: number) => (
+          {blogs?.data?.data.map((blog: any, idx: number) => (
             <Link
               href={`/blogs/${blog._id}`}
               key={idx}
@@ -63,15 +63,7 @@ function Blogs() {
             </Link>
           ))}
         </div>
-
-        <Link href="/blogs" className="inline-block">
-          <button className="bg-[#5e3030] text-white mt-8 px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer uppercase">
-            Read The Blog
-          </button>
-        </Link>
       </div>
     </section>
   );
 }
-
-export default Blogs;
