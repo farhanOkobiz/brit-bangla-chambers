@@ -2,26 +2,27 @@
 
 import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ClientSignupForm() {
   const [formData, setFormData] = useState({
-    role: "client",
     full_name: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
-    // nidNumber: "",
-    // dateOfBirth: "",
-    // gender: "",
-    // profilePhoto: "",
-    // presentAddress: "",
-    // permanentAddress: "",
+    nidNumber: "",
+    dateOfBirth: "",
+    gender: "",
+    profilePhoto: "",
+    presentAddress: "",
+    permanentAddress: "",
     terms: false,
   });
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -61,11 +62,53 @@ export default function ClientSignupForm() {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // TODO: send to backend
-      const res = await apiFetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-      });
+      // Only send fields required by backend (exclude confirmPassword and terms)
+      const postData = { ...formData } as Partial<typeof formData>;
+      delete postData.confirmPassword;
+      delete postData.terms;
+      try {
+        const res = await apiFetch(`/auth/register`, {
+          method: "POST",
+          body: JSON.stringify(postData),
+        });
+
+        
+          // Check for custom OTP status code
+          if (res.status === 201) {
+            const resOTP = await apiFetch(`/auth/send-otp`, {
+              method: "POST",
+              body: JSON.stringify({ email: postData.email }),
+            });
+            console.log("OTP send response:", resOTP);
+           if (resOTP.status === 200) {
+            return router.push(`/verify-otp?&email=${postData.email}`);      
+           }
+          }
+           else {
+            setErrors({ general: "Registration failed" });
+            return;
+          }
+    
+        // Registration success: you may want to redirect or show a message
+        // For now, just clear the form
+        setFormData({
+          full_name: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          nidNumber: "",
+          dateOfBirth: "",
+          gender: "",
+          profilePhoto: "",
+          presentAddress: "",
+          permanentAddress: "",
+          terms: false,
+        });
+        setErrors({});
+      } catch (err) {
+        setErrors({ general: "Something went wrong. Please try again." });
+      }
     }
   };
 
@@ -103,13 +146,13 @@ export default function ClientSignupForm() {
             placeholder="+8801234567890"
             error={errors.phone}
           />
-          {/* <Input
+          <Input
             label="Date of Birth"
             name="dateOfBirth"
             type="date"
             value={formData.dateOfBirth}
             onChange={handleChange}
-          /> */}
+          />
 
           <Input
             label="Password"
@@ -130,7 +173,7 @@ export default function ClientSignupForm() {
             error={errors.confirmPassword}
           />
 
-          {/* <Select
+          <Select
             label="Gender"
             name="gender"
             value={formData.gender}
@@ -141,7 +184,7 @@ export default function ClientSignupForm() {
               { value: "female", label: "Female" },
               { value: "other", label: "Other" },
             ]}
-          /> */}
+          />
 
           {/* <Input
             label="Profile Photo URL"
@@ -149,27 +192,28 @@ export default function ClientSignupForm() {
             value={formData.profilePhoto}
             onChange={handleChange}
           /> */}
-          {/* <Input
+          <Input
             label="NID Number"
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          /> */}
-          {/* <Input
+          /> 
+          <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
-          /> */}
-          {/* <Input
+          />
+          
+           <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
             onChange={handleChange}
-          /> */}
+          />
         </div>
 
-        {/* Terms */}
+        {/* Terms and Conditions */}
         <div className="flex items-center">
           <input
             type="checkbox"

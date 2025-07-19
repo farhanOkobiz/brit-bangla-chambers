@@ -1,5 +1,6 @@
 import { sendEmail } from "../utils/sendEmail.js";
 import User from "../models/userSchema.js";
+import Client from "../models/clientSchema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -8,19 +9,44 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "BritBangla_JWT_REF
 
 export const register = async (req, res) => {
   try {
-    const { full_name, email, phone, password } = req.body;
+    console.log('Registration attempt:', req.body);
+    const {
+      full_name,
+      email,
+      phone,
+      password,
+      nidNumber,
+      dateOfBirth,
+      gender,
+      presentAddress,
+      profilePhoto,
+      permanentAddress,
+    } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
     const hashedPassword = await bcrypt.hash(password, 10);
+    // Create user (basic info only)
     const user = await User.create({
       full_name,
       email,
       phone,
       password: hashedPassword,
     });
-    res.status(201).json({ message: "User registered successfully", user });
+    console.log('User created:', user._id);
+    // Create client profile (extended info)
+    const client = await Client.create({
+      user_id: user._id,
+      nid_number: nidNumber,
+      date_of_birth: dateOfBirth,
+      gender,
+      profile_photo: profilePhoto,
+      present_address: presentAddress,
+      permanent_address: permanentAddress,
+    });
+    res.status(201).json({ message: "User registered successfully", user, client });
   } catch (err) {
+    console.error('Registration error:', err);
     res.status(500).json({ message: err.message });
   }
 };
