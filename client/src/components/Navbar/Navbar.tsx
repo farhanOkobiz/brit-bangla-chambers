@@ -29,7 +29,6 @@ export function Navbar({ user }: NavbarProps) {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Services" },
-    { href: "/portfolio", label: "Portfolio" },
     { href: "/help-center", label: "Help center" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
@@ -42,7 +41,7 @@ export function Navbar({ user }: NavbarProps) {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between mx-auto">
+      <div className="container flex h-20 items-center justify-between mx-auto">
         <Link href="/" className="flex items-center space-x-2">
           <Image
             src={Logo}
