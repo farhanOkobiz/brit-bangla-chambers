@@ -1,17 +1,12 @@
-// src/components/CategoryForm.jsx
-
-import FormBuilder from "./FormBuilder";
-
+// src/pages/CreateCategory.jsx
+import FormBuilder from "../components/FormBuilder";
+import { useAxios } from "../hooks/useAxios";
 
 const CategoryForm = () => {
   const fields = [
-    {
-      name: "name",
-      label: "Name",
-      type: "text",
-      placeholder: "Category Name",
-      required: true,
-    },
+    { name: "name", label: "Category Name", type: "text", required: true },
+    { name: "details", label: "Details", type: "textarea" },
+    { name: "link", label: "Facebook Link", type: "text" },
     {
       name: "image",
       label: "Image",
@@ -19,28 +14,33 @@ const CategoryForm = () => {
       accept: "image/*",
       required: true,
     },
-    { name: "details", label: "Details", type: "text", placeholder: "Details" },
-    { name: "link", label: "Link", type: "text", placeholder: "Link" },
   ];
 
   const handleSubmit = async (formData) => {
-    try {
-      const res = await fetch("/api/categories", {
-        method: "POST",
-        body: formData,
-      });
+    const res = await useAxios("/api/v1/category/create-category", {
+      method: "POST",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data", // 👈 crucial for file upload
+      },
+    });
 
-      const result = await res.json();
-      if (!res.ok)
-        throw new Error(result.message || "Failed to create category");
-
+    if (res.ok) {
       alert("Category created successfully!");
-    } catch (err) {
-      alert(err.message);
+    } else {
+      alert("Error: " + res.data?.message || "Unknown error");
     }
+
+    console.log("Response:", res);
   };
 
-  return <FormBuilder fields={fields} onSubmit={handleSubmit} />;
+  return (
+    <FormBuilder
+      fields={fields}
+      onSubmit={handleSubmit}
+      submitText="Create Category"
+    />
+  );
 };
 
 export default CategoryForm;

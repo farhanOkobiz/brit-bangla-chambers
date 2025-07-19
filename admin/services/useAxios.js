@@ -1,13 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 
 export async function useAxios(url, options = {}) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  const isFormData = options.data instanceof FormData;
 
   const instance = axios.create({
     baseURL: apiBaseUrl,
     withCredentials: true,
     headers: {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(options.headers || {}),
     },
   });
@@ -15,8 +17,8 @@ export async function useAxios(url, options = {}) {
   const makeRequest = () =>
     instance({
       url,
-      method: options.method || 'GET',
-      data: options.data || undefined,     // ✅ Axios uses `data` for request body
+      method: options.method || "GET",
+      data: options.data || undefined,
       params: options.params || undefined,
     });
 
@@ -26,7 +28,7 @@ export async function useAxios(url, options = {}) {
   } catch (error) {
     if (error.response?.status === 401) {
       try {
-        const refreshRes = await instance.post('/auth/refresh'); // already under baseURL
+        const refreshRes = await instance.post("/auth/refresh");
 
         if (refreshRes.status === 200) {
           const retryRes = await makeRequest();
