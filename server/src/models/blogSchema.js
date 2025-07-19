@@ -1,11 +1,17 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema, model, Types } = mongoose;
 
 const BlogSchema = new Schema(
   {
-    author_id: { type: Types.ObjectId, required: true, refPath: 'author_model' },
-    author_model: { type: String, required: true, enum: ['Admin', 'Advocate'] },
+    author_id: {
+      type: Types.ObjectId,
+      required: true,
+      refPath: "author_model",
+    },
+    author_model: { type: String, required: true, enum: ["Admin", "Advocate"] },
+
+    image: { type: String },
 
     title: { type: String, required: true },
 
@@ -15,15 +21,12 @@ const BlogSchema = new Schema(
 
     tags: [{ type: String }],
 
-    published_at: { type: Date,
-      default: Date.now,
-      required: true,
-     },
+    published_at: { type: Date, default: Date.now, required: true },
 
     status: {
       type: String,
-      enum: ['draft', 'published'],
-      default: 'draft',
+      enum: ["draft", "published"],
+      default: "draft",
     },
   },
   {
@@ -31,4 +34,4 @@ const BlogSchema = new Schema(
   }
 );
 
-export default model('Blog', BlogSchema);
+export default model("Blog", BlogSchema);
