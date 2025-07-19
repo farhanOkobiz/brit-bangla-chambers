@@ -13,7 +13,7 @@ function Dashboard() {
           where components will go
         </div>
        </div>
-    </Card>
+    </Card> 
   );
 }
 
