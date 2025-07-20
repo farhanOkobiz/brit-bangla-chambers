@@ -76,7 +76,7 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "1m",
+      expiresIn: "30m",
     });
 
     const refreshToken = jwt.sign({ id: user._id, role: user.role }, JWT_REFRESH_SECRET, {
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 1 * 60 * 1000, // 1 minute
+      maxAge: 30 * 60 * 1000, // 30 minute
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -118,7 +118,7 @@ export const refresh = async(req, res) => {
     if (!user) return res.status(401).json({ message: "User not found" });
 
     const token = jwt.sign({ id: payload.id, role:user.role }, JWT_SECRET, {
-      expiresIn: "1m",
+      expiresIn: "30m",
     });
     // Issue a new refresh token with a new 30-day expiration
     const newRefreshToken = jwt.sign({ id: payload.id, role:user.role }, JWT_REFRESH_SECRET, {
@@ -128,7 +128,7 @@ export const refresh = async(req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 1 * 60 * 1000, // 1 minute
+      maxAge: 30 * 60 * 1000, // 30 minute
     });
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
@@ -175,7 +175,7 @@ export const verifyOtp = async (req, res) => {
 
     // Issue tokens
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "1m",
+      expiresIn: "30m",
     });
     const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
       expiresIn: "30d",
@@ -186,7 +186,7 @@ export const verifyOtp = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 1 * 60 * 1000, // 1 minute
+      maxAge: 30 * 60 * 1000, // 30 minute
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
