@@ -51,13 +51,13 @@ const AdvocateSidebar = () => {
         <div className="p-4 border-b font-bold text-xl text-blue-700 hidden md:block">
           Advocate Panel
         </div>
-        <nav className="flex flex-col p-4 space-y-2">
+        <nav className="flex flex-col p-4 space-y-2 ">
           {menuItems.map((item) =>
             item.isDropdown ? (
               <div key={item.label}>
                 <button
                   onClick={() => toggleDropdown(item.label)}
-                  className="w-full text-left text-gray-700 px-3 py-2 rounded hover:bg-blue-100 flex justify-between items-center"
+                  className="w-full text-left text-blue-700 px-3 py-2 rounded hover:bg-blue-100 flex justify-between items-center cursor-pointer"
                 >
                   {item.label}
                   {openDropdown === item.label ? (
@@ -67,7 +67,7 @@ const AdvocateSidebar = () => {
                   )}
                 </button>
                 {openDropdown === item.label && (
-                  <div className="ml-4 flex flex-col space-y-1">
+                  <div className="ml-4 flex flex-col space-y-1 cursor-pointer">
                     {item.subItems?.map((subItem) => (
                       <Link
                         key={subItem.path}
