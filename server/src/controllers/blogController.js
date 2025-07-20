@@ -2,30 +2,19 @@ import Blog from "../models/blogSchema.js";
 
 // Create a new blog
 export const createBlog = async (req, res, next) => {
-  console.log("hit api");
+  console.log("hit api", req.body);
   try {
-    const {
-      author_id,
-      author_model,
-      image,
-      title,
-      slug,
-      content,
-      tags,
-      published_at,
-      status,
-    } = req.body;
+    const { image, title, content, tags, published_at, status, author } =
+      req.body;
 
     const blog = await Blog.create({
-      author_id,
-      author_model,
       image,
       title,
-      slug,
       content,
       tags,
       published_at,
       status,
+      author,
     });
 
     res.status(201).json({ success: true, data: blog });

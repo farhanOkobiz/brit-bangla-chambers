@@ -8,12 +8,17 @@ export default function ContactPage() {
       {/* Title */}
       <div className="mx-auto text-center mb-6 md:mb-8 lg:mb-12">
         <h2 className="text-gray-700 text-2xl md:text-3xl lg:text-5xl font-bold">
-          Contact Us
+          Request for a service
         </h2>
         <p className="mt-2 text-base md:text-lg text-center text-gray-600">
           Reach out for consultations, inquiries, or legal guidance. We’re here
           to help.
         </p>
+      </div>
+
+      {/* Contact Form */}
+      <div className="max-w-3xl mx-auto bg-white p-4 md:p-8 rounded-xl border border-gray-200 shadow">
+        <ContactForm />
       </div>
 
       {/* Static Office Info */}
@@ -27,11 +32,6 @@ export default function ContactPage() {
           <p>Email: contact@britbanglachamber.com</p>
           <p>Phone: +8801XXXXXXXXX</p>
         </div>
-      </div>
-
-      {/* Contact Form */}
-      <div className="max-w-3xl mx-auto bg-white p-4 md:p-8 rounded-xl border border-gray-200 shadow">
-        <ContactForm />
       </div>
     </section>
   );

@@ -8,15 +8,15 @@ import CategoryForm from "../components/CategoryForm";
 import SubcategoryForm from "../components/subCategoryForm";
 import AdminDashboard from "../components/AdminDashboard";
 import AdvocateDashboard from "../components/AdvocateDashboard";
+import Blogs from "../pages/blog/Blogs";
+import CreateBlog from "../pages/blog/CreateBlog";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
 
         {/* <Route
           path="/admin/dashboard"
@@ -35,6 +35,8 @@ export default function App() {
           }
         >
           <Route path="dashboard" element={<AdvocateDashboard />} />
+          <Route path="dashboard/blogs" element={<Blogs />} />
+          <Route path="dashboard/create-blog" element={<CreateBlog />} />
           {/* Add more advocate child routes here as needed */}
         </Route>
 

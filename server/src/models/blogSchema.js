@@ -4,18 +4,9 @@ const { Schema, model, Types } = mongoose;
 
 const BlogSchema = new Schema(
   {
-    author_id: {
-      type: Types.ObjectId,
-      required: true,
-      refPath: "author_model",
-    },
-    author_model: { type: String, required: true, enum: ["Admin", "Advocate"] },
-
     image: { type: String },
 
     title: { type: String, required: true },
-
-    slug: { type: String, required: true, unique: true },
 
     content: { type: String, required: true },
 
@@ -28,6 +19,7 @@ const BlogSchema = new Schema(
       enum: ["draft", "published"],
       default: "draft",
     },
+    author: { type: String, required: true, enum: ["Admin", "Advocate"] },
   },
   {
     timestamps: true,

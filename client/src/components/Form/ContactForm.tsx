@@ -10,7 +10,6 @@ function ContactForm() {
     permanentAddress: "",
     issueType: "",
     message: "",
-    date: "",
   });
 
   const handleChange = (
@@ -133,15 +132,6 @@ function ContactForm() {
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
           ></textarea>
         </div>
-
-        {/* Date and Time */}
-        <Input
-          name="date"
-          type="datetime-local"
-          value={form.date}
-          onChange={handleChange}
-          required
-        />
 
         <button
           type="submit"
