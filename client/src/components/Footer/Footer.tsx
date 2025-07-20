@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="bg-[#1d1d1d] text-white py-10 px-6 md:px-20">
@@ -16,29 +18,38 @@ export default function Footer() {
           <h3 className="font-semibold mb-4">Quick Links</h3>
           <ul className="space-y-2 text-gray-300">
             <li>
-              <a href="/" className="hover:text-purple-400 transition">
+              <Link href="/" className="hover:text-purple-400 transition">
                 Home
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/about" className="hover:text-purple-400 transition">
+              <Link href="/about" className="hover:text-purple-400 transition">
                 About Us
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/advocates" className="hover:text-purple-400 transition">
+              <Link
+                href="/advocates"
+                className="hover:text-purple-400 transition"
+              >
                 Advocates
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/services" className="hover:text-purple-400 transition">
+              <Link
+                href="/services"
+                className="hover:text-purple-400 transition"
+              >
                 Services
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/contact" className="hover:text-purple-400 transition">
+              <Link
+                href="/contact"
+                className="hover:text-purple-400 transition"
+              >
                 Contact
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -59,30 +70,30 @@ export default function Footer() {
         <div>
           <h3 className="font-semibold mb-4">Follow Us</h3>
           <div className="flex space-x-4">
-            <a
+            <Link
               href="https://facebook.com/britbanglachamber"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-purple-400 transition"
             >
               Facebook
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://twitter.com/britbanglachamber"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-purple-400 transition"
             >
               Twitter
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://linkedin.com/company/britbanglachamber"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-purple-400 transition"
             >
               LinkedIn
-            </a>
+            </Link>
           </div>
         </div>
       </div>

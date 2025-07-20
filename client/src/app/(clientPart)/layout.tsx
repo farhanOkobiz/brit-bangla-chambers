@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/api/apiFetch";
+import { toast } from "react-toastify";
 
-export default function ClientDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function ClientDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const checkClientRole = async () => {
@@ -19,8 +23,8 @@ export default function ClientDashboardLayout({ children }: { children: React.Re
           return;
         }
         setLoading(false);
-      } catch (err) {
-        setError("Authentication failed");
+      } catch {
+        toast.warning("Authentication failed");
         router.replace("/");
       }
     };

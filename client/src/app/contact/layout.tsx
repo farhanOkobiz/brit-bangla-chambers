@@ -1,5 +1,5 @@
-import Navbar from '@/components/Navbar/Navbar'
-import '../globals.css'
+import Navbar from "@/components/Navbar/Navbar";
+import "../globals.css";
 import type { ReactNode } from "react";
 
 export const metadata = {
@@ -9,11 +9,9 @@ export const metadata = {
 
 export default function ContactLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-black text-white antialiased">
-        <Navbar/>
-        {children}
-      </body>
-    </html>
+    <div className="bg-black text-white antialiased">
+      <Navbar />
+      {children}
+    </div>
   );
 }

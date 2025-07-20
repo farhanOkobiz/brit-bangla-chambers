@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 const Advocates: React.FC = () => {
   return (
@@ -40,10 +41,11 @@ const Advocates: React.FC = () => {
               key={idx}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-              <img
+              <Image
                 src="https://cdn.pixabay.com/photo/2022/04/10/16/41/lawyer-7123798_640.jpg"
                 alt={partner.name}
-                className="w-full h-80 object-cover"
+                fill
+                className="object-cover rounded"
               />
               <div className="p-6 text-gray-800 text-center">
                 <h3 className="text-2xl font-semibold mb-1">{partner.name}</h3>

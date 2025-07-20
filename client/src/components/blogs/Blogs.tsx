@@ -2,6 +2,8 @@
 import { useGetBlogsQuery } from "@/redux/api/blogApi";
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
+import { Blog } from "@/types/blog.interface";
 
 function Blogs() {
   const { data: blogs } = useGetBlogsQuery(undefined);
@@ -35,16 +37,18 @@ function Blogs() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogs?.data?.data.slice(0, 3).map((blog: any, idx: number) => (
+          {blogs?.data?.data.slice(0, 3).map((blog: Blog, idx: number) => (
             <Link
               href={`/blogs/${blog._id}`}
               key={idx}
               className="cursor-pointer"
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-                <img
+                <Image
                   src={blog.image}
                   alt={blog.title}
+                  width={800}
+                  height={224}
                   className="w-full h-56 object-cover"
                 />
                 <div className="p-6 text-gray-800">

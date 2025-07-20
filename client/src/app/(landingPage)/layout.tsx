@@ -27,16 +27,12 @@ export default function RootLayout({
 }>) {
   const user = null;
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ReduxProvider>
-          <Navbar user={user} />
-          {children}
-          <Footer />
-        </ReduxProvider>
-      </body>
-    </html>
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <ReduxProvider>
+        <Navbar user={user} />
+        {children}
+        <Footer />
+      </ReduxProvider>
+    </div>
   );
 }

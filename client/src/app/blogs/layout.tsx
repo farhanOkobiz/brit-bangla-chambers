@@ -15,12 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Navbar />
-        <ReduxProvider>{children} </ReduxProvider>
-        <Footer />
-      </body>
-    </html>
+    <div>
+      <Navbar />
+      <ReduxProvider>{children} </ReduxProvider>
+      <Footer />
+    </div>
   );
 }

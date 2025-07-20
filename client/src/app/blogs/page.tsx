@@ -2,6 +2,8 @@
 import { useGetBlogsQuery } from "@/redux/api/blogApi";
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
+import { Blog } from "@/types/blog.interface";
 
 export default function BlogPage() {
   const { data: blogs } = useGetBlogsQuery(undefined);
@@ -35,18 +37,21 @@ export default function BlogPage() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogs?.data?.data.map((blog: any, idx: number) => (
+          {blogs?.data?.data.map((blog: Blog, idx: number) => (
             <Link
               href={`/blogs/${blog._id}`}
               key={idx}
               className="cursor-pointer"
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-                <img
+                <Image
                   src={blog.image}
                   alt={blog.title}
-                  className="w-full h-56 object-cover"
+                  width={700} // প্রয়োজন অনুযায়ী adjust করো
+                  height={224} // aspect ratio মেনে height দিন (h-56 = 14rem = 224px)
+                  className="object-cover w-full"
                 />
+
                 <div className="p-6 text-gray-800">
                   <p className="text-sm text-gray-500 mb-2">
                     By{" "}
