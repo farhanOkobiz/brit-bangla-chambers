@@ -1,11 +1,10 @@
 "use client";
 import { useGetSingleBlogQuery } from "@/redux/api/blogApi";
-import { log } from "console";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
+import Image from "next/image";
 
-function page() {
+function Page() {
   const { id } = useParams();
   const { data: blog } = useGetSingleBlogQuery(id);
 
@@ -41,10 +40,12 @@ function page() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 grid grid-cols-1 md:grid-cols-1 gap-6">
             <div className="max-w-4xl mx-auto">
-              <img
+              <Image
                 src="https://cdn.pixabay.com/photo/2022/03/07/10/47/bird-7053394_640.jpg"
-                alt={blog?.data.data.title}
-                className="w-full h-56 object-cover"
+                alt={blog?.data.data.title || "Blog Image"}
+                width={640} // ছবির আসল width
+                height={224} // h-56 মানে 14rem ≈ 224px
+                className="object-cover w-full"
               />
             </div>
             <div className="p-6 text-gray-800 max-w-4xl mx-auto">
@@ -76,4 +77,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

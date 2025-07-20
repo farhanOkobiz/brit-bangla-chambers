@@ -1,7 +1,7 @@
 "use client";
 
-import { Briefcase, Scale, Globe, Building, Users } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const servicesData = [
   {
@@ -68,10 +68,12 @@ export default function ServicesPage() {
             className="bg-white p-6 rounded-xl border border-gray-300 shadow hover:shadow-lg transition"
           >
             <div className="mb-4 flex justify-center">
-              <img
+              <Image
                 src={service.serviceImage}
                 alt={service.title}
-                className="w-16 h-16 object-cover rounded-md"
+                width={64} // w-16 = 4rem = 64px
+                height={64} // h-16 = 4rem = 64px
+                className="object-cover rounded-md"
               />
             </div>
 

@@ -62,53 +62,11 @@ export default function ClientSignupForm() {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // Only send fields required by backend (exclude confirmPassword and terms)
-      const postData = { ...formData } as Partial<typeof formData>;
-      delete postData.confirmPassword;
-      delete postData.terms;
-      try {
-        const res = await apiFetch(`/auth/register`, {
-          method: "POST",
-          body: JSON.stringify(postData),
-        });
-
-        
-          // Check for custom OTP status code
-          if (res.status === 201) {
-            const resOTP = await apiFetch(`/auth/send-otp`, {
-              method: "POST",
-              body: JSON.stringify({ email: postData.email }),
-            });
-            console.log("OTP send response:", resOTP);
-           if (resOTP.status === 200) {
-            return router.push(`/verify-otp?&email=${postData.email}`);      
-           }
-          }
-           else {
-            setErrors({ general: "Registration failed" });
-            return;
-          }
-    
-        // Registration success: you may want to redirect or show a message
-        // For now, just clear the form
-        setFormData({
-          full_name: "",
-          email: "",
-          phone: "",
-          password: "",
-          confirmPassword: "",
-          nidNumber: "",
-          dateOfBirth: "",
-          gender: "",
-          profilePhoto: "",
-          presentAddress: "",
-          permanentAddress: "",
-          terms: false,
-        });
-        setErrors({});
-      } catch (err) {
-        setErrors({ general: "Something went wrong. Please try again." });
-      }
+      // TODO: send to backend
+      await apiFetch(`${BASE_URL}/auth/register`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
     }
   };
 
@@ -197,15 +155,15 @@ export default function ClientSignupForm() {
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          /> 
+          />
           <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
           />
-          
-           <Input
+
+          <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
@@ -289,36 +247,36 @@ function Input({
 }
 
 // Reusable Select
-function Select({
-  label,
-  name,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: { value: string; label: string }[];
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
-      >
-        {options.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
+// function Select({
+//   label,
+//   name,
+//   value,
+//   onChange,
+//   options,
+// }: {
+//   label: string;
+//   name: string;
+//   value: string;
+//   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+//   options: { value: string; label: string }[];
+// }) {
+//   return (
+//     <div>
+//       <label className="block text-sm font-medium text-gray-700 mb-1">
+//         {label}
+//       </label>
+//       <select
+//         name={name}
+//         value={value}
+//         onChange={onChange}
+//         className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
+//       >
+//         {options.map(({ value, label }) => (
+//           <option key={value} value={value}>
+//             {label}
+//           </option>
+//         ))}
+//       </select>
+//     </div>
+//   );
+// }

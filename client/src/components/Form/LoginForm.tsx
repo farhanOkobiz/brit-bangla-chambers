@@ -10,7 +10,7 @@ function LoginForm() {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,19 +27,23 @@ function LoginForm() {
         body: JSON.stringify(form),
       });
 
-if (!res.ok) {
-  const data = res.data;
-  // Check for custom OTP status code
-  if (res.status === 470) {
-    await apiFetch(`/auth/send-otp`, {
-      method: "POST",
-      body: JSON.stringify({ email: form.email }),
-    });
-    return router.push(`/verify-otp?user=${data?.userId}&email=${encodeURIComponent(data?.email)}`);
-  } else {
-    return setError(data?.message || "Login failed");
-  }
-}
+      if (!res.ok) {
+        const data = res.data;
+        // Check for custom OTP status code
+        if (res.status === 470) {
+          await apiFetch(`/auth/send-otp`, {
+            method: "POST",
+            body: JSON.stringify({ email: form.email }),
+          });
+          return router.push(
+            `/verify-otp?user=${data?.userId}&email=${encodeURIComponent(
+              data?.email
+            )}`
+          );
+        } else {
+          return setError(data?.message || "Login failed");
+        }
+      }
 
       const data = res.data;
       const user = data.user;
@@ -47,8 +51,7 @@ if (!res.ok) {
       // Redirect based on user role
       if (user?.role === "client") {
         router.push("/client/dashboard");
-      }
-      else if (user?.role === "admin") {
+      } else if (user?.role === "admin") {
         router.push("/unauthorized");
       } else if (user?.role === "advocate") {
         router.push("/unauthorized");
@@ -87,7 +90,9 @@ if (!res.ok) {
         />
 
         {error && (
-          <p className="text-red-600 text-sm font-medium text-center">{error}</p>
+          <p className="text-red-600 text-sm font-medium text-center">
+            {error}
+          </p>
         )}
 
         <button

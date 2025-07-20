@@ -20,18 +20,19 @@ export const customBaseQuery: BaseQueryFn<
     options = {
       method: args.method,
       body: args.body,
-      headers: args.headers,
+      headers: args.headers as HeadersInit,
     };
   }
 
   try {
     const data = await apiFetch(`${BASE_URL}/${url}`, options);
     return { data };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = (error as Partial<{ status: number; data: unknown }>) || {};
     return {
       error: {
-        status: error.status || 500,
-        data: error.data || "Something went wrong",
+        status: err.status ?? 500,
+        data: err.data ?? "Something went wrong",
       },
     };
   }
