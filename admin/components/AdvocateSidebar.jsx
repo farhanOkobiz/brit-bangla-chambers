@@ -1,18 +1,35 @@
-import { useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 const menuItems = [
   { label: "Dashboard", path: "/advocate/dashboard" },
   { label: "My Cases", path: "/advocate/cases" },
   { label: "Appointments", path: "/advocate/appointments" },
   { label: "Clients", path: "/advocate/clients" },
-  { label: "Profile", path: "/advocate/profile" },
+  {
+    label: "Blogs",
+    isDropdown: true,
+    subItems: [
+      { label: "All Blogs", path: "/advocate/dashboard/blogs" },
+      { label: "Create Blog", path: "/advocate/dashboard/create-blog" },
+    ],
+  },
   { label: "Settings", path: "/advocate/settings" },
 ];
 
 const AdvocateSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState("");
+
+  const toggleDropdown = (label) => {
+    if (openDropdown === label) {
+      setOpenDropdown(null);
+    } else {
+      setOpenDropdown(label);
+    }
+  };
 
   return (
     <>
@@ -27,22 +44,54 @@ const AdvocateSidebar = () => {
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full bg-white border-r z-40 w-64 transform transition-transform duration-300
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static md:block`}
+        ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:static md:block`}
       >
         <div className="p-4 border-b font-bold text-xl text-blue-700 hidden md:block">
           Advocate Panel
         </div>
         <nav className="flex flex-col p-4 space-y-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="text-gray-700 px-3 py-2 rounded hover:bg-blue-100 transition"
-              onClick={() => setIsOpen(false)} // close menu on mobile
-            >
-              {item.label}
-            </Link>
-          ))}
+          {menuItems.map((item) =>
+            item.isDropdown ? (
+              <div key={item.label}>
+                <button
+                  onClick={() => toggleDropdown(item.label)}
+                  className="w-full text-left text-gray-700 px-3 py-2 rounded hover:bg-blue-100 flex justify-between items-center"
+                >
+                  {item.label}
+                  {openDropdown === item.label ? (
+                    <FiChevronUp />
+                  ) : (
+                    <FiChevronDown />
+                  )}
+                </button>
+                {openDropdown === item.label && (
+                  <div className="ml-4 flex flex-col space-y-1">
+                    {item.subItems?.map((subItem) => (
+                      <Link
+                        key={subItem.path}
+                        to={subItem.path}
+                        className="text-gray-600 px-3 py-1 rounded hover:bg-blue-50 transition"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {subItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="text-gray-700 px-3 py-2 rounded hover:bg-blue-100 transition"
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
       </div>
 

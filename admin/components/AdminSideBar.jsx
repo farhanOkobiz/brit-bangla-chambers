@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard" },
@@ -33,7 +33,9 @@ const AdminSidebar = () => {
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full bg-white border-r z-40 w-64 transform transition-transform duration-300
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static md:block`}
+        ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:static md:block`}
       >
         <div className="p-4 border-b font-bold text-xl text-blue-700 hidden md:block">
           Admin Panel

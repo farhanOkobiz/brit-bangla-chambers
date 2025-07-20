@@ -17,7 +17,10 @@ connectDB();
 
 // Middleware
 
-const allowedOrigins = process.env.CLIENT_URLS.split(",");
+const allowedOrigins = [
+  ...process.env.CLIENT_URLS.split(","),
+  "http://localhost:5173",
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
