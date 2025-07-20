@@ -19,7 +19,7 @@ const DataList = ({
   const filteredData = data.filter(
     (item) =>
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      item.details?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -138,9 +138,9 @@ const DefaultItemRenderer = ({ item }) => (
       <h3 className="text-lg font-semibold text-gray-900 truncate">
         {item.name}
       </h3>
-      {item.description && (
+      {item.details && (
         <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-          {item.description}
+          {item.details}
         </p>
       )}
       {item.link && (
