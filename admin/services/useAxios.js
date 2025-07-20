@@ -24,6 +24,7 @@ export async function useAxios(url, options = {}) {
 
   try {
     const res = await makeRequest();
+    console.log(`Axios request to ${url} successful:`, res.status, res.data);
     return { status: res.status, ok: true, data: res.data };
   } catch (error) {
     if (error.response?.status === 401) {

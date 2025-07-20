@@ -1,13 +1,13 @@
 import Blog from "../models/blogSchema.js";
 
-
 // Create a new blog
 export const createBlog = async (req, res, next) => {
-    console.log("hit api");
+  console.log("hit api");
   try {
     const {
       author_id,
       author_model,
+      image,
       title,
       slug,
       content,
@@ -19,6 +19,7 @@ export const createBlog = async (req, res, next) => {
     const blog = await Blog.create({
       author_id,
       author_model,
+      image,
       title,
       slug,
       content,
@@ -65,9 +66,9 @@ export const getAllBlogs = async (req, res, next) => {
 // Get single blog by slug
 export const getBlogBySlug = async (req, res, next) => {
   try {
-    const { slug } = req.params;
+    const { id } = req.params;
 
-    const blog = await Blog.findOne({ slug });
+    const blog = await Blog.findById(id);
 
     if (!blog)
       return res
