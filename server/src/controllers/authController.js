@@ -5,11 +5,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "BritBangla_jwt_secret";
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "BritBangla_JWT_REFRESH_SECRET";
+const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET || "BritBangla_JWT_REFRESH_SECRET";
 
 export const register = async (req, res) => {
   try {
-    console.log('Registration attempt:', req.body);
+    console.log("Registration attempt:", req.body);
     const {
       full_name,
       email,
@@ -33,7 +34,7 @@ export const register = async (req, res) => {
       phone,
       password: hashedPassword,
     });
-    console.log('User created:', user._id);
+    console.log("User created:", user._id);
     // Create client profile (extended info)
     const client = await Client.create({
       user_id: user._id,
@@ -44,16 +45,18 @@ export const register = async (req, res) => {
       present_address: presentAddress,
       permanent_address: permanentAddress,
     });
-    res.status(201).json({ message: "User registered successfully", user, client });
+    res
+      .status(201)
+      .json({ message: "User registered successfully", user, client });
   } catch (err) {
-    console.error('Registration error:', err);
+    console.error("Registration error:", err);
     res.status(500).json({ message: err.message });
   }
 };
 
 export const login = async (req, res) => {
+  console.log("Login attempt:", req.body);
   try {
-    console.log('Login attempt:', req.body);
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
@@ -79,9 +82,13 @@ export const login = async (req, res) => {
       expiresIn: "1m",
     });
 
-    const refreshToken = jwt.sign({ id: user._id, role: user.role }, JWT_REFRESH_SECRET, {
-      expiresIn: "30d",
-    });
+    const refreshToken = jwt.sign(
+      { id: user._id, role: user.role },
+      JWT_REFRESH_SECRET,
+      {
+        expiresIn: "30d",
+      }
+    );
 
     // Set cookies
     res.cookie("token", token, {
@@ -104,8 +111,7 @@ export const login = async (req, res) => {
   }
 };
 
-
-export const refresh = async(req, res) => {
+export const refresh = async (req, res) => {
   // Get refreshToken from cookies
   const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken)
@@ -117,13 +123,17 @@ export const refresh = async(req, res) => {
     const user = await User.findById(payload.id);
     if (!user) return res.status(401).json({ message: "User not found" });
 
-    const token = jwt.sign({ id: payload.id, role:user.role }, JWT_SECRET, {
+    const token = jwt.sign({ id: payload.id, role: user.role }, JWT_SECRET, {
       expiresIn: "1m",
     });
     // Issue a new refresh token with a new 30-day expiration
-    const newRefreshToken = jwt.sign({ id: payload.id, role:user.role }, JWT_REFRESH_SECRET, {
-      expiresIn: "30d",
-    });
+    const newRefreshToken = jwt.sign(
+      { id: payload.id, role: user.role },
+      JWT_REFRESH_SECRET,
+      {
+        expiresIn: "30d",
+      }
+    );
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -201,17 +211,17 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
-//return role 
+//return role
 export const checkAuth = (req, res) => {
   const token = req.cookies?.token;
-  if (!token) return res.status(401).json({ message: 'No token provided' });
+  if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     return res.json({ ok: true, role: decoded.role });
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
@@ -220,8 +230,8 @@ export const showAllUsers = async (req, res) => {
     const users = await User.find();
     res.json({ ok: true, users });
   } catch (err) {
-    console.error('Error fetching users:', err);
-    res.status(500).json({ ok: false, message: 'Failed to fetch users' });
+    console.error("Error fetching users:", err);
+    res.status(500).json({ ok: false, message: "Failed to fetch users" });
   }
 };
 
@@ -229,24 +239,24 @@ export const showAllUsers = async (req, res) => {
 export const getOwnProfile = async (req, res) => {
   try {
     const token = req.cookies?.token;
-    if (!token) return res.status(401).json({ message: 'No token provided' });
+    if (!token) return res.status(401).json({ message: "No token provided" });
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.id).select('-password');
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
     res.json({ user });
   } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ message: "Invalid token" });
   }
-}
+};
 // Get user by ID
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const user = await User.findById(req.params.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
     res.json({ user });
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch user' });
+    res.status(500).json({ message: "Failed to fetch user" });
   }
-}
+};
