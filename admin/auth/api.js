@@ -24,3 +24,15 @@ export async function logout() {
   });
   return res.ok;
 }
+
+//category functions
+export async function createCategory(name, image, description, link) {
+  const res = await useAxios(
+    "http://localhost:5000/api/v1/category/create-category",
+    {
+      method: "POST",
+      body: { name, image, description, link },
+    }
+  );
+  return res;
+}

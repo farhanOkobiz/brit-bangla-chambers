@@ -11,6 +11,7 @@ const getFilenameFromUrl = (url) => {
 
 // Create a new category
 export const createCategory = async (req, res) => {
+  console.log("hit createCategory");
   let newImageFilename = null;
 
   try {
@@ -41,7 +42,7 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ error: "Category already exists" });
     }
 
-    const newCategory = new Category({ name, description, image, link });
+    const newCategory = new Category({ name, details: description, image, link });
     await newCategory.save();
 
     res.status(201).json({
@@ -122,7 +123,7 @@ export const updateCategory = async (req, res) => {
     // Prepare update data
     const updateData = {
       name: name || existingCategory.name,
-      description: description || existingCategory.description,
+      details: description || existingCategory.description,
       link: link || existingCategory.link,
       image: existingCategory.image,
     };
