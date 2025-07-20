@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { apiFetch } from '@/api/apiFetch';
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { apiFetch } from "@/api/apiFetch";
 
 export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-//   const userId = searchParams.get('user');
-  const email = searchParams.get('email');
+  //   const userId = searchParams.get('user');
+  const email = searchParams.get("email");
 
-  const [otp, setOtp] = useState('');
-  const [error, setError] = useState('');
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       const res = await apiFetch(`/auth/verify-otp`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({
           email,
           otp,
@@ -30,15 +30,19 @@ export default function VerifyOtpPage() {
       });
 
       if (!res.ok) {
-        setError(res.data.message || 'OTP verification failed');
+        setError(res.data.message || "OTP verification failed");
         setLoading(false);
         return;
       }
 
       // OTP verified, cookies set, redirect to profile
-      router.push('/profile');
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+      router.push("/profile");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
       setLoading(false);
     }
   };
@@ -71,7 +75,7 @@ export default function VerifyOtpPage() {
             disabled={loading}
             className="w-full bg-black text-white py-3 rounded-md font-bold text-lg shadow-md hover:bg-gray-800 transition cursor-pointer"
           >
-            {loading ? 'Verifying...' : 'Verify OTP'}
+            {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
       </div>

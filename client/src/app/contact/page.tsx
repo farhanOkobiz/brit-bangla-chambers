@@ -1,7 +1,6 @@
 "use client";
 
 import ContactForm from "@/components/Form/ContactForm";
-import { useState } from "react";
 
 export default function ContactPage() {
   return (

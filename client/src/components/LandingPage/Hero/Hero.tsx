@@ -1,7 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Award, Users, TrendingUp } from "lucide-react";
-import Link from "next/link";
-
 export function HeroSection() {
   return (
     <section

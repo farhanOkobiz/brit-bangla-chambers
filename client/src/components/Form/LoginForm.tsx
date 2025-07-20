@@ -27,7 +27,6 @@ function LoginForm() {
 
       if (!res.ok) {
         const data = res.data;
-
         if (res.status === 470) {
           await apiFetch(`/auth/send-otp`, {
             method: "POST",
