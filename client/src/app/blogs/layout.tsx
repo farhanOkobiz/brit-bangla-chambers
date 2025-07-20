@@ -1,8 +1,8 @@
-import ReduxProvider from "@/Provider/ReduxProvider";
 import "../globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import ReduxProvider from "@/Provider/ReduxProvider";
 
 export const metadata: Metadata = {
   title: "Your Site Title",
@@ -15,12 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Navbar />
-        <ReduxProvider>{children} </ReduxProvider>
-        <Footer />
-      </body>
-    </html>
+    <div>
+      <Navbar />
+      <ReduxProvider>{children} </ReduxProvider>
+      <Footer />
+    </div>
   );
 }

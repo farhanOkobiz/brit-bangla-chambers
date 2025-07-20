@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import '../globals.css'
+import "../globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 
 export const metadata = {
@@ -7,12 +7,15 @@ export const metadata = {
   description: "Frequently asked questions and support guides.",
 };
 
-export default function HelpCenterLayout({ children }: { children: ReactNode }) {
+export default function HelpCenterLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body className="bg-slate-950 text-white">
-        <Navbar/>
-        {children}</body>
-    </html>
+    <div className="bg-slate-950 text-white">
+      <Navbar />
+      {children}
+    </div>
   );
 }

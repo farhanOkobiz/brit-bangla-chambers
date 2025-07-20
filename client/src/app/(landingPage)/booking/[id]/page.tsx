@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
 const advocates = [
   {
@@ -54,10 +55,12 @@ export default function BookingPage({ params }: Props) {
       <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg w-full max-w-3xl p-10 space-y-8">
         {/* Advocate Info */}
         <div className="flex items-center gap-6">
-          <img
+          <Image
             src={advocate.image}
             alt={advocate.name}
-            className="w-20 h-20 rounded-full border-2 border-purple-500 object-cover"
+            width={80} // w-20 = 5rem = 80px
+            height={80} // h-20 = 5rem = 80px
+            className="rounded-full border-2 border-purple-500 object-cover"
           />
           <div>
             <h2 className="text-2xl font-bold">{advocate.name}</h2>

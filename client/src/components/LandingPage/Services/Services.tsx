@@ -1,16 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  TrendingUp,
-  Settings,
-  Users,
-  BarChart3,
-  Lightbulb,
-  Shield,
-  ArrowRight,
-} from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface ServiceCardProps {
   serviceImage: string;
@@ -82,11 +71,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   return (
     <div className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center text-center border-b-4 border-transparent hover:border-[#d69292] transition-colors duration-300">
-      <img
-        src={serviceImage}
-        alt={title}
-        className="w-20 h-20 object-cover rounded-full mb-6"
-      />
+      <div className="relative w-20 h-20 mb-6">
+        <Image
+          src={serviceImage}
+          alt={title}
+          fill
+          className="object-cover rounded-full"
+        />
+      </div>
       <h3 className="text-xl font-bold text-gray-800 mb-3">{title}</h3>
       <p className="text-gray-600 leading-relaxed mb-6 flex-grow">
         {description}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
 // Dummy data placeholder: replace with real data fetch logic
 const advocates = [
@@ -102,7 +103,13 @@ const advocates = [
   },
 ];
 
-export default function AdvocateProfilePage({ params }) {
+interface Params {
+  params: {
+    id: string;
+  };
+}
+
+export default function AdvocateProfilePage({ params }: Params) {
   const id = Number(params.id);
   const advocate = advocates.find((a) => a.id === id);
 
@@ -116,10 +123,12 @@ export default function AdvocateProfilePage({ params }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-6 lg:gap-8 mb-8">
           <div className="mx-auto md:mx-0">
-            <img
+            <Image
               src={advocate.profile_photo_url}
               alt={advocate.name}
-              className="w-48 h-48 rounded-full border-4 border-gray-700 object-cover"
+              width={192} // 48 * 4 px (assuming tailwind's 1 unit = 4px)
+              height={192}
+              className="rounded-full border-4 border-gray-700 object-cover"
             />
           </div>
           <div className="text-gray-700">
@@ -205,7 +214,7 @@ export default function AdvocateProfilePage({ params }) {
                 Contact
               </h2>
               <p>
-                Office Address:{" "}
+                Office Address:
                 <span className="">{advocate.office_address}</span>
               </p>
               <p>
@@ -221,61 +230,61 @@ export default function AdvocateProfilePage({ params }) {
                 </ul>
               </p>
               <p>
-                WhatsApp:{" "}
+                WhatsApp:
                 {advocate.contact_links.whatsapp ? (
-                  <a
+                  <Link
                     href={advocate.contact_links.whatsapp}
                     target="_blank"
                     rel="noopener noreferrer"
                     className=""
                   >
                     Chat on WhatsApp
-                  </a>
+                  </Link>
                 ) : (
                   "N/A"
                 )}
               </p>
               <p>
-                Messenger:{" "}
+                Messenger:
                 {advocate.contact_links.messenger ? (
-                  <a
+                  <Link
                     href={advocate.contact_links.messenger}
                     target="_blank"
                     rel="noopener noreferrer"
                     className=""
                   >
                     Message on Messenger
-                  </a>
+                  </Link>
                 ) : (
                   "N/A"
                 )}
               </p>
               <p>
-                Facebook:{" "}
+                Facebook:
                 {advocate.social_links.facebook ? (
-                  <a
+                  <Link
                     href={advocate.social_links.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
                     className=""
                   >
                     Facebook Profile
-                  </a>
+                  </Link>
                 ) : (
                   "N/A"
                 )}
               </p>
               <p>
-                LinkedIn:{" "}
+                LinkedIn:
                 {advocate.social_links.linkedin ? (
-                  <a
+                  <Link
                     href={advocate.social_links.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     className=""
                   >
                     LinkedIn Profile
-                  </a>
+                  </Link>
                 ) : (
                   "N/A"
                 )}
@@ -325,7 +334,7 @@ export default function AdvocateProfilePage({ params }) {
               </h2>
               <p className="capitalize">{advocate.status}</p>
               <p>
-                Verified by Admin:{" "}
+                Verified by Admin:
                 <span>{advocate.verified_by_admin ? "Yes" : "No"}</span>
               </p>
               <p>
@@ -344,7 +353,7 @@ export default function AdvocateProfilePage({ params }) {
                       {"⭐".repeat(t.rating)}{" "}
                       <span className="">({t.rating} / 5)</span>
                     </p>
-                    <p className=" italic">"{t.comment}"</p>
+                    <p className=" italic">{t.comment}</p>
                     <p className=" mt-1">
                       - {t.client_name}, {new Date(t.date).toLocaleDateString()}
                     </p>

@@ -7,11 +7,9 @@ export default function ServicesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen">
-        <Navbar />
-        {children}
-      </body>
-    </html>
+    <div className="min-h-screen">
+      <Navbar />
+      {children}
+    </div>
   );
 }

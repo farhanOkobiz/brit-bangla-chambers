@@ -2,26 +2,27 @@
 
 import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ClientSignupForm() {
   const [formData, setFormData] = useState({
-    role: "client",
     full_name: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
-    // nidNumber: "",
-    // dateOfBirth: "",
-    // gender: "",
-    // profilePhoto: "",
-    // presentAddress: "",
-    // permanentAddress: "",
+    nidNumber: "",
+    dateOfBirth: "",
+    gender: "",
+    profilePhoto: "",
+    presentAddress: "",
+    permanentAddress: "",
     terms: false,
   });
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -62,7 +63,7 @@ export default function ClientSignupForm() {
 
     if (Object.keys(validationErrors).length === 0) {
       // TODO: send to backend
-      const res = await apiFetch(`${BASE_URL}/auth/register`, {
+      await apiFetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         body: JSON.stringify(formData),
       });
@@ -103,13 +104,13 @@ export default function ClientSignupForm() {
             placeholder="+8801234567890"
             error={errors.phone}
           />
-          {/* <Input
+          <Input
             label="Date of Birth"
             name="dateOfBirth"
             type="date"
             value={formData.dateOfBirth}
             onChange={handleChange}
-          /> */}
+          />
 
           <Input
             label="Password"
@@ -130,7 +131,7 @@ export default function ClientSignupForm() {
             error={errors.confirmPassword}
           />
 
-          {/* <Select
+          <Select
             label="Gender"
             name="gender"
             value={formData.gender}
@@ -141,7 +142,7 @@ export default function ClientSignupForm() {
               { value: "female", label: "Female" },
               { value: "other", label: "Other" },
             ]}
-          /> */}
+          />
 
           {/* <Input
             label="Profile Photo URL"
@@ -149,27 +150,28 @@ export default function ClientSignupForm() {
             value={formData.profilePhoto}
             onChange={handleChange}
           /> */}
-          {/* <Input
+          <Input
             label="NID Number"
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          /> */}
-          {/* <Input
+          />
+          <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
-          /> */}
-          {/* <Input
+          />
+
+          <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
             onChange={handleChange}
-          /> */}
+          />
         </div>
 
-        {/* Terms */}
+        {/* Terms and Conditions */}
         <div className="flex items-center">
           <input
             type="checkbox"
@@ -245,36 +247,36 @@ function Input({
 }
 
 // Reusable Select
-function Select({
-  label,
-  name,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: { value: string; label: string }[];
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
-      >
-        {options.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
+// function Select({
+//   label,
+//   name,
+//   value,
+//   onChange,
+//   options,
+// }: {
+//   label: string;
+//   name: string;
+//   value: string;
+//   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+//   options: { value: string; label: string }[];
+// }) {
+//   return (
+//     <div>
+//       <label className="block text-sm font-medium text-gray-700 mb-1">
+//         {label}
+//       </label>
+//       <select
+//         name={name}
+//         value={value}
+//         onChange={onChange}
+//         className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
+//       >
+//         {options.map(({ value, label }) => (
+//           <option key={value} value={value}>
+//             {label}
+//           </option>
+//         ))}
+//       </select>
+//     </div>
+//   );
+// }

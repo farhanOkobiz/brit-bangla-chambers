@@ -1,10 +1,7 @@
-import React from "react";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+"use client";
 
-interface ProgressBarProps {
-  label: string;
-  percentage: number;
-}
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Image from "next/image";
 
 // const ProgressBar: React.FC<ProgressBarProps> = ({ label, percentage }) => (
 //   <div className="mb-4">
@@ -46,10 +43,11 @@ function AboutUs() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
           {/* Image */}
           <div className="flex justify-center items-center ">
-            <img
+            <Image
               src="https://cdn.pixabay.com/photo/2022/10/05/07/08/gavel-7499911_640.jpg"
               alt="Legal Professional"
-              className="w-full rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-500"
+              fill
+              className="rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-500 object-cover"
             />
           </div>
           {/* What We Do */}

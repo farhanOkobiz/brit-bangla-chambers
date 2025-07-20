@@ -31,7 +31,7 @@ function ProfilePage() {
         }
         setUser(res.data.user);
         setLoading(false);
-      } catch (err) {
+      } catch {
         setError("Failed to fetch profile");
         setLoading(false);
       }
