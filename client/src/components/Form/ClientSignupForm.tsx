@@ -3,6 +3,7 @@
 import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Select from "react-select";
 
 export default function ClientSignupForm() {
   const [formData, setFormData] = useState({
@@ -55,6 +56,13 @@ export default function ClientSignupForm() {
 
     return newErrors;
   };
+
+  const genderOptions = [
+  { value: "", label: "Select Gender" },
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,17 +140,13 @@ export default function ClientSignupForm() {
           />
 
           <Select
-            label="Gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            options={[
-              { value: "", label: "Select Gender" },
-              { value: "male", label: "Male" },
-              { value: "female", label: "Female" },
-              { value: "other", label: "Other" },
-            ]}
-          />
+  name="gender"
+  value={genderOptions.find(o => o.value === formData.gender)}
+  onChange={(selectedOption) =>
+    setFormData({ ...formData, gender: selectedOption?.value || "" })
+  }
+  options={genderOptions}
+/>
 
           {/* <Input
             label="Profile Photo URL"

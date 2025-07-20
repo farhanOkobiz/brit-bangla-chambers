@@ -5,12 +5,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 function LoginForm() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
-  // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,6 +17,7 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
       const res = await apiFetch(`/auth/login`, {
@@ -29,31 +27,25 @@ function LoginForm() {
 
       if (!res.ok) {
         const data = res.data;
-        // Check for custom OTP status code
         if (res.status === 470) {
           await apiFetch(`/auth/send-otp`, {
             method: "POST",
             body: JSON.stringify({ email: form.email }),
           });
-          return router.push(
-            `/verify-otp?user=${data?.userId}&email=${encodeURIComponent(
-              data?.email
-            )}`
-          );
+          router.push(`/verify-otp?user=${data?.userId}&email=${encodeURIComponent(data?.email)}`);
+          return;
         } else {
-          return setError(data?.message || "Login failed");
+          setError(data?.message || "Login failed");
+          return;
         }
       }
 
       const data = res.data;
       const user = data.user;
 
-      // Redirect based on user role
       if (user?.role === "client") {
         router.push("/client/dashboard");
-      } else if (user?.role === "admin") {
-        router.push("/unauthorized");
-      } else if (user?.role === "advocate") {
+      } else if (user?.role === "admin" || user?.role === "advocate") {
         router.push("/unauthorized");
       } else {
         router.push("/");
@@ -61,48 +53,74 @@ function LoginForm() {
     } catch (err) {
       console.error("Login error:", err);
       setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <input
-          type="email"
-          name="email"
-          autoComplete="email"
-          placeholder="Email Address"
-          value={form.email}
-          onChange={handleChange}
-          required
-          className="border border-gray-300 p-3 rounded-md w-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
-        />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <input
+        type="email"
+        name="email"
+        autoComplete="email"
+        placeholder="Email Address"
+        value={form.email}
+        onChange={handleChange}
+        required
+        className="border border-gray-300 p-3 rounded-md w-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
+      />
 
-        <input
-          type="password"
-          name="password"
-          autoComplete="current-password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-          className="border border-gray-300 p-3 rounded-md w-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
-        />
+      <input
+        type="password"
+        name="password"
+        autoComplete="current-password"
+        placeholder="Password"
+        value={form.password}
+        onChange={handleChange}
+        required
+        className="border border-gray-300 p-3 rounded-md w-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
+      />
 
-        {error && (
-          <p className="text-red-600 text-sm font-medium text-center">
-            {error}
-          </p>
+      {error && (
+        <p className="text-red-600 text-sm font-medium text-center">{error}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading}
+        className={`w-full flex justify-center items-center gap-2 py-3 rounded-md font-bold text-lg shadow-md transition cursor-pointer
+          ${loading ? "bg-gray-600 cursor-not-allowed" : "bg-black hover:bg-gray-800 text-white"}`}
+      >
+        {loading ? (
+          <>
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.372 0 0 5.372 0 12h4z"
+              ></path>
+            </svg>
+            Logging in...
+          </>
+        ) : (
+          "Login"
         )}
-
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-3 rounded-md font-bold text-lg shadow-md hover:bg-gray-800 transition cursor-pointer"
-        >
-          Login
-        </button>
-      </form>
-    </>
+      </button>
+    </form>
   );
 }
 
