@@ -15,7 +15,9 @@ const showProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     // Get client-specific data
-    const client = await clientSchema.findOne({ user_id }).populate("user_id", "-password");
+    const client = await clientSchema
+      .findOne({ user_id })
+      .populate("user_id", "-password");
     if (!client) {
       return res.status(404).json({ message: "Client profile not found" });
     }
@@ -33,7 +35,7 @@ const showProfileByUserId = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     const client = await clientSchema.findOne({ user_id }).select("-password");
     if (!client) {
       return res.status(404).json({ message: "Client profile not found" });
@@ -43,11 +45,13 @@ const showProfileByUserId = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
-}
+};
 const showProfileByClientId = async (req, res) => {
   try {
     const client_id = req.params.id;
-    const client = await clientSchema.findById(client_id).populate("user_id" , "-password");
+    const client = await clientSchema
+      .findById(client_id)
+      .populate("user_id", "-password");
     if (!client) {
       return res.status(404).json({ message: "Client not found" });
     }
@@ -55,8 +59,7 @@ const showProfileByClientId = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
-}
-
+};
 
 const showAllClients = async (req, res) => {
   try {
@@ -68,7 +71,7 @@ const showAllClients = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
-}
+};
 
 const createClientProfile = async (req, res) => {
   try {
@@ -86,7 +89,9 @@ const createClientProfile = async (req, res) => {
     } = req.body;
 
     // Check if user already exists
-    const existingUser = await userSchema.findOne({ $or: [{ email }, { phone }] });
+    const existingUser = await userSchema.findOne({
+      $or: [{ email }, { phone }],
+    });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -112,7 +117,7 @@ const createClientProfile = async (req, res) => {
       profile_photo: profilePhoto,
       present_address: presentAddress,
       permanent_address: permanentAddress,
-      status: "active"
+      status: "active",
     });
 
     res.status(201).json({
@@ -125,7 +130,6 @@ const createClientProfile = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 // ESM-compatible __dirname setup
 const __filename = fileURLToPath(import.meta.url);
@@ -177,7 +181,10 @@ const updateClientProfile = async (req, res) => {
 
       // Delete old profile photo if exists
       if (client.profile_photo) {
-        const oldPhotoPath = path.join(uploadPath, path.basename(client.profile_photo));
+        const oldPhotoPath = path.join(
+          uploadPath,
+          path.basename(client.profile_photo)
+        );
         if (fs.existsSync(oldPhotoPath)) {
           fs.unlinkSync(oldPhotoPath);
         }
@@ -194,7 +201,6 @@ const updateClientProfile = async (req, res) => {
       message: "Client profile updated successfully",
       client: populatedClient,
     });
-
   } catch (error) {
     // Cleanup uploaded file if error occurred
     if (newProfilePhotoPath && fs.existsSync(newProfilePhotoPath)) {
@@ -218,7 +224,10 @@ const deleteClientProfile = async (req, res) => {
 
     // === Delete profile photo from uploads folder ===
     if (client.profile_photo) {
-      const photoPath = path.join(uploadPath, path.basename(client.profile_photo));
+      const photoPath = path.join(
+        uploadPath,
+        path.basename(client.profile_photo)
+      );
       if (fs.existsSync(photoPath)) {
         fs.unlinkSync(photoPath);
       }
@@ -233,8 +242,9 @@ const deleteClientProfile = async (req, res) => {
       return res.status(404).json({ message: "Associated user not found" });
     }
 
-    res.status(200).json({ message: "Client profile and photo deleted successfully" });
-
+    res
+      .status(200)
+      .json({ message: "Client profile and photo deleted successfully" });
   } catch (error) {
     console.error("Delete client error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -248,5 +258,5 @@ export {
   showAllClients,
   createClientProfile,
   updateClientProfile,
-  deleteClientProfile
+  deleteClientProfile,
 };
