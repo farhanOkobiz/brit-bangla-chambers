@@ -11,10 +11,13 @@ const getFilenameFromUrl = (url) => {
 
 // Create a new category
 export const createCategory = async (req, res) => {
+  console.log("hit createCategory");
   let newImageFilename = null;
 
   try {
-    const { name, description, link } = req.body;
+    const { name, details, link } = req.body;
+
+    console.log("Received data:", { name, details, link });
 
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -41,8 +44,9 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ error: "Category already exists" });
     }
 
-    const newCategory = new Category({ name, description, image, link });
+    const newCategory = new Category({ name, details, image, link });
     await newCategory.save();
+    console.log("Category created successfully:", newCategory);
 
     res.status(201).json({
       message: "Category created successfully",
@@ -92,7 +96,7 @@ export const updateCategory = async (req, res) => {
 
   try {
     const { id } = req.params;
-    const { name, description, link } = req.body;
+    const { name, details, link } = req.body;
 
     // Validate link format if provided
     if (link && !validator.isURL(link)) {
@@ -122,7 +126,7 @@ export const updateCategory = async (req, res) => {
     // Prepare update data
     const updateData = {
       name: name || existingCategory.name,
-      description: description || existingCategory.description,
+      details: details || existingCategory.details,
       link: link || existingCategory.link,
       image: existingCategory.image,
     };
@@ -176,7 +180,7 @@ export const deleteCategory = async (req, res) => {
       const filename = getFilenameFromUrl(category.image);
       if (filename) {
         const filePath = path.join("uploads", filename);
-        console
+        console;
         if (fs.existsSync(filePath)) {
           fs.unlink(filePath, (err) => {
             if (err) console.error("Image deletion error:", err);

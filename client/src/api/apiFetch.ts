@@ -1,5 +1,5 @@
 // Generic API client for making requests with credentials and JSON handling
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000/api/v1';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5001/api/v1';
 
 export async function apiFetch(
   endpoint: string,
