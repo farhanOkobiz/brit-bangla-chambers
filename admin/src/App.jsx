@@ -52,6 +52,8 @@ export default function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="categories" element={<CategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="sub-categories" element={<SubcategoryForm />} />
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />
