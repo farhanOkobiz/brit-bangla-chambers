@@ -37,7 +37,6 @@ export default function App() {
           <Route path="dashboard" element={<AdvocateDashboard />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
-          {/* Add more advocate child routes here as needed */}
         </Route>
 
         {/* Fallback Route */}

@@ -37,7 +37,6 @@ const AdminSidebar = () => {
       setOpenDropdown(label);
     }
   };
-  console.log("ok");
 
   return (
     <>
