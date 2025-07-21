@@ -1,6 +1,8 @@
+import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
-function ContactForm() {
+function RequestServiceForm() {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -10,7 +12,6 @@ function ContactForm() {
     permanentAddress: "",
     issueType: "",
     message: "",
-    date: "",
   });
 
   const handleChange = (
@@ -21,10 +22,40 @@ function ContactForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Submitted:", form);
-    // TODO: Send to backend API
+
+    try {
+      const response = await apiFetch("/request-service", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        toast.warning(
+          "Failed to submit: " + (errData.message || "Unknown error")
+        );
+        return;
+      }
+
+      toast.success("Request sent successfully!");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        nid: "",
+        presentAddress: "",
+        permanentAddress: "",
+        issueType: "",
+        message: "",
+      });
+    } catch {
+      toast.warning("Error submitting the form. Please try again.");
+    }
   };
 
   return (
@@ -134,15 +165,6 @@ function ContactForm() {
           ></textarea>
         </div>
 
-        {/* Date and Time */}
-        <Input
-          name="date"
-          type="datetime-local"
-          value={form.date}
-          onChange={handleChange}
-          required
-        />
-
         <button
           type="submit"
           className="w-full bg-black text-white py-3 rounded-md font-bold text-lg hover:bg-gray-800 transition"
@@ -191,4 +213,4 @@ function Input({
   );
 }
 
-export default ContactForm;
+export default RequestServiceForm;

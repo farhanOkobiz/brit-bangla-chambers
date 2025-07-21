@@ -46,7 +46,8 @@ function AboutUs() {
             <Image
               src="https://cdn.pixabay.com/photo/2022/10/05/07/08/gavel-7499911_640.jpg"
               alt="Legal Professional"
-              fill
+              width={640}
+              height={427} // aspect ratio maintain korun
               className="rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-500 object-cover"
             />
           </div>

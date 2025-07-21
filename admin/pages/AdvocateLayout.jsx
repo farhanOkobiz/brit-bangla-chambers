@@ -1,4 +1,4 @@
-import AdvocateSideBar from '../components/AdvocateSidebar';
+import AdvocateSideBar from "../components/AdvocateSidebar";
 
 const AdvocateLayout = ({ children }) => {
   return (

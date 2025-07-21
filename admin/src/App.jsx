@@ -8,15 +8,17 @@ import CategoryForm from "../components/CategoryForm";
 import SubcategoryForm from "../components/subCategoryForm";
 import AdminDashboard from "../components/AdminDashboard";
 import AdvocateDashboard from "../components/AdvocateDashboard";
+import Blogs from "../pages/blog/Blogs";
+import CreateBlog from "../pages/blog/CreateBlog";
+import ContactMessage from "../components/message/ContactMessage";
+import RequestMessage from "../components/message/RequestMessage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
 
         {/* <Route
           path="/admin/dashboard"
@@ -35,7 +37,8 @@ export default function App() {
           }
         >
           <Route path="dashboard" element={<AdvocateDashboard />} />
-          {/* Add more advocate child routes here as needed */}
+          <Route path="dashboard/blogs" element={<Blogs />} />
+          <Route path="dashboard/create-blog" element={<CreateBlog />} />
         </Route>
 
         {/* Fallback Route */}
@@ -50,6 +53,8 @@ export default function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="categories" element={<CategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="messages/contact" element={<ContactMessage />} />
+          <Route path="messages/service" element={<RequestMessage />} />
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

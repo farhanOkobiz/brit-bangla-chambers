@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(express.json());
@@ -17,7 +17,10 @@ connectDB();
 
 // Middleware
 
-const allowedOrigins = process.env.CLIENT_URLS.split(",");
+const allowedOrigins = [
+  ...process.env.CLIENT_URLS.split(","),
+  "http://localhost:5173",
+];
 
 const corsOptions = {
   origin: (origin, callback) => {
