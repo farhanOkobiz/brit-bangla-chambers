@@ -5,7 +5,8 @@ import categoryRoutes from "./api/categoryRoutes.js";
 import subCategoryRoutes from "./api/subCategoryRoutes.js";
 import blogRoutes from "./api/blogRoutes.js";
 import contactUsRoutes from "./api/contactUsRoutes.js";
-import clientRoutes from './api/clientRoutes.js';
+import requestServiceRoutes from "./api/requestServiceRoutes.js";
+import clientRoutes from "./api/clientRoutes.js";
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.use("/category", categoryRoutes);
 router.use("/sub-category", subCategoryRoutes);
 router.use("/blog", blogRoutes);
 router.use("/contact", contactUsRoutes);
-router.use('/client', clientRoutes);
-
+router.use("/request-service", requestServiceRoutes);
+router.use("/client", clientRoutes);
 
 export default router;

@@ -1,6 +1,7 @@
 "use client";
 
-import ContactForm from "@/components/Form/ContactForm";
+import RequestServiceForm from "@/components/Form/RequestServiceForm";
+import ContactForm from "@/components/Form/RequestServiceForm";
 
 export default function ContactPage() {
   return (
@@ -18,7 +19,7 @@ export default function ContactPage() {
 
       {/* Contact Form */}
       <div className="max-w-3xl mx-auto bg-white p-4 md:p-8 rounded-xl border border-gray-200 shadow">
-        <ContactForm />
+        <RequestServiceForm />
       </div>
 
       {/* Static Office Info */}
