@@ -1,12 +1,39 @@
 import validator from "validator";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import Category from "../models/categorySchema.js";
+
+// Get current directory for proper path resolution
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper function to extract filename from URL
 const getFilenameFromUrl = (url) => {
   const parts = url.split("/uploads/");
   return parts.length > 1 ? parts[1] : null;
+};
+
+// Helper function to get absolute upload path
+const getUploadPath = (filename) => {
+  return path.join(__dirname, "..", "..", "uploads", filename);
+};
+
+// Helper function to safely delete file
+const deleteFile = (filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log("File deleted successfully:", filePath);
+      return true;
+    } else {
+      console.warn("File not found:", filePath);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    return false;
+  }
 };
 
 // Create a new category
@@ -32,7 +59,7 @@ export const createCategory = async (req, res) => {
     // Validate URL format if link exists
     if (link && !validator.isURL(link)) {
       // Cleanup uploaded file if validation fails
-      fs.unlinkSync(req.file.path);
+      deleteFile(getUploadPath(newImageFilename));
       return res.status(400).json({ error: "Invalid URL format for link" });
     }
 
@@ -40,7 +67,7 @@ export const createCategory = async (req, res) => {
     const existing = await Category.findOne({ name });
     if (existing) {
       // Cleanup uploaded file if duplicate exists
-      fs.unlinkSync(req.file.path);
+      deleteFile(getUploadPath(newImageFilename));
       return res.status(400).json({ error: "Category already exists" });
     }
 
@@ -55,8 +82,7 @@ export const createCategory = async (req, res) => {
   } catch (error) {
     // Cleanup uploaded file on error
     if (newImageFilename) {
-      const filePath = path.join("uploads", newImageFilename);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      deleteFile(getUploadPath(newImageFilename));
     }
 
     console.error("Create Category Error:", error);
@@ -92,7 +118,7 @@ export const getCategoryById = async (req, res) => {
 // Update a category
 export const updateCategory = async (req, res) => {
   let newImageFilename = null;
-  let oldImagePath = null;
+  let oldImageFilename = null;
 
   try {
     const { id } = req.params;
@@ -117,10 +143,9 @@ export const updateCategory = async (req, res) => {
       return res.status(404).json({ error: "Category not found" });
     }
 
-    // Store old image path for cleanup
+    // Store old image filename for cleanup
     if (existingCategory.image) {
-      const filename = getFilenameFromUrl(existingCategory.image);
-      if (filename) oldImagePath = path.join("uploads", filename);
+      oldImageFilename = getFilenameFromUrl(existingCategory.image);
     }
 
     // Prepare update data
@@ -142,11 +167,9 @@ export const updateCategory = async (req, res) => {
       new: true,
     });
 
-    // Cleanup old image after successful update
-    if (req.file && oldImagePath && fs.existsSync(oldImagePath)) {
-      fs.unlink(oldImagePath, (err) => {
-        if (err) console.error("Old image deletion error:", err);
-      });
+    // Cleanup old image after successful update (only if new image was uploaded)
+    if (req.file && oldImageFilename) {
+      deleteFile(getUploadPath(oldImageFilename));
     }
 
     res.status(200).json({
@@ -156,8 +179,7 @@ export const updateCategory = async (req, res) => {
   } catch (error) {
     // Cleanup new uploaded file on error
     if (newImageFilename) {
-      const filePath = path.join("uploads", newImageFilename);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      deleteFile(getUploadPath(newImageFilename));
     }
 
     console.error("Update Category Error:", error);
@@ -179,13 +201,7 @@ export const deleteCategory = async (req, res) => {
     if (category.image) {
       const filename = getFilenameFromUrl(category.image);
       if (filename) {
-        const filePath = path.join("uploads", filename);
-        console;
-        if (fs.existsSync(filePath)) {
-          fs.unlink(filePath, (err) => {
-            if (err) console.error("Image deletion error:", err);
-          });
-        }
+        deleteFile(getUploadPath(filename));
       }
     }
 

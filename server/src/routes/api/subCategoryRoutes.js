@@ -7,17 +7,18 @@ import {
   deleteSubCategory,
 } from "../../controllers/subCategoryController.js";
 import upload from "../../middleware/multerMiddleware.js";
+import { checkAdmin } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/create-sub-category", upload.single("image"), createSubCategory);
-router.get("/get-all-sub-categories", getAllSubCategories);
-router.get("/get-sub-category/:id", getSubCategoryById);
+router.post("/create-sub-category",checkAdmin, upload.single("image"), createSubCategory);
+router.get("/get-all-sub-categories",checkAdmin, getAllSubCategories);
+router.get("/get-sub-category/:id",checkAdmin, getSubCategoryById);
 router.put(
-  "/update-sub-category/:id",
+  "/update-sub-category/:id",checkAdmin,
   upload.single("image"),
   updateSubCategory
 );
-router.delete("/delete-sub-category/:id", deleteSubCategory);
+router.delete("/delete-sub-category/:id",checkAdmin, deleteSubCategory);
 
 export default router;
