@@ -250,3 +250,20 @@ export const getUserById = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch user' });
   }
 }
+
+// Logout: clear cookies
+export const logout = (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    expires: new Date(0),
+  });
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    expires: new Date(0),
+  });
+  res.json({ message: "Logged out" });
+};

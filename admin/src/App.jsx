@@ -10,6 +10,7 @@ import AdminDashboard from "../components/AdminDashboard";
 import AdvocateDashboard from "../components/AdvocateDashboard";
 import Blogs from "../pages/blog/Blogs";
 import CreateBlog from "../pages/blog/CreateBlog";
+import Users from "../pages/Admin/Users";
 
 export default function App() {
   return (
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="users" element= { <Users/> } />
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

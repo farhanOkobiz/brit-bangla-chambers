@@ -1,7 +1,7 @@
 import validator from "validator";
 import fs from "fs";
 import path from "path";
-import Category from "../models/categorySchema.js";
+import Specialization from "../models/specializationSchema.js";
 
 // Helper function to extract filename from URL
 const getFilenameFromUrl = (url) => {
@@ -9,9 +9,9 @@ const getFilenameFromUrl = (url) => {
   return parts.length > 1 ? parts[1] : null;
 };
 
-// Create a new category
-export const createCategory = async (req, res) => {
-  console.log("hit createCategory");
+// Create a new Specialization
+export const createSpecialization = async (req, res) => {
+  console.log("hit createSpecialization");
   let newImageFilename = null;
 
   try {
@@ -36,21 +36,21 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ error: "Invalid URL format for link" });
     }
 
-    // Check for duplicate category
-    const existing = await Category.findOne({ name });
+    // Check for duplicate Specialization
+    const existing = await Specialization.findOne({ name });
     if (existing) {
       // Cleanup uploaded file if duplicate exists
       fs.unlinkSync(req.file.path);
-      return res.status(400).json({ error: "Category already exists" });
+      return res.status(400).json({ error: "Specialization already exists" });
     }
 
-    const newCategory = new Category({ name, details, image, link });
-    await newCategory.save();
-    console.log("Category created successfully:", newCategory);
+    const newSpecialization = new Specialization({ name, details, image, link });
+    await newSpecialization.save();
+    console.log("Specialization created successfully:", newSpecialization);
 
     res.status(201).json({
-      message: "Category created successfully",
-      category: newCategory,
+      message: "Specialization created successfully",
+      Specialization: newSpecialization,
     });
   } catch (error) {
     // Cleanup uploaded file on error
@@ -59,38 +59,38 @@ export const createCategory = async (req, res) => {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
 
-    console.error("Create Category Error:", error);
+    console.error("Create Specialization Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// Get all categories
-export const getAllCategories = async (req, res) => {
+// Get all Specializations
+export const getAllSpecializations = async (req, res) => {
   try {
-    const categories = await Category.find().sort({ createdAt: -1 });
-    res.status(200).json(categories);
+    const Specializations = await Specialization.find().sort({ createdAt: -1 });
+    res.status(200).json(Specializations);
   } catch (error) {
-    console.error("Get Categories Error:", error);
+    console.error("Get Specializations Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// Get single category by ID
-export const getCategoryById = async (req, res) => {
+// Get single Specialization by ID
+export const getSpecializationById = async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({ error: "Category not found" });
+    const Specialization = await Specialization.findById(req.params.id);
+    if (!Specialization) {
+      return res.status(404).json({ error: "Specialization not found" });
     }
-    res.status(200).json(category);
+    res.status(200).json(Specialization);
   } catch (error) {
-    console.error("Get Category Error:", error);
+    console.error("Get Specialization Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// Update a category
-export const updateCategory = async (req, res) => {
+// Update a Specialization
+export const updateSpecialization = async (req, res) => {
   let newImageFilename = null;
   let oldImagePath = null;
 
@@ -103,32 +103,32 @@ export const updateCategory = async (req, res) => {
       return res.status(400).json({ error: "Invalid URL format for link" });
     }
 
-    // Check for duplicate name (excluding current category)
+    // Check for duplicate name (excluding current Specialization)
     if (name) {
-      const existing = await Category.findOne({ name, _id: { $ne: id } });
+      const existing = await Specialization.findOne({ name, _id: { $ne: id } });
       if (existing) {
-        return res.status(400).json({ error: "Category name already in use" });
+        return res.status(400).json({ error: "Specialization name already in use" });
       }
     }
 
-    // Get existing category
-    const existingCategory = await Category.findById(id);
-    if (!existingCategory) {
-      return res.status(404).json({ error: "Category not found" });
+    // Get existing Specialization
+    const existingSpecialization = await Specialization.findById(id);
+    if (!existingSpecialization) {
+      return res.status(404).json({ error: "Specialization not found" });
     }
 
     // Store old image path for cleanup
-    if (existingCategory.image) {
-      const filename = getFilenameFromUrl(existingCategory.image);
+    if (existingSpecialization.image) {
+      const filename = getFilenameFromUrl(existingSpecialization.image);
       if (filename) oldImagePath = path.join("uploads", filename);
     }
 
     // Prepare update data
     const updateData = {
-      name: name || existingCategory.name,
-      details: details || existingCategory.details,
-      link: link || existingCategory.link,
-      image: existingCategory.image,
+      name: name || existingSpecialization.name,
+      details: details || existingSpecialization.details,
+      link: link || existingSpecialization.link,
+      image: existingSpecialization.image,
     };
 
     // Handle new image upload
@@ -137,8 +137,8 @@ export const updateCategory = async (req, res) => {
       updateData.image = `${req.protocol}://${req.get("host")}/uploads/${newImageFilename}`;
     }
 
-    // Update the category
-    const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
+    // Update the Specialization
+    const updatedSpecialization = await Specialization.findByIdAndUpdate(id, updateData, {
       new: true,
     });
 
@@ -150,8 +150,8 @@ export const updateCategory = async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Category updated successfully",
-      category: updatedCategory,
+      message: "Specialization updated successfully",
+      Specialization: updatedSpecialization,
     });
   } catch (error) {
     // Cleanup new uploaded file on error
@@ -160,24 +160,24 @@ export const updateCategory = async (req, res) => {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
 
-    console.error("Update Category Error:", error);
+    console.error("Update Specialization Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// Delete a category
-export const deleteCategory = async (req, res) => {
+// Delete a Specialization
+export const deleteSpecialization = async (req, res) => {
   try {
-    console.log("hit deleteCategory");
-    const category = await Category.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({ error: "Category not found" });
+    console.log("hit deleteSpecialization");
+    const Specialization = await Specialization.findById(req.params.id);
+    if (!Specialization) {
+      return res.status(404).json({ error: "Specialization not found" });
     }
-    console.log("Category found:", category.image);
+    console.log("Specialization found:", Specialization.image);
 
     // Delete associated image file
-    if (category.image) {
-      const filename = getFilenameFromUrl(category.image);
+    if (Specialization.image) {
+      const filename = getFilenameFromUrl(Specialization.image);
       if (filename) {
         const filePath = path.join("uploads", filename);
         console;
@@ -189,12 +189,12 @@ export const deleteCategory = async (req, res) => {
       }
     }
 
-    // Delete the category document
-    await Category.findByIdAndDelete(req.params.id);
+    // Delete the Specialization document
+    await Specialization.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({ message: "Category deleted successfully" });
+    res.status(200).json({ message: "Specialization deleted successfully" });
   } catch (error) {
-    console.error("Delete Category Error:", error);
+    console.error("Delete Specialization Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
