@@ -17,6 +17,7 @@ import ServiceForm from "../components/ServiceForm";
 import AdvocateForm from "../components/AdvocateForm";
 import AdvocateManagement from "../components/AdvocateManagement";
 
+import AdvocateProfile from "../components/Advocate/AdvocateProfile";
 export default function App() {
   return (
     <BrowserRouter>
@@ -32,6 +33,7 @@ export default function App() {
             </ProtectedRoute>
           }
         >
+          <Route path="/advocate/profile" element={<AdvocateProfile />} />
           <Route path="dashboard" element={<AdvocateDashboard />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />

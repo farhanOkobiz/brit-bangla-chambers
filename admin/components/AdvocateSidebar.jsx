@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 const menuItems = [
+  { label : "Advocate Profile", path: "/advocate/profile" },
   { label: "Dashboard", path: "/advocate/dashboard" },
   { label: "My Cases", path: "/advocate/cases" },
   { label: "Appointments", path: "/advocate/appointments" },
