@@ -16,7 +16,7 @@ const EducationSchema = new Schema(
     },
     degree: { type: String, required: true },
     institute: { type: String, required: true },
-    year: { type: Number, required: true },
+    passing_year: { type: Number, required: true },
   },
   {
     timestamps: true,

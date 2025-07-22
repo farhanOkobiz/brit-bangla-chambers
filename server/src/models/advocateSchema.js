@@ -29,14 +29,18 @@ const AdvocateSchema = new Schema(
       linkedin: { type: String },
     },
 
-    language_ids: [{ type: Types.ObjectId, ref: "Language" }],  //settings
+    language_ids: [{ type: String }],  //settings
     specialization_ids: [{ type: Types.ObjectId, ref: "Specialization" }], //settings
     education_ids: [{ type: Types.ObjectId, ref: "Education" }],
     certification_ids: [{ type: Types.ObjectId, ref: "Certification" }],
-    bar_membership_ids: [{ type: Types.ObjectId, ref: "BarMembership" }],
     testimonial_ids: [{ type: Types.ObjectId, ref: "Testimonial" }],
     case_history_ids: [{ type: Types.ObjectId, ref: "CaseHistory" }],
     document_ids: [{ type: Types.ObjectId, ref: "Document" }],
+
+    bar_memberships: [{
+      bar_name: { type: String },
+      membership_number: { type: String }
+    }],
 
     avg_rating: { type: Number, default: 0 },
     total_reviews: { type: Number, default: 0 },

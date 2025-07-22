@@ -10,6 +10,7 @@ import {
 } from "../../controllers/advocateController.js";
 import upload from "../../middleware/multerMiddleware.js";
 import { checkAdmin, checkAdvocate, protect } from "../../middleware/authMiddleware.js";
+import { addCertificationToAdvocate } from '../../controllers/certificationController.js';
 
 const router = Router();
 //Get individual advocate profile
@@ -31,6 +32,8 @@ router.put("/update/:id", protect(["admin", "advocate"]), upload.single("profile
 
 // Delete advocate profile
 router.delete("/profile/:id", checkAdmin, deleteAdvocateProfile);
+
+router.post('/certification/:advocateId', addCertificationToAdvocate);
 
 export default router;
 

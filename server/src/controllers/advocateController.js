@@ -4,11 +4,8 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import Language from "../models/languageSchema.js";
-import Specialization from "../models/specializationSchema.js";
 import Education from "../models/educationSchema.js";
 import Certification from "../models/certificationSchema.js";
-import BarMembership from "../models/barSchema.js";
 import Testimonial from "../models/testimonialSchema.js";
 import CaseHistory from "../models/caseHistory.js";
 import Document from "../models/documentSchema.js";
@@ -30,11 +27,9 @@ export const showAdvocate = async (req, res) => {
         // Get advocate profile with all referenced fields populated
         const advocate = await Advocate.findOne({ user_id })
           .populate("user_id", "-password")
-          .populate("language_ids")
           .populate("specialization_ids")
           .populate("education_ids")
           .populate("certification_ids")
-          .populate("bar_membership_ids")
           .populate("testimonial_ids")
           .populate("case_history_ids")
           .populate("document_ids");
@@ -85,11 +80,9 @@ export const showAdvocateById = async (req, res) => {
     const advocate_id = req.params.id;
     const advocate = await Advocate.findById(advocate_id)
       .populate("user_id", "-password")
-      .populate("language_ids")
       .populate("specialization_ids")
       .populate("education_ids")
       .populate("certification_ids")
-      .populate("bar_membership_ids")
       .populate("testimonial_ids")
       .populate("case_history_ids")
       .populate("document_ids");
@@ -114,15 +107,12 @@ export const createAdvocateProfile = async (req, res) => {
       bar_council_enroll_num,
       experience_years,
       bio,
-      slug,
       office_address,
       available_hours,
       contact,
-      language_ids,
       specialization_ids,
-      education_ids,
+      education,
       certification_ids,
-      bar_membership_ids,
       testimonial_ids,
       case_history_ids,
       document_ids,
@@ -139,7 +129,7 @@ export const createAdvocateProfile = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-
+    
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -161,6 +151,19 @@ export const createAdvocateProfile = async (req, res) => {
       role: "advocate",
     });
 
+    // Create education records and collect their _id
+    let educationIds = [];
+    if (Array.isArray(education)) {
+      for (const edu of education) {
+        const newEdu = await Education.create({
+          ...edu,
+          user_type: "Advocate",
+          user_id: user._id
+        });
+        educationIds.push(newEdu._id);
+      }
+    }
+
     // Create associated advocate profile
     const advocate = await Advocate.create({
       user_id: user._id,
@@ -172,11 +175,9 @@ export const createAdvocateProfile = async (req, res) => {
       office_address,
       available_hours,
       contact,
-      language_ids,
       specialization_ids,
-      education_ids,
+      education_ids: educationIds,
       certification_ids,
-      bar_membership_ids,
       testimonial_ids,
       case_history_ids,
       document_ids,
@@ -210,11 +211,9 @@ export const updateAdvocateProfile = async (req, res) => {
       office_address,
       available_hours,
       contact,
-      language_ids,
       specialization_ids,
       education_ids,
       certification_ids,
-      bar_membership_ids,
       testimonial_ids,
       case_history_ids,
       document_ids,
@@ -257,11 +256,30 @@ export const updateAdvocateProfile = async (req, res) => {
     if (office_address) advocate.office_address = office_address;
     if (available_hours) advocate.available_hours = available_hours;
     if (contact) advocate.contact = contact;
-    if (language_ids) advocate.language_ids = language_ids;
     if (specialization_ids) advocate.specialization_ids = specialization_ids;
-    if (education_ids) advocate.education_ids = education_ids;
+    // Handle education update/creation
+    if (Array.isArray(req.body.education)) {
+      let updatedEducationIds = [];
+      for (const edu of req.body.education) {
+        if (edu._id) {
+          // Update existing education
+          await Education.findByIdAndUpdate(edu._id, edu);
+          updatedEducationIds.push(edu._id);
+        } else {
+          // Create new education
+          const newEdu = await Education.create({
+            ...edu,
+            user_type: "Advocate",
+            user_id: advocate.user_id
+          });
+          updatedEducationIds.push(newEdu._id);
+        }
+      }
+      advocate.education_ids = updatedEducationIds;
+    } else if (education_ids) {
+      advocate.education_ids = education_ids;
+    }
     if (certification_ids) advocate.certification_ids = certification_ids;
-    if (bar_membership_ids) advocate.bar_membership_ids = bar_membership_ids;
     if (testimonial_ids) advocate.testimonial_ids = testimonial_ids;
     if (case_history_ids) advocate.case_history_ids = case_history_ids;
     if (document_ids) advocate.document_ids = document_ids;
