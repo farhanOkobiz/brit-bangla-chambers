@@ -9,6 +9,9 @@ import {
   FaGavel,
   FaClock,
   FaStar,
+  FaEye,
+  FaCheck,
+  FaTimes,
 } from "react-icons/fa";
 
 const AdvocateManagement = () => {
@@ -16,11 +19,14 @@ const AdvocateManagement = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAdvocate, setSelectedAdvocate] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
+
+  const useAxiosHook = useAxios;
 
   const fetchAdvocates = async () => {
     try {
       setLoading(true);
-      const res = await useAxios("/advocate/all", {
+      const res = await useAxiosHook("/advocate/all", {
         method: "GET",
       });
 
@@ -38,7 +44,7 @@ const AdvocateManagement = () => {
 
   const handleStatusUpdate = async (advocateId, newStatus) => {
     try {
-      const res = await useAxios(`/advocate/update/${advocateId}`, {
+      const res = await useAxiosHook(`/advocate/update/${advocateId}`, {
         method: "PUT",
         data: { status: newStatus },
       });
@@ -46,6 +52,9 @@ const AdvocateManagement = () => {
       if (res.ok) {
         alert(`Advocate status updated to ${newStatus}`);
         fetchAdvocates();
+        if (selectedAdvocate && selectedAdvocate._id === advocateId) {
+          setSelectedAdvocate({ ...selectedAdvocate, status: newStatus });
+        }
       } else {
         alert("Failed to update status");
       }
@@ -73,6 +82,11 @@ const AdvocateManagement = () => {
     }
   };
 
+  const filteredAdvocates = advocates.filter((advocate) => {
+    if (filter === "all") return true;
+    return advocate.status === filter;
+  });
+
   useEffect(() => {
     fetchAdvocates();
   }, []);
@@ -87,213 +101,278 @@ const AdvocateManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Advocate Management
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Manage advocate profiles and approvals
-            </p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-500">
-              Total Advocates: {advocates.length}
+      {/* Mobile spacing for fixed header */}
+      <div className="pt-16 lg:pt-0">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+            <div>
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
+                Advocate Management
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Manage advocate profiles and approvals
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-500">
+                Total Advocates: {advocates.length}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <FaUser className="h-6 w-6 text-green-600" />
+        <div className="p-4 lg:p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="p-2 lg:p-3 bg-green-100 rounded-lg">
+                    <FaUser className="h-5 w-5 lg:h-6 lg:w-6 text-green-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Approved
+                    </p>
+                    <p className="text-xl lg:text-2xl font-semibold text-gray-900">
+                      {advocates.filter((a) => a.status === "approved").length}
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Approved</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {advocates.filter((a) => a.status === "approved").length}
-                  </p>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="p-2 lg:p-3 bg-yellow-100 rounded-lg">
+                    <FaClock className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Pending</p>
+                    <p className="text-xl lg:text-2xl font-semibold text-gray-900">
+                      {advocates.filter((a) => a.status === "pending").length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="p-2 lg:p-3 bg-red-100 rounded-lg">
+                    <FaGavel className="h-5 w-5 lg:h-6 lg:w-6 text-red-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Rejected
+                    </p>
+                    <p className="text-xl lg:text-2xl font-semibold text-gray-900">
+                      {advocates.filter((a) => a.status === "rejected").length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="p-2 lg:p-3 bg-purple-100 rounded-lg">
+                    <FaStar className="h-5 w-5 lg:h-6 lg:w-6 text-purple-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Featured
+                    </p>
+                    <p className="text-xl lg:text-2xl font-semibold text-gray-900">
+                      {advocates.filter((a) => a.featured).length}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <FaClock className="h-6 w-6 text-yellow-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {advocates.filter((a) => a.status === "pending").length}
-                  </p>
-                </div>
+            {/* Filter Tabs */}
+            <div className="bg-white rounded-lg shadow mb-6">
+              <div className="border-b border-gray-200">
+                <nav className="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                  {[
+                    {
+                      key: "all",
+                      label: "All Advocates",
+                      count: advocates.length,
+                    },
+                    {
+                      key: "pending",
+                      label: "Pending",
+                      count: advocates.filter((a) => a.status === "pending")
+                        .length,
+                    },
+                    {
+                      key: "approved",
+                      label: "Approved",
+                      count: advocates.filter((a) => a.status === "approved")
+                        .length,
+                    },
+                    {
+                      key: "rejected",
+                      label: "Rejected",
+                      count: advocates.filter((a) => a.status === "rejected")
+                        .length,
+                    },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setFilter(tab.key)}
+                      className={`${
+                        filter === tab.key
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                    >
+                      {tab.label} ({tab.count})
+                    </button>
+                  ))}
+                </nav>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <FaGavel className="h-6 w-6 text-red-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Rejected</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {advocates.filter((a) => a.status === "rejected").length}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <FaStar className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Featured</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {advocates.filter((a) => a.featured).length}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Advocates Table */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">
-                All Advocates
-              </h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Advocate
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Contact
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Experience
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {advocates.map((advocate) => (
-                    <tr key={advocate._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            {advocate.profile_photo_url ? (
-                              <img
-                                className="h-10 w-10 rounded-full object-cover"
-                                src={
-                                  advocate.profile_photo_url ||
-                                  "/placeholder.svg"
-                                }
-                                alt={advocate.user_id?.full_name}
-                              />
-                            ) : (
-                              <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                <FaUser className="h-5 w-5 text-gray-600" />
+            {/* Advocates Table */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Advocate
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Experience
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredAdvocates.map((advocate) => (
+                      <tr key={advocate._id} className="hover:bg-gray-50">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-10 w-10">
+                              {advocate.profile_photo_url ? (
+                                <img
+                                  className="h-10 w-10 rounded-full object-cover"
+                                  src={
+                                    advocate.profile_photo_url ||
+                                    "/placeholder.svg"
+                                  }
+                                  alt={advocate.user_id?.full_name}
+                                />
+                              ) : (
+                                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                  <FaUser className="h-5 w-5 text-gray-600" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {advocate.user_id?.full_name || "Unknown"}
                               </div>
+                              <div className="text-sm text-gray-500">
+                                {advocate.designation || "Advocate"}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 flex items-center">
+                            <FaEnvelope className="h-4 w-4 mr-2 text-gray-400" />
+                            {advocate.user_id?.email || "No email"}
+                          </div>
+                          <div className="text-sm text-gray-500 flex items-center mt-1">
+                            <FaPhone className="h-4 w-4 mr-2 text-gray-400" />
+                            {advocate.user_id?.phone || "No phone"}
+                          </div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {advocate.experience_years || 0} years
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {advocate.bar_council_enroll_num || "No enrollment"}
+                          </div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                              advocate.status
+                            )}`}
+                          >
+                            {advocate.status?.charAt(0).toUpperCase() +
+                              advocate.status?.slice(1)}
+                          </span>
+                          {advocate.featured && (
+                            <span className="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                              Featured
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleViewDetails(advocate)}
+                              className="text-blue-600 hover:text-blue-900 p-1"
+                              title="View Details"
+                            >
+                              <FaEye className="h-4 w-4" />
+                            </button>
+                            {advocate.status === "pending" && (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    handleStatusUpdate(advocate._id, "approved")
+                                  }
+                                  className="text-green-600 hover:text-green-900 p-1"
+                                  title="Approve"
+                                >
+                                  <FaCheck className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleStatusUpdate(advocate._id, "rejected")
+                                  }
+                                  className="text-red-600 hover:text-red-900 p-1"
+                                  title="Reject"
+                                >
+                                  <FaTimes className="h-4 w-4" />
+                                </button>
+                              </>
                             )}
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {advocate.user_id?.full_name || "Unknown"}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {advocate.designation || "Advocate"}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 flex items-center">
-                          <FaEnvelope className="h-4 w-4 mr-2 text-gray-400" />
-                          {advocate.user_id?.email || "No email"}
-                        </div>
-                        <div className="text-sm text-gray-500 flex items-center mt-1">
-                          <FaPhone className="h-4 w-4 mr-2 text-gray-400" />
-                          {advocate.user_id?.phone || "No phone"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {advocate.experience_years || 0} years
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {advocate.bar_council_enroll_num || "No enrollment"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                            advocate.status
-                          )}`}
-                        >
-                          {advocate.status?.charAt(0).toUpperCase() +
-                            advocate.status?.slice(1)}
-                        </span>
-                        {advocate.featured && (
-                          <span className="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                            Featured
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleViewDetails(advocate)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            View
-                          </button>
-                          {advocate.status === "pending" && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  handleStatusUpdate(advocate._id, "approved")
-                                }
-                                className="text-green-600 hover:text-green-900"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleStatusUpdate(advocate._id, "rejected")
-                                }
-                                className="text-red-600 hover:text-red-900"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredAdvocates.length === 0 && (
+                <div className="text-center py-12">
+                  <FaUser className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">
+                    No advocates found
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {filter === "all"
+                      ? "No advocates have been created yet."
+                      : `No ${filter} advocates found.`}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
