@@ -25,7 +25,15 @@ const menuItems = [
     icon: <FaFolderOpen />,
   },
   { label: "Services", path: "/admin/services", icon: <FaCogs /> },
-  { label: "Advocates", path: "/admin/advocates", icon: <FaGavel /> },
+  {
+    label: "Advocates",
+    isDropdown: true,
+    icon: <FaGavel />,
+    subItems: [
+      { label: "Manage Advocates", path: "/admin/advocates" },
+      { label: "Advocate Approvals", path: "/admin/advocates/management" },
+    ],
+  },
   { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
   {
     label: "Messages",
