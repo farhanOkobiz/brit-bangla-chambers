@@ -2,6 +2,8 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import Service from "../models/serviceSchema.js";
+import Specialization from "../models/specializationSchema.js";
+import Subcategory from "../models/subCategorySchema.js";
 
 // Get current directory for proper path resolution
 const __filename = fileURLToPath(import.meta.url);
@@ -55,7 +57,9 @@ export const createService = async (req, res) => {
   try {
     ensureUploadDirExists();
 
-    // Log the authenticated user for debugging
+    console.log("=== CREATE SERVICE DEBUG ===");
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
     console.log("Authenticated user:", req.user);
 
     const { category, subcategory, title, description, status } = req.body;
@@ -73,6 +77,17 @@ export const createService = async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
+    // Validate that category and subcategory exist
+    const categoryExists = await Specialization.findById(category);
+    if (!categoryExists) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    const subcategoryExists = await Subcategory.findById(subcategory);
+    if (!subcategoryExists) {
+      return res.status(400).json({ message: "Invalid subcategory ID" });
+    }
+
     const imagePath = req.file
       ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
       : "";
@@ -82,9 +97,9 @@ export const createService = async (req, res) => {
       subcategory,
       title,
       description,
-      created_by: req.user._id, // Get from authenticated user
+      created_by: req.user._id,
       serviceImage: imagePath,
-      status: status || "active", // Default to active if not provided
+      status: status || "active",
     });
 
     console.log("Service created successfully:", service);
@@ -113,14 +128,23 @@ export const createService = async (req, res) => {
 // Get All Services
 export const getAllServices = async (req, res) => {
   try {
+    console.log("=== GET ALL SERVICES DEBUG ===");
+
     const services = await Service.find()
       .populate("created_by", "full_name email role")
       .populate("category", "name")
       .populate("subcategory", "name")
       .sort({ createdAt: -1 });
-    res.json(services);
+
+    console.log("Services fetched successfully:", services.length);
+
+    res.status(200).json(services);
   } catch (err) {
-    res.status(500).json({ message: "Fetch failed", error: err.message });
+    console.error("Get all services error:", err);
+    res.status(500).json({
+      message: "Failed to fetch services",
+      error: err.message,
+    });
   }
 };
 
@@ -131,10 +155,18 @@ export const getServiceById = async (req, res) => {
       .populate("created_by", "full_name email role")
       .populate("category", "name")
       .populate("subcategory", "name");
-    if (!service) return res.status(404).json({ message: "Not found" });
-    res.json(service);
+
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    res.status(200).json(service);
   } catch (err) {
-    res.status(500).json({ message: "Fetch failed", error: err.message });
+    console.error("Get service by ID error:", err);
+    res.status(500).json({
+      message: "Failed to fetch service",
+      error: err.message,
+    });
   }
 };
 
@@ -144,14 +176,36 @@ export const updateService = async (req, res) => {
 
   try {
     ensureUploadDirExists();
+
+    console.log("=== UPDATE SERVICE DEBUG ===");
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
+
     const { category, subcategory, title, description, status } = req.body;
 
     const service = await Service.findById(req.params.id);
-    if (!service) return res.status(404).json({ message: "Not found" });
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
 
     // Check if user is authenticated
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    // Validate category and subcategory if provided
+    if (category) {
+      const categoryExists = await Specialization.findById(category);
+      if (!categoryExists) {
+        return res.status(400).json({ message: "Invalid category ID" });
+      }
+    }
+
+    if (subcategory) {
+      const subcategoryExists = await Subcategory.findById(subcategory);
+      if (!subcategoryExists) {
+        return res.status(400).json({ message: "Invalid subcategory ID" });
+      }
     }
 
     // Store old image for potential cleanup
@@ -177,14 +231,25 @@ export const updateService = async (req, res) => {
       deleteImage(oldImageURL);
     }
 
-    res.json({ message: "Service updated successfully", data: updated });
+    console.log("Service updated successfully:", updated);
+
+    res.status(200).json({
+      message: "Service updated successfully",
+      data: updated,
+    });
   } catch (err) {
+    console.error("Update service error:", err);
+
     // Cleanup new uploaded file on error
     if (newImageFilename) {
       const newImageURL = `${req.protocol}://${req.get("host")}/uploads/${newImageFilename}`;
       deleteImage(newImageURL);
     }
-    res.status(500).json({ message: "Update failed", error: err.message });
+
+    res.status(500).json({
+      message: "Update failed",
+      error: err.message,
+    });
   }
 };
 
@@ -192,7 +257,9 @@ export const updateService = async (req, res) => {
 export const deleteService = async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
-    if (!service) return res.status(404).json({ message: "Not found" });
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
 
     // Check if user is authenticated
     if (!req.user || !req.user._id) {
@@ -205,8 +272,15 @@ export const deleteService = async (req, res) => {
     }
 
     await Service.findByIdAndDelete(req.params.id);
-    res.json({ message: "Service deleted successfully" });
+
+    console.log("Service deleted successfully:", req.params.id);
+
+    res.status(200).json({ message: "Service deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Delete failed", error: err.message });
+    console.error("Delete service error:", err);
+    res.status(500).json({
+      message: "Delete failed",
+      error: err.message,
+    });
   }
 };

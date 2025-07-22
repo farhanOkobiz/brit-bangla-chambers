@@ -22,16 +22,18 @@ const DataList = ({
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchTerm.toLowerCase()) 
+      item.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  console.log("filteredData : ", filteredData)
+  console.log("filteredData : ", filteredData);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+      <div className="p-4 lg:p-6 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
+          <h2 className="text-lg lg:text-xl font-bold text-gray-900">
+            {title}
+          </h2>
           <span className="text-sm text-gray-500">
             {filteredData.length} {filteredData.length === 1 ? "item" : "items"}
           </span>
@@ -48,31 +50,35 @@ const DataList = ({
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 lg:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
             />
           </div>
         )}
       </div>
 
       {/* List with Fixed Height and Scrollbar */}
-      <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <div className="h-80 lg:h-96 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-gray-500 mt-2">Loading...</p>
+              <div className="animate-spin rounded-full h-8 w-8 lg:h-12 lg:w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="text-gray-500 mt-2 text-sm lg:text-base">
+                Loading...
+              </p>
             </div>
           </div>
         ) : filteredData.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaPlus className="h-6 w-6 text-gray-400" />
+            <div className="text-center p-4">
+              <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaPlus className="h-5 w-5 lg:h-6 lg:w-6 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-base lg:text-lg font-medium text-gray-900 mb-2">
                 No items yet
               </h3>
-              <p className="text-gray-500">{emptyMessage}</p>
+              <p className="text-gray-500 text-sm lg:text-base">
+                {emptyMessage}
+              </p>
             </div>
           </div>
         ) : (
@@ -80,9 +86,9 @@ const DataList = ({
             {filteredData.map((item) => (
               <div
                 key={item._id}
-                className="p-6 hover:bg-gray-50 transition-colors"
+                className="p-4 lg:p-6 hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-start space-x-4">
                   {/* Custom Item Rendering */}
                   <div className="flex-1 min-w-0">
                     {renderItem ? (
@@ -121,7 +127,7 @@ const DataList = ({
 
 // Default item renderer
 const DefaultItemRenderer = ({ item }) => (
-  <div className="flex items-center space-x-4">
+  <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
     {/* Image */}
     <div className="flex-shrink-0">
       {item.image ? (
@@ -139,11 +145,11 @@ const DefaultItemRenderer = ({ item }) => (
 
     {/* Info */}
     <div className="flex-1 min-w-0">
-      <h3 className="text-lg font-semibold text-gray-900 truncate">
+      <h3 className="text-base lg:text-lg font-semibold text-gray-900 truncate">
         {item.name}
       </h3>
       {item.details && (
-        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+        <p className="text-gray-600 text-sm lg:text-base mt-1 line-clamp-2">
           {item.details}
         </p>
       )}
@@ -152,12 +158,12 @@ const DefaultItemRenderer = ({ item }) => (
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-700 text-sm mt-1 inline-block"
+          className="text-blue-600 hover:text-blue-700 text-sm lg:text-base mt-1 inline-block"
         >
           View Link →
         </a>
       )}
-      <p className="text-xs text-gray-400 mt-2">
+      <p className="text-xs lg:text-sm text-gray-400 mt-2">
         Created: {new Date(item.createdAt).toLocaleDateString()}
       </p>
     </div>

@@ -4,8 +4,16 @@ const { Schema, model, Types } = mongoose;
 
 const ServiceSchema = new Schema(
   {
-    category: { type: Types.ObjectId, ref: "Category", required: true },
-    subcategory: { type: Types.ObjectId, ref: "Subcategory", required: true },
+    category: {
+      type: Types.ObjectId,
+      ref: "Specialization", // Changed from "Category" to "Specialization"
+      required: true,
+    },
+    subcategory: {
+      type: Types.ObjectId,
+      ref: "Subcategory",
+      required: true,
+    },
     serviceImage: { type: String },
     title: { type: String, required: true },
     description: { type: String, required: true },

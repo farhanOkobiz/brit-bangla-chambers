@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAxios } from "../services/useAxios";
+import { useAxios } from "../services/useAxios"; // Fixed: Changed from default import to named import
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
@@ -38,7 +38,7 @@ const CategoryForm = () => {
   const fetchCategories = async () => {
     try {
       setLoadingCategories(true);
-      const res = await useAxios("/category/get-all-categories", {
+      const res = await useAxios("/specialization/get-all-categories", {
         method: "GET",
       });
 
@@ -66,8 +66,8 @@ const CategoryForm = () => {
       }
 
       const url = editingCategory
-        ? `/category/update-category/${editingCategory._id}`
-        : "/category/create-category";
+        ? `/specialization/update-category/${editingCategory._id}`
+        : "/specialization/create-category";
       const method = editingCategory ? "PUT" : "POST";
 
       const res = await useAxios(url, {
@@ -113,9 +113,12 @@ const CategoryForm = () => {
     }
 
     try {
-      const res = await useAxios(`/category/delete-category/${categoryId}`, {
-        method: "DELETE",
-      });
+      const res = await useAxios(
+        `/specialization/delete-category/${categoryId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (res.ok) {
         alert("Category deleted successfully!");
@@ -185,8 +188,7 @@ const CategoryForm = () => {
     </div>
   );
 
-  const useAxiosHook = useAxios;
-
+  // Ensure all hooks are called at the top level
   useEffect(() => {
     fetchCategories();
   }, []);

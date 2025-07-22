@@ -14,7 +14,7 @@ import ContactMessage from "../components/message/ContactMessage";
 import RequestMessage from "../components/message/RequestMessage";
 import Users from "../pages/Admin/Users";
 import ServiceForm from "../components/ServiceForm";
-import AdvocateManagement from "../components/AdvocateManagement";
+import AdvocateForm from "../components/AdvocateForm";
 
 export default function App() {
   return (
@@ -49,12 +49,12 @@ export default function App() {
           <Route path="categories" element={<CategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="services" element={<ServiceForm />} />
-          <Route path="advocates" element={<AdvocateManagement />} />
+          <Route path="advocates" element={<AdvocateForm />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
-          <Route path="users" element= { <Users/> } />
+          <Route path="users" element={<Users />} />
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

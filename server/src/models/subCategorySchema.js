@@ -6,7 +6,7 @@ const SubcategorySchema = new Schema(
   {
     categoryId: {
       type: Schema.Types.ObjectId,
-      ref: "Category", // assumes you have a Category model
+      ref: "Specialization", // Changed from "Category" to "Specialization"
       required: true,
     },
     name: {

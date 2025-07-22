@@ -22,7 +22,12 @@ const FormBuilder = ({
     if (initialData) {
       const populatedData = { ...initialFormState };
       Object.keys(populatedData).forEach((key) => {
-        if (initialData[key] !== undefined && key !== "image") {
+        if (
+          initialData[key] !== undefined &&
+          key !== "serviceImage" &&
+          key !== "image" &&
+          key !== "profilePhoto"
+        ) {
           populatedData[key] = initialData[key] || "";
         }
       });
@@ -31,7 +36,7 @@ const FormBuilder = ({
     } else {
       setFormData(initialFormState);
     }
-  }, [initialData]);
+  }, [initialData, fields]);
 
   const handleChange = (e) => {
     const { name, type, value, files } = e.target;
@@ -93,13 +98,13 @@ const FormBuilder = ({
   return (
     <div>
       <div className="mb-6">
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-sm lg:text-base">
           Fill in the information below to {initialData ? "update" : "create"}{" "}
           the item
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
         {fields.map((field) => (
           <div key={field.name}>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -114,9 +119,9 @@ const FormBuilder = ({
                 onChange={handleChange}
                 required={field.required}
                 disabled={disabled || isSubmitting}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 transition-colors"
+                className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 transition-colors text-sm lg:text-base"
               >
-                <option value="">-- Select --</option>
+                <option value="">-- Select {field.label} --</option>
                 {field.options?.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -132,12 +137,31 @@ const FormBuilder = ({
                 disabled={disabled || isSubmitting}
                 rows="4"
                 placeholder={field.placeholder || ""}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 transition-colors resize-none"
+                className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 transition-colors resize-none text-sm lg:text-base"
               />
             ) : field.type === "file" ? (
               <div className="space-y-3">
                 {/* Show current image if editing */}
-                {initialData?.image && (
+                {initialData?.serviceImage && (
+                  <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <img
+                      src={initialData.serviceImage || "/placeholder.svg"}
+                      alt="Current"
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">
+                        Current Image
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        Upload a new image to replace
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Show current image for other file types */}
+                {initialData?.image && field.name === "image" && (
                   <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <img
                       src={initialData.image || "/placeholder.svg"}
@@ -160,7 +184,11 @@ const FormBuilder = ({
                     type="file"
                     name={field.name}
                     onChange={handleChange}
-                    required={field.required && !initialData?.image}
+                    required={
+                      field.required &&
+                      !initialData?.serviceImage &&
+                      !initialData?.image
+                    }
                     disabled={disabled || isSubmitting}
                     accept={field.accept}
                     className="hidden"
@@ -168,11 +196,11 @@ const FormBuilder = ({
                   />
                   <label
                     htmlFor={field.name}
-                    className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors disabled:opacity-50"
+                    className="flex items-center justify-center w-full px-4 py-6 lg:py-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors disabled:opacity-50"
                   >
                     <div className="text-center">
                       <svg
-                        className="mx-auto h-12 w-12 text-gray-400 mb-4"
+                        className="mx-auto h-10 w-10 lg:h-12 lg:w-12 text-gray-400 mb-4"
                         stroke="currentColor"
                         fill="none"
                         viewBox="0 0 48 48"
@@ -184,13 +212,13 @@ const FormBuilder = ({
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm lg:text-base text-gray-600">
                         <span className="font-semibold text-blue-600">
                           Click to upload
                         </span>{" "}
                         or drag and drop
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs lg:text-sm text-gray-500 mt-1">
                         PNG, JPG, GIF up to 5MB
                       </p>
                     </div>
@@ -206,7 +234,7 @@ const FormBuilder = ({
                 required={field.required}
                 disabled={disabled || isSubmitting}
                 placeholder={field.placeholder || ""}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 transition-colors"
+                className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 transition-colors text-sm lg:text-base"
               />
             )}
 
@@ -237,7 +265,7 @@ const FormBuilder = ({
           <button
             type="submit"
             disabled={disabled || isSubmitting}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 lg:py-3 px-4 lg:px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl text-sm lg:text-base"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">

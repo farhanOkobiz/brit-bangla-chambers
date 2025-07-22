@@ -6,7 +6,6 @@ import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
 const ServiceForm = () => {
-  const useAxiosHook = useAxios;
   const [isLoading, setIsLoading] = useState(false);
   const [services, setServices] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -15,7 +14,10 @@ const ServiceForm = () => {
   const [editingService, setEditingService] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const fields = [
+  const useAxiosHook = useAxios;
+
+  // Dynamic fields that update based on available categories and subcategories
+  const getFields = () => [
     {
       name: "category",
       label: "Select Category",
@@ -36,7 +38,13 @@ const ServiceForm = () => {
         value: sub._id,
       })),
     },
-    { name: "title", label: "Service Title", type: "text", required: true },
+    {
+      name: "title",
+      label: "Service Title",
+      type: "text",
+      required: true,
+      placeholder: "Enter service title",
+    },
     {
       name: "description",
       label: "Description",
@@ -67,21 +75,27 @@ const ServiceForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await useAxiosHook("/category/get-all-categories", {
+      console.log("Fetching categories...");
+      const res = await useAxiosHook("/specialization/get-all-categories", {
         method: "GET",
       });
 
       if (res.ok) {
         console.log("Fetched categories:", res.data);
         setCategories(res.data || []);
+      } else {
+        console.error("Failed to fetch categories:", res.data);
+        alert("Failed to fetch categories. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
+      alert("Error fetching categories. Please check your connection.");
     }
   };
 
   const fetchSubcategories = async () => {
     try {
+      console.log("Fetching subcategories...");
       const res = await useAxiosHook("/sub-category/get-all-sub-categories", {
         method: "GET",
       });
@@ -89,15 +103,20 @@ const ServiceForm = () => {
       if (res.ok) {
         console.log("Fetched subcategories:", res.data);
         setSubcategories(res.data || []);
+      } else {
+        console.error("Failed to fetch subcategories:", res.data);
+        alert("Failed to fetch subcategories. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching subcategories:", error);
+      alert("Error fetching subcategories. Please check your connection.");
     }
   };
 
   const fetchServices = async () => {
     try {
       setLoadingServices(true);
+      console.log("Fetching services...");
       const res = await useAxiosHook("/service/get-all-service", {
         method: "GET",
       });
@@ -107,33 +126,66 @@ const ServiceForm = () => {
         setServices(res.data || []);
       } else {
         console.error("Failed to fetch services:", res.data);
+        alert("Failed to fetch services. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching services:", error);
+      alert("Failed to fetch services. Please check your connection.");
     } finally {
       setLoadingServices(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
-    fetchSubcategories();
-    fetchServices();
+    const fetchData = async () => {
+      console.log("Component mounted, fetching initial data...");
+      await Promise.all([
+        fetchCategories(),
+        fetchSubcategories(),
+        fetchServices(),
+      ]);
+    };
+
+    fetchData();
   }, []);
 
   const handleSubmit = async (formData) => {
     setIsLoading(true);
 
     try {
+      console.log("=== SERVICE SUBMISSION DEBUG ===");
       console.log("Submitting service data:");
       for (const pair of formData.entries()) {
-        console.log(pair[0] + ": ", pair[1]);
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      // Validate required fields
+      const requiredFields = [
+        "category",
+        "subcategory",
+        "title",
+        "description",
+        "status",
+      ];
+      const missingFields = [];
+
+      for (const field of requiredFields) {
+        if (!formData.get(field)) {
+          missingFields.push(field);
+        }
+      }
+
+      if (missingFields.length > 0) {
+        alert(`Please fill in required fields: ${missingFields.join(", ")}`);
+        return false;
       }
 
       const url = editingService
         ? `/service/update-service/${editingService._id}`
         : "/service/create-service";
       const method = editingService ? "PUT" : "POST";
+
+      console.log(`Making ${method} request to ${url}`);
 
       const res = await useAxiosHook(url, {
         method,
@@ -155,7 +207,9 @@ const ServiceForm = () => {
         return true;
       } else {
         console.error("Service submission failed:", res);
-        alert(res.data?.message || res.data?.error || "Something went wrong!");
+        const errorMessage =
+          res.data?.message || res.data?.error || "Something went wrong!";
+        alert(errorMessage);
         return false;
       }
     } catch (error) {
@@ -169,7 +223,23 @@ const ServiceForm = () => {
 
   const handleEdit = (service) => {
     console.log("Editing service:", service);
-    setEditingService(service);
+
+    // Transform service data for form
+    const transformedService = {
+      ...service,
+      // Handle populated vs non-populated category/subcategory
+      category:
+        typeof service.category === "object"
+          ? service.category._id
+          : service.category,
+      subcategory:
+        typeof service.subcategory === "object"
+          ? service.subcategory._id
+          : service.subcategory,
+    };
+
+    console.log("Transformed service for editing:", transformedService);
+    setEditingService(transformedService);
     setShowCreateForm(true);
   };
 
@@ -179,6 +249,7 @@ const ServiceForm = () => {
     }
 
     try {
+      console.log("Deleting service:", serviceId);
       const res = await useAxiosHook(`/service/delete-service/${serviceId}`, {
         method: "DELETE",
       });
@@ -187,7 +258,10 @@ const ServiceForm = () => {
         alert("Service deleted successfully!");
         await fetchServices();
       } else {
-        alert(res.data?.error || "Failed to delete service");
+        console.error("Delete failed:", res.data);
+        alert(
+          res.data?.error || res.data?.message || "Failed to delete service"
+        );
       }
     } catch (error) {
       console.error("Error deleting service:", error);
@@ -208,8 +282,6 @@ const ServiceForm = () => {
 
   const renderServiceItem = (item) => {
     console.log("Rendering service item:", item);
-    console.log("Available categories:", categories);
-    console.log("Available subcategories:", subcategories);
 
     // Handle both populated and non-populated data
     let categoryName = "Unknown Category";
@@ -225,7 +297,9 @@ const ServiceForm = () => {
         const foundCategory = categories.find(
           (cat) => cat._id === item.category
         );
-        categoryName = foundCategory ? foundCategory.name : "Unknown Category";
+        categoryName = foundCategory
+          ? foundCategory.name
+          : `Category ID: ${item.category}`;
       }
     }
 
@@ -241,12 +315,12 @@ const ServiceForm = () => {
         );
         subcategoryName = foundSubcategory
           ? foundSubcategory.name
-          : "Unknown Subcategory";
+          : `Subcategory ID: ${item.subcategory}`;
       }
     }
 
     return (
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
         {/* Image */}
         <div className="flex-shrink-0">
           {item.serviceImage ? (
@@ -264,12 +338,12 @@ const ServiceForm = () => {
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 truncate">
+          <h3 className="text-base lg:text-lg font-semibold text-gray-900 truncate">
             {item.title}
           </h3>
-          <div className="flex items-center space-x-4 mt-1">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1 space-y-1 sm:space-y-0">
             <p className="text-blue-600 text-sm font-medium">{categoryName}</p>
-            <span className="text-gray-400">•</span>
+            <span className="hidden sm:inline text-gray-400">•</span>
             <p className="text-green-600 text-sm font-medium">
               {subcategoryName}
             </p>
@@ -279,9 +353,9 @@ const ServiceForm = () => {
               {item.description}
             </p>
           )}
-          <div className="flex items-center space-x-4 mt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-2 space-y-1 sm:space-y-0">
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit ${
                 item.status === "active"
                   ? "bg-green-100 text-green-800"
                   : item.status === "inactive"
@@ -294,7 +368,8 @@ const ServiceForm = () => {
               {item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}
             </span>
             <p className="text-xs text-gray-400">
-              Created: {new Date(item.createdAt).toLocaleDateString()}
+              Created:{" "}
+              {new Date(item.createdAt || item.created_at).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -302,44 +377,67 @@ const ServiceForm = () => {
     );
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Services</h1>
-            <p className="text-gray-600 mt-1">Create and manage services</p>
-          </div>
+  // Show loading state if categories or subcategories are not loaded yet
+  if (categories.length === 0 || subcategories.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">
+            Loading categories and subcategories...
+          </p>
         </div>
       </div>
+    );
+  }
 
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Form Modal */}
-          <FormModal
-            title="Service"
-            fields={fields}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            editingItem={editingService}
-            onCancel={handleCancelEdit}
-            showForm={showCreateForm}
-            onToggleForm={handleToggleForm}
-            buttonText="Add Service"
-          />
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile spacing for fixed header */}
+      <div className="pt-16 lg:pt-0">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
+                Services
+              </h1>
+              <p className="text-gray-600 mt-1">Create and manage services</p>
+            </div>
+            <div className="text-sm text-gray-500">
+              Categories: {categories.length} | Subcategories:{" "}
+              {subcategories.length}
+            </div>
+          </div>
+        </div>
 
-          {/* Services List */}
-          <DataList
-            title="Services List"
-            data={services}
-            loading={loadingServices}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            renderItem={renderServiceItem}
-            emptyMessage="Create your first service to get started."
-            searchPlaceholder="Search services..."
-          />
+        <div className="p-4 lg:p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Form Modal */}
+            <FormModal
+              title="Service"
+              fields={getFields()}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              editingItem={editingService}
+              onCancel={handleCancelEdit}
+              showForm={showCreateForm}
+              onToggleForm={handleToggleForm}
+              buttonText="Add Service"
+            />
+
+            {/* Services List */}
+            <DataList
+              title="Services List"
+              data={services}
+              loading={loadingServices}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              renderItem={renderServiceItem}
+              emptyMessage="Create your first service to get started."
+              searchPlaceholder="Search services..."
+            />
+          </div>
         </div>
       </div>
     </div>

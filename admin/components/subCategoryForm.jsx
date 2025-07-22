@@ -6,14 +6,13 @@ import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
 const SubcategoryForm = () => {
+  const useAxiosHook = useAxios; // Ensure useAxios is called at the top level
   const [isLoading, setIsLoading] = useState(false);
   const [subcategories, setSubcategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loadingSubcategories, setLoadingSubcategories] = useState(true);
   const [editingSubcategory, setEditingSubcategory] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
-
-  const useAxiosHook = useAxios; // Ensure useAxios is called at the top level
 
   const fields = [
     {
@@ -40,7 +39,7 @@ const SubcategoryForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await useAxiosHook("/category/get-all-categories", {
+      const res = await useAxiosHook("/specialization/get-all-categories", {
         method: "GET",
       });
 
