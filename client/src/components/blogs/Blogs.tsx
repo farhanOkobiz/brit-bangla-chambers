@@ -19,19 +19,14 @@ function Blogs() {
       <div className="absolute inset-0 bg-white/90 bg-opacity-60" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl w-full px-4 mx-auto text-center">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-700 uppercase">
+      <div className="relative z-10 w-full px-4 mx-auto text-center">
+        <h3 className="text-xl md:text-2xl font-bold mb-4 text-gray-700 uppercase">
           our blog
-        </h2>
+        </h3>
 
-        <p className="text-lg text-gray-300 mb-4 uppercase tracking-wider">
-          <Link
-            href="#"
-            className="text-4xl md:text-5xl font-bold text-gray-900 transition duration-300 ease-in-out"
-          >
-            Recent Articles
-          </Link>
-        </p>
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Recent Articles
+        </h2>
 
         <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
 

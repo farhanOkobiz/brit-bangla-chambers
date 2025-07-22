@@ -12,6 +12,8 @@ import Blogs from "../pages/blog/Blogs";
 import CreateBlog from "../pages/blog/CreateBlog";
 import ContactMessage from "../components/message/ContactMessage";
 import RequestMessage from "../components/message/RequestMessage";
+import EditBlog from "../pages/blog/EditBlog";
+import AdvocateMessage from "../components/message/AdvocateMessage";
 
 export default function App() {
   return (
@@ -39,6 +41,7 @@ export default function App() {
           <Route path="dashboard" element={<AdvocateDashboard />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
+          <Route path="dashboard/message" element={<AdvocateMessage />} />
         </Route>
 
         {/* Fallback Route */}
@@ -55,6 +58,10 @@ export default function App() {
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
+          <Route path="dashboard/blogs" element={<Blogs />} />
+          <Route path="dashboard/create-blog" element={<CreateBlog />} />
+          <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
+
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

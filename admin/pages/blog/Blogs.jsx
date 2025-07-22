@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { useAxios } from "../../services/useAxios";
+import Swal from "sweetalert2";
 
 const BASE_URL = "http://localhost:5000/api/v1";
 
@@ -9,7 +10,6 @@ function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -30,22 +30,31 @@ function Blogs() {
   }, []);
 
   const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!confirm.isConfirmed) return;
+
     try {
-      const res = await useAxios(`${BASE_URL}/blog/delete/${id}`, {
+      const res = await useAxios(`/blog/delete-blog/${id}`, {
         method: "DELETE",
       });
 
       if (!res.ok) throw new Error("Failed to delete");
 
       setBlogs((prev) => prev.filter((b) => b._id !== id));
-      alert("Blog deleted successfully");
-    } catch (error) {
-      alert("Error deleting blog: " + error.message);
-    }
-  };
 
-  const handleEdit = (id) => {
-    navigate(`/edit-blog/${id}`);
+      Swal.fire("Deleted!", "Blog has been deleted.", "success");
+    } catch (error) {
+      Swal.fire("Error!", `Error deleting blog: ${error.message}`, "error");
+    }
   };
 
   if (loading) return <div>Loading blogs...</div>;
@@ -87,13 +96,14 @@ function Blogs() {
 
                 {/* Edit/Delete Icons on top-right */}
                 <div className="absolute top-2 right-2 flex gap-2 z-10">
-                  <button
-                    onClick={() => handleEdit(blog._id)}
+                  <Link
+                    to={`edit-blog/${blog._id}`}
                     title="Edit"
                     className="p-1 rounded-full shadow text-blue-600 cursor-pointer"
                   >
                     <FiEdit size={18} />
-                  </button>
+                  </Link>
+
                   <button
                     onClick={() => handleDelete(blog._id)}
                     title="Delete"
@@ -107,8 +117,7 @@ function Blogs() {
               {/* Blog Content */}
               <div className="p-6 text-gray-800 text-left">
                 <p className="text-sm text-gray-500 mb-2">
-                  By <span className="font-semibold">{blog.author_model}</span>{" "}
-                  ·{" "}
+                  By <span className="font-semibold">{blog.author_model}</span>
                   {new Date(blog.createdAt).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
