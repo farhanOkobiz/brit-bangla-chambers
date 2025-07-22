@@ -3,12 +3,12 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-// Define __filename and __dirname manually
+// Manually define __dirname in ES Module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, "..", "uploads");
+// Create uploads folder in project root (not in src)
+const uploadDir = path.join(__dirname, "..", "..", "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -25,28 +25,20 @@ const storage = multer.diskStorage({
   },
 });
 
-// File type filter
+// Allow only image files
 const imageFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|webp|gif|avif/;
-  const mimeType = allowedTypes.test(file.mimetype);
-  const extName = allowedTypes.test(
-    path.extname(file.originalname).toLowerCase()
-  );
-
-  if (mimeType && extName) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed!"));
-  }
+  const allowed = /jpeg|jpg|png|webp|gif/;
+  const isValidType =
+    allowed.test(file.mimetype) &&
+    allowed.test(path.extname(file.originalname).toLowerCase());
+  isValidType ? cb(null, true) : cb(new Error("Only image files are allowed!"));
 };
 
-// Multer upload instance
+// Export multer upload middleware
 const upload = multer({
   storage,
   fileFilter: imageFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-  },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
 export default upload;

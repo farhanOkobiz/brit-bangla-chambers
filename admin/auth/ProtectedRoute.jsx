@@ -9,9 +9,9 @@ export default function ProtectedRoute({ children, requiredRole }) {
   useEffect(() => {
     if (!loading) {
       if (!authed) {
-        navigate('/login');
+        navigate("/login");
       } else if (requiredRole && role !== requiredRole) {
-        navigate('/unauthorized'); // or 403 page
+        navigate("/unauthorized"); // or 403 page
       }
     }
   }, [loading, authed, role, requiredRole, navigate]);
