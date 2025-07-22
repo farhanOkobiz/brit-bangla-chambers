@@ -4,11 +4,49 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import Language from "../models/languageSchema.js";
+import Specialization from "../models/specializationSchema.js";
+import Education from "../models/educationSchema.js";
+import Certification from "../models/certificationSchema.js";
+import BarMembership from "../models/barSchema.js";
+import Testimonial from "../models/testimonialSchema.js";
+import CaseHistory from "../models/caseHistory.js";
+import Document from "../models/documentSchema.js";
 
 // ESM-compatible __dirname setup
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadPath = path.join(__dirname, "..", "uploads");
+
+
+export const showAdvocate = async (req, res) => {
+    try {
+        const user_id = req.user._id;
+        // Get basic user data (excluding password)
+        const user = await User.findById(user_id).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "Advocate not found" });
+        }
+        // Get advocate profile with all referenced fields populated
+        const advocate = await Advocate.findOne({ user_id })
+          .populate("user_id", "-password")
+          .populate("language_ids")
+          .populate("specialization_ids")
+          .populate("education_ids")
+          .populate("certification_ids")
+          .populate("bar_membership_ids")
+          .populate("testimonial_ids")
+          .populate("case_history_ids")
+          .populate("document_ids");
+        if (!advocate) {
+            return res.status(404).json({ message: "Advocate profile not found" });
+        }
+        // Return combined profile
+        res.status(200).json({ advocate });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
 
 // Get all advocates
 export const showAllAdvocates = async (req, res) => {
@@ -45,7 +83,16 @@ export const showAdvocateByUserId = async (req, res) => {
 export const showAdvocateById = async (req, res) => {
   try {
     const advocate_id = req.params.id;
-    const advocate = await Advocate.findById(advocate_id).populate("user_id", "-password");
+    const advocate = await Advocate.findById(advocate_id)
+      .populate("user_id", "-password")
+      .populate("language_ids")
+      .populate("specialization_ids")
+      .populate("education_ids")
+      .populate("certification_ids")
+      .populate("bar_membership_ids")
+      .populate("testimonial_ids")
+      .populate("case_history_ids")
+      .populate("document_ids");
     if (!advocate) {
       return res.status(404).json({ message: "Advocate not found" });
     }

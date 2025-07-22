@@ -4,7 +4,16 @@ const { Schema, model, Types } = mongoose;
 
 const EducationSchema = new Schema(
   {
-    advocate_id: { type: Types.ObjectId, ref: "Advocate", required: true },
+    user_type: {
+      type: String,
+      enum: ['Advocate', 'Client'],
+      required: true,
+    },
+    user_id: {
+      type: Types.ObjectId,
+      required: true,
+      refPath: 'user_type', // dynamic ref
+    },
     degree: { type: String, required: true },
     institute: { type: String, required: true },
     year: { type: Number, required: true },

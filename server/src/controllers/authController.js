@@ -124,7 +124,7 @@ export const refresh = async (req, res) => {
     if (!user) return res.status(401).json({ message: "User not found" });
 
     const token = jwt.sign({ id: payload.id, role: user.role }, JWT_SECRET, {
-      expiresIn: "1m",
+      expiresIn: "30m",
     });
     // Issue a new refresh token with a new 30-day expiration
     const newRefreshToken = jwt.sign(

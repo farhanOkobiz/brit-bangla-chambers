@@ -29,8 +29,8 @@ const AdvocateSchema = new Schema(
       linkedin: { type: String },
     },
 
-    language_ids: [{ type: Types.ObjectId, ref: "Language" }],
-    specialization_ids: [{ type: Types.ObjectId, ref: "Specialization" }],
+    language_ids: [{ type: Types.ObjectId, ref: "Language" }],  //settings
+    specialization_ids: [{ type: Types.ObjectId, ref: "Specialization" }], //settings
     education_ids: [{ type: Types.ObjectId, ref: "Education" }],
     certification_ids: [{ type: Types.ObjectId, ref: "Certification" }],
     bar_membership_ids: [{ type: Types.ObjectId, ref: "BarMembership" }],

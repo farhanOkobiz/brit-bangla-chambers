@@ -5,13 +5,15 @@ import {
   showAdvocateById,
   createAdvocateProfile,
   updateAdvocateProfile,
-  deleteAdvocateProfile
+  deleteAdvocateProfile,
+  showAdvocate,
 } from "../../controllers/advocateController.js";
 import upload from "../../middleware/multerMiddleware.js";
-import { checkAdmin, protect } from "../../middleware/authMiddleware.js";
+import { checkAdmin, checkAdvocate, protect } from "../../middleware/authMiddleware.js";
 
 const router = Router();
-
+//Get individual advocate profile
+router.get("/profile", checkAdvocate, showAdvocate);
 // Get all advocates
 router.get("/all", checkAdmin, showAllAdvocates);
 
