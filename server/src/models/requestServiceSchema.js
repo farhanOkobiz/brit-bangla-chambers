@@ -4,21 +4,33 @@ const { Schema, model } = mongoose;
 
 const requestServiceSchema = new Schema(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    nid: { type: String, required: true },
-    presentAddress: { type: String, required: true },
-    permanentAddress: { type: String, required: true },
-    issueType: {
-      type: String,
-      required: true,
+    userMessage: {
+      name: String,
+      email: String,
+      phone: String,
+      nid: String,
+      presentAddress: String,
+      permanentAddress: String,
+      issueType: String,
+      message: String,
+      createdAt: { type: Date, default: Date.now },
     },
-    message: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ["pending", "sent_to_advocate", "accepted", "rejected"],
+      default: "pending",
+    },
+    adminForwarded: {
+      type: Boolean,
+      default: false,
+    },
+    forwardedTo: {
+      type: Schema.Types.ObjectId,
+      ref: "Advocate",
+      default: null,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default model("RequestService", requestServiceSchema);

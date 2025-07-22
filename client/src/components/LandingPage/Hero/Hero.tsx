@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function HeroSection() {
   return (
     <section
@@ -8,16 +10,22 @@ export function HeroSection() {
     >
       <div className="absolute inset-0 bg-[#3c2c2c] opacity-80"></div>
 
-      <div className="relative z-10 text-center px-4">
+      <div className="relative z-10 text-center px-4 md:px-8">
         <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-8">
-          We Provide Finance Law
+          Empowering Brit-Bangla chamber
         </h1>
         <p className="text-md md:text-lg mb-3 md:mb-6">
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+          Dedicated to providing expert legal solutions for the Brit-Bangla
+          community, we specialize in immigration,{" "}
+          <br className=" hidden lg:block" /> business, and civil law to protect
+          your rights and secure justice.
         </p>
-        <button className="bg-[#5e3030] text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer">
+        <Link
+          href="/about"
+          className="bg-[#5e3030] text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer"
+        >
           Learn More
-        </button>
+        </Link>
       </div>
     </section>
   );

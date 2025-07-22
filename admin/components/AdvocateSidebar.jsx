@@ -5,6 +5,7 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 const menuItems = [
   { label: "Dashboard", path: "/advocate/dashboard" },
+  { label: "Message", path: "/advocate/dashboard/message" },
   { label: "My Cases", path: "/advocate/cases" },
   { label: "Appointments", path: "/advocate/appointments" },
   { label: "Clients", path: "/advocate/clients" },

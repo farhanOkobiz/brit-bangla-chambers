@@ -36,6 +36,14 @@ const menuItems = [
       { label: "Service Requests", path: "/admin/messages/service" },
     ],
   },
+  {
+    label: "Blogs",
+    isDropdown: true,
+    subItems: [
+      { label: "All Blogs", path: "/admin/dashboard/blogs" },
+      { label: "Create Blog", path: "/admin/dashboard/create-blog" },
+    ],
+  },
   { label: "Settings", path: "/admin/settings", icon: <FaCogs /> },
 ];
 
@@ -141,16 +149,13 @@ const AdminSidebar = () => {
                   <div key={item.label}>
                     <button
                       onClick={() => toggleDropdown(item.label)}
-                      className={`w-full text-left px-4 py-3 flex justify-between items-center rounded-xl text-base font-medium transition-all duration-200 ${
+                      className={`w-full text-left px-3 py-2 flex justify-between items-center rounded-lg text-sm font-medium cursor-pointer ${
                         openDropdown === item.label
                           ? "bg-blue-50 text-blue-600 shadow-sm"
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      <div className="flex items-center space-x-3">
-                        <span className="text-lg">{item.icon}</span>
-                        <span>{item.label}</span>
-                      </div>
+                      <span className="text-blue-700">{item.label}</span>
                       {openDropdown === item.label ? (
                         <FiChevronUp className="text-lg" />
                       ) : (
