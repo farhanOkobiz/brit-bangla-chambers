@@ -12,6 +12,7 @@ import Blogs from "../pages/blog/Blogs";
 import CreateBlog from "../pages/blog/CreateBlog";
 import ContactMessage from "../components/message/ContactMessage";
 import RequestMessage from "../components/message/RequestMessage";
+import Users from "../pages/Admin/Users";
 import ServiceForm from "../components/ServiceForm";
 import AdvocateManagement from "../components/AdvocateManagement";
 
@@ -51,6 +52,10 @@ export default function App() {
           <Route path="advocates" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
+          <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="users" element= { <Users/> } />
+          {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />
       </Routes>

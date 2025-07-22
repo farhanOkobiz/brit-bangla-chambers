@@ -61,7 +61,6 @@ const AdvocateSchema = new Schema(
     },
 
     featured: { type: Boolean, default: false },
-    verified_by_admin: { type: Boolean, default: false },
   },
   {
     timestamps: true,
