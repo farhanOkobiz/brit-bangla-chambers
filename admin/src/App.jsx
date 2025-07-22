@@ -12,6 +12,8 @@ import Blogs from "../pages/blog/Blogs";
 import CreateBlog from "../pages/blog/CreateBlog";
 import ContactMessage from "../components/message/ContactMessage";
 import RequestMessage from "../components/message/RequestMessage";
+import ServiceForm from "../components/ServiceForm";
+import AdvocateManagement from "../components/AdvocateManagement";
 
 export default function App() {
   return (
@@ -20,14 +22,6 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        /> */}
         <Route
           path="/advocate"
           element={
@@ -41,7 +35,7 @@ export default function App() {
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
         </Route>
 
-        {/* Fallback Route */}
+        {/* Admin Routes */}
         <Route
           path="/admin"
           element={
@@ -53,9 +47,10 @@ export default function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="categories" element={<CategoryForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="services" element={<ServiceForm />} />
+          <Route path="advocates" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
-          {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />
       </Routes>

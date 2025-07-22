@@ -54,8 +54,24 @@ const deleteImage = (imageURL) => {
 export const createService = async (req, res) => {
   try {
     ensureUploadDirExists();
-    const { category, subcategory, title, description, created_by, status } =
-      req.body;
+
+    // Log the authenticated user for debugging
+    console.log("Authenticated user:", req.user);
+
+    const { category, subcategory, title, description, status } = req.body;
+
+    // Validate required fields
+    if (!category || !subcategory || !title || !description) {
+      return res.status(400).json({
+        message: "Missing required fields",
+        required: ["category", "subcategory", "title", "description"],
+      });
+    }
+
+    // Check if user is authenticated
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
 
     const imagePath = req.file
       ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
@@ -66,27 +82,42 @@ export const createService = async (req, res) => {
       subcategory,
       title,
       description,
-      created_by,
+      created_by: req.user._id, // Get from authenticated user
       serviceImage: imagePath,
-      status,
+      status: status || "active", // Default to active if not provided
     });
 
-    res.status(201).json({ message: "Service created", data: service });
+    console.log("Service created successfully:", service);
+
+    res.status(201).json({
+      message: "Service created successfully",
+      data: service,
+    });
   } catch (err) {
+    console.error("Service creation error:", err);
+
     // Cleanup uploaded file on error
     if (req.file) {
       deleteImage(
         `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
       );
     }
-    res.status(500).json({ message: "Create failed", error: err.message });
+
+    res.status(500).json({
+      message: "Create failed",
+      error: err.message,
+    });
   }
 };
 
 // Get All Services
 export const getAllServices = async (req, res) => {
   try {
-    const services = await Service.find().sort({ createdAt: -1 });
+    const services = await Service.find()
+      .populate("created_by", "full_name email role")
+      .populate("category", "name")
+      .populate("subcategory", "name")
+      .sort({ createdAt: -1 });
     res.json(services);
   } catch (err) {
     res.status(500).json({ message: "Fetch failed", error: err.message });
@@ -96,7 +127,10 @@ export const getAllServices = async (req, res) => {
 // Get Service By ID
 export const getServiceById = async (req, res) => {
   try {
-    const service = await Service.findById(req.params.id);
+    const service = await Service.findById(req.params.id)
+      .populate("created_by", "full_name email role")
+      .populate("category", "name")
+      .populate("subcategory", "name");
     if (!service) return res.status(404).json({ message: "Not found" });
     res.json(service);
   } catch (err) {
@@ -114,6 +148,11 @@ export const updateService = async (req, res) => {
 
     const service = await Service.findById(req.params.id);
     if (!service) return res.status(404).json({ message: "Not found" });
+
+    // Check if user is authenticated
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
 
     // Store old image for potential cleanup
     const oldImageURL = service.serviceImage;
@@ -138,7 +177,7 @@ export const updateService = async (req, res) => {
       deleteImage(oldImageURL);
     }
 
-    res.json({ message: "Service updated", data: updated });
+    res.json({ message: "Service updated successfully", data: updated });
   } catch (err) {
     // Cleanup new uploaded file on error
     if (newImageFilename) {
@@ -155,13 +194,18 @@ export const deleteService = async (req, res) => {
     const service = await Service.findById(req.params.id);
     if (!service) return res.status(404).json({ message: "Not found" });
 
+    // Check if user is authenticated
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
     // Delete associated image
     if (service.serviceImage) {
       deleteImage(service.serviceImage);
     }
 
     await Service.findByIdAndDelete(req.params.id);
-    res.json({ message: "Service deleted" });
+    res.json({ message: "Service deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Delete failed", error: err.message });
   }

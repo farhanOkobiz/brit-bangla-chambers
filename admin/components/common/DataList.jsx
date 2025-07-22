@@ -15,12 +15,16 @@ const DataList = ({
   showSearch = true,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  console.log("DataList rendered with data:", data);
 
   const filteredData = data.filter(
     (item) =>
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.details?.toLowerCase().includes(searchTerm.toLowerCase())
+      item.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description?.toLowerCase().includes(searchTerm.toLowerCase()) 
   );
+  console.log("filteredData : ", filteredData)
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
