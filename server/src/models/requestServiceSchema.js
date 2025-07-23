@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const { Schema, model } = mongoose;
 
 const requestServiceSchema = new Schema(
@@ -11,11 +10,7 @@ const requestServiceSchema = new Schema(
       nid: String,
       presentAddress: String,
       permanentAddress: String,
-      issueType: {
-        type: mongoose.Types.ObjectId,
-        ref: "Specialization",
-        default: null,
-      },
+      issueType: String,
       message: String,
       createdAt: { type: Date, default: Date.now },
     },
@@ -29,12 +24,14 @@ const requestServiceSchema = new Schema(
       default: false,
     },
     forwardedTo: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Advocate",
       default: null,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export default model("RequestService", requestServiceSchema);

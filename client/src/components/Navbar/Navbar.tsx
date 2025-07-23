@@ -31,7 +31,7 @@ export function Navbar({ user }: NavbarProps) {
     { href: "/services", label: "Services" },
     { href: "/help-center", label: "Help center" },
     { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/request-for-service", label: "Request for service" },
   ];
 
   const handleLogout = () => {

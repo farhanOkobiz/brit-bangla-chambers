@@ -1,8 +1,10 @@
 import { apiFetch } from "@/api/apiFetch";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 function RequestServiceForm() {
+  const [specialization, setSpecialization] = useState([]);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -59,6 +61,15 @@ function RequestServiceForm() {
       toast.warning("Error submitting the form. Please try again.");
     }
   };
+
+  useEffect(() => {
+    async function fetchSpecialization() {
+      const res = await apiFetch("/specialization/get-all-specialization");
+      setSpecialization(res?.data);
+    }
+
+    fetchSpecialization();
+  }, []);
 
   return (
     <div>
@@ -139,12 +150,12 @@ function RequestServiceForm() {
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
           >
             <option value="">Select Issue Type</option>
-            <option value="criminal">Criminal</option>
-            <option value="family">Family</option>
-            <option value="property">Property</option>
-            <option value="immigration">Immigration</option>
-            <option value="business">Business</option>
-            <option value="other">Other</option>
+            {specialization?.map((item) => (
+              <option key={item._id} value={item.name}>
+                {item.name}
+              </option>
+            ))}
+            <option value="idonotknow">I do not know</option>
           </select>
         </div>
 
