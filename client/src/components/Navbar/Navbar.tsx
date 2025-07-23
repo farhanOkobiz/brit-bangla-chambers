@@ -82,11 +82,7 @@ function Navbar() {
             <Link
               key={item.href}
               href={item.href}
-<<<<<<< HEAD
               className="text-md font-medium transition-colors  hover:text-primary hover:bg-gray-300 px-3 py-2 rounded"
-=======
-              className="font-medium transition-colors py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white"
->>>>>>> raihan
             >
               {item.label}
             </Link>
@@ -105,7 +101,6 @@ function Navbar() {
                   size="icon"
                   className="rounded-full  hover:bg-muted"
                 >
-<<<<<<< HEAD
                   {data.avatar ? (
                     <Image
                       src={"#"} // Replace with actual avatar URL
@@ -121,12 +116,6 @@ function Navbar() {
                     </div>
                     </>
                   )}
-=======
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
-                    {user.name}
-                  </span>
->>>>>>> raihan
                 </Button>
             
               </DropdownMenuTrigger>
@@ -161,7 +150,6 @@ function Navbar() {
             
            
           ) : (
-<<<<<<< HEAD
             <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
@@ -174,19 +162,6 @@ function Navbar() {
               <Button size="sm" asChild className="hover:bg-muted">
                 <Link href="/signup">Sign Up</Link>
               </Button>
-=======
-            <div className="flex items-center">
-              <button className="py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
-                <Link className="" href="/login">
-                  Login
-                </Link>
-              </button>
-              <button className="py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
-                <Link className="" href="/signup">
-                  Sign Up
-                </Link>
-              </button>
->>>>>>> raihan
             </div>
           )}
 
@@ -207,12 +182,7 @@ function Navbar() {
                   <Link
                     key={item.href}
                     href={item.href}
-<<<<<<< HEAD
                     className="text-lg font-medium transition-colors hover:text-primary hover:bg-muted px-2 py-1 rounded"
-=======
-                    className="text-lg font-medium transition-colors py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white "
-                    onClick={() => setIsOpen(false)}
->>>>>>> raihan
                   >
                     {item.label}
                   </Link>

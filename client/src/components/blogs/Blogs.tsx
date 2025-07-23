@@ -39,11 +39,7 @@ function Blogs() {
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
                 <Image
-<<<<<<< HEAD
-                  src={blog.image?.trim() || "/fallback.jpg"}
-=======
                   src={`${imageUrl}${blog.image}`}
->>>>>>> raihan
                   alt={blog.title}
                   width={800}
                   height={224}
