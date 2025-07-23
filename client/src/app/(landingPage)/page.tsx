@@ -19,7 +19,7 @@ export default function Home() {
       <Advocates />
       <WhyChooseUs />
       <StatsAndGrowth />
-      <Blogs />
+      {/* <Blogs /> */}
       <ContactUs />
       <Faq />
     </div>
