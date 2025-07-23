@@ -206,18 +206,20 @@ const AdvocateForm = () => {
   const fetchAdvocates = async () => {
     try {
       setLoadingAdvocates(true);
-       const res = await useAxios("/advocate/all", {
-        method: "GET"}); // Moved useAxios call here to ensure it's at the top level
-      
+      console.log("Fetching advocates...");
+      const axiosInstance = useAxios(); // Moved useAxios call here
+      const res = await axiosInstance.get("/advocate/all");
 
       if (res.ok) {
         console.log("Fetched advocates:", res.data);
         setAdvocates(res.data || []);
       } else {
         console.error("Failed to fetch advocates:", res.data);
+        alert("Failed to fetch advocates. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching advocates:", error);
+      alert("Error fetching advocates. Please check your connection.");
     } finally {
       setLoadingAdvocates(false);
     }
@@ -231,14 +233,18 @@ const AdvocateForm = () => {
     setIsLoading(true);
 
     try {
-      console.log("=== FORM SUBMISSION DEBUG ===");
+      console.log("=== ADVOCATE SUBMISSION DEBUG ===");
       console.log("FormData entries:");
       for (const pair of formData.entries()) {
         console.log(`${pair[0]}: ${pair[1]}`);
       }
 
       // Validate required fields before sending
-      const requiredFields = ["full_name", "email", "phone", "password"];
+      const requiredFields = ["full_name", "email", "phone", "status"];
+      if (!editingAdvocate) {
+        requiredFields.push("password");
+      }
+
       const missingFields = [];
 
       for (const field of requiredFields) {
@@ -327,9 +333,10 @@ const AdvocateForm = () => {
         ? `/advocate/update/${editingAdvocate._id}`
         : "/advocate/create";
       const method = editingAdvocate ? "PUT" : "POST";
+      const axiosInstance = useAxios(); // Moved useAxios call here
 
-      // Moved useAxios call here to ensure it's at the top level
-      const res = await useAxios(url, {
+      const res = await axiosInstance.request({
+        url,
         method,
         data: transformedData,
       });
@@ -409,10 +416,8 @@ const AdvocateForm = () => {
     }
 
     try {
-       // Moved useAxios call here to ensure it's at the top level
-      const res = await useAxios(`/advocate/profile/${advocateId}`, {
-        method: "DELETE",
-      });
+      const axiosInstance = useAxios(); // Moved useAxios call here
+      const res = await axiosInstance.delete(`/advocate/profile/${advocateId}`);
 
       if (res.ok) {
         alert("Advocate deleted successfully!");
@@ -524,44 +529,52 @@ const AdvocateForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Advocates</h1>
-            <p className="text-gray-600 mt-1">
-              Create and manage advocate profiles
-            </p>
+      {/* Mobile spacing for fixed header */}
+      <div className="pt-16 lg:pt-0">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
+                Advocates
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Create and manage advocate profiles
+              </p>
+            </div>
+            <div className="text-sm text-gray-500">
+              Total: {advocates.length}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Form Modal */}
-          <FormModal
-            title="Advocate"
-            fields={fields}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            editingItem={editingAdvocate}
-            onCancel={handleCancelEdit}
-            showForm={showCreateForm}
-            onToggleForm={handleToggleForm}
-            buttonText="Add Advocate"
-          />
+        <div className="p-4 lg:p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Form Modal */}
+            <FormModal
+              title="Advocate"
+              fields={fields}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              editingItem={editingAdvocate}
+              onCancel={handleCancelEdit}
+              showForm={showCreateForm}
+              onToggleForm={handleToggleForm}
+              buttonText="Add Advocate"
+            />
 
-          {/* Advocates List */}
-          <DataList
-            title="Advocates List"
-            data={advocates}
-            loading={loadingAdvocates}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            renderItem={renderAdvocateItem}
-            emptyMessage="Create your first advocate profile to get started."
-            searchPlaceholder="Search advocates..."
-          />
+            {/* Advocates List */}
+            <DataList
+              title="Advocates List"
+              data={advocates}
+              loading={loadingAdvocates}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              renderItem={renderAdvocateItem}
+              emptyMessage="Create your first advocate profile to get started."
+              searchPlaceholder="Search advocates..."
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useAxios } from '../services/useAxios';
 export async function checkAuth() {
   const res = await useAxios('/auth/check');
   if (res.ok && res.data) {
-    return { ok: true, role: res.data.role }; 
+    return { ok: true, role: res.data.role , userName: res.data.userName || null }; 
   }
   return { ok: false, role: null };
 }

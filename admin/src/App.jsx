@@ -17,7 +17,9 @@ import ServiceForm from "../components/ServiceForm";
 import AdvocateForm from "../components/AdvocateForm";
 import EditBlog from "../pages/blog/EditBlog";
 import AdvocateMessage from "../components/message/AdvocateMessage";
+import AdvocateManagement from "../components/AdvocateManagement";
 
+import AdvocateProfile from "../components/Advocate/AdvocateProfile";
 export default function App() {
   return (
     <BrowserRouter>
@@ -33,6 +35,7 @@ export default function App() {
             </ProtectedRoute>
           }
         >
+          <Route path="/advocate/profile" element={<AdvocateProfile />} />
           <Route path="dashboard" element={<AdvocateDashboard />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
@@ -53,6 +56,7 @@ export default function App() {
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="services" element={<ServiceForm />} />
           <Route path="advocates" element={<AdvocateForm />} />
+          <Route path="advocates/management" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
           <Route path="users" element={<Users />} />

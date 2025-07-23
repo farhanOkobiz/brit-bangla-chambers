@@ -5,13 +5,16 @@ import {
   showAdvocateById,
   createAdvocateProfile,
   updateAdvocateProfile,
-  deleteAdvocateProfile
+  deleteAdvocateProfile,
+  showAdvocate,
 } from "../../controllers/advocateController.js";
 import upload from "../../middleware/multerMiddleware.js";
-import { checkAdmin, protect } from "../../middleware/authMiddleware.js";
+import { checkAdmin, checkAdvocate, protect } from "../../middleware/authMiddleware.js";
+import { addCertificationToAdvocate } from '../../controllers/certificationController.js';
 
 const router = Router();
-
+//Get individual advocate profile
+router.get("/profile", checkAdvocate, showAdvocate);
 // Get all advocates
 router.get("/all", checkAdmin, showAllAdvocates);
 
@@ -29,6 +32,8 @@ router.put("/update/:id", protect(["admin", "advocate"]), upload.single("profile
 
 // Delete advocate profile
 router.delete("/profile/:id", checkAdmin, deleteAdvocateProfile);
+
+router.post('/certification/:advocateId', addCertificationToAdvocate);
 
 export default router;
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   FaBars,
@@ -14,6 +12,8 @@ import {
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { useAxios } from "../services/useAxios";
+import { useAuth } from "../auth/AuthContext";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
@@ -25,7 +25,15 @@ const menuItems = [
     icon: <FaFolderOpen />,
   },
   { label: "Services", path: "/admin/services", icon: <FaCogs /> },
-  { label: "Advocates", path: "/admin/advocates", icon: <FaGavel /> },
+  {
+    label: "Advocates",
+    isDropdown: true,
+    icon: <FaGavel />,
+    subItems: [
+      { label: "Manage Advocates", path: "/admin/advocates" },
+      { label: "Advocate Approvals", path: "/admin/advocates/management" },
+    ],
+  },
   { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
   {
     label: "Messages",
@@ -51,6 +59,7 @@ const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
+  const { userName, setAuthed , authed } = useAuth();
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -303,20 +312,30 @@ const AdminSidebar = () => {
           {/* Desktop User Profile */}
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-              <img
+              {/* <img
                 className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
                 src="/placeholder.svg?height=32&width=32"
                 alt="Admin"
-              />
+              /> */}
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-gray-800 truncate">
-                  Admin User
+                  {userName || "Admin User"}
                 </h3>
-                <p className="text-xs text-gray-600 truncate">
-                  admin@example.com
-                </p>
+              
               </div>
-              <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+              <button
+                className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                onClick={async () => {
+                  try {
+                    const res = await useAxios("/auth/logout", { method: "POST" });
+                    if (res.ok) {
+                      window.location.href = "/login";
+                    }
+                  } catch (err) {
+                    alert("Logout failed");
+                  }
+                }}
+              >
                 <FaSignOutAlt className="h-4 w-4" />
               </button>
             </div>

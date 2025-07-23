@@ -4,14 +4,20 @@ const { Schema, model, Types } = mongoose;
 
 const DocumentSchema = new Schema(
   {
-    advocate_id: { type: Types.ObjectId, ref: 'Advocate', required: true },
-    type: {
+    user_type: {
       type: String,
+      enum: ['Advocate', 'Client'],
       required: true,
-      enum: ['nid', 'bar_certificate', 'gown_photo'],
+    },
+    user_id: {
+      type: Types.ObjectId,
+      required: true,
+      refPath: 'user_type', // Dynamic reference
     },
     file_url: { type: String, required: true },
-    verified: { type: Boolean, default: false },
+    file_name: { type: String }, // Optional: actual name or title of document
+    document_type: { type: String }, // Optional: e.g. "NID", "Enrollment Certificate", "Case File"
+    verified: { type: Boolean, default: true },
     uploaded_at: { type: Date, default: Date.now },
   },
   {
