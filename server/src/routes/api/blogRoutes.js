@@ -6,13 +6,14 @@ import {
   getBlogById,
   updateBlog,
 } from "../../controllers/blogController.js";
+import upload from "../../middleware/multerMiddleware.js";
 
 const router = Router();
 
-router.post("/create-blog", createBlog);
+router.post("/create-blog", upload.single("image"), createBlog);
 router.get("/get-all-blog", getAllBlogs);
 router.get("/get-single-blog/:id", getBlogById);
-router.put("/edit-blog/:id", updateBlog);
+router.put("/edit-blog/:id", upload.single("image"), updateBlog);
 router.delete("/delete-blog/:id", deleteBlog);
 
 export default router;

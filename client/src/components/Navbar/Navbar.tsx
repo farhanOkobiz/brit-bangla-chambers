@@ -63,7 +63,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className=" sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
       <div className="container flex h-20 items-center justify-between mx-auto">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
@@ -77,7 +77,7 @@ function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden md:flex items-center">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -177,7 +177,7 @@ function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
-              <div className="flex flex-col space-y-4 mt-8">
+              <div className="flex flex-col mt-8">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}

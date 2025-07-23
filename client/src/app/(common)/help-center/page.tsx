@@ -54,14 +54,6 @@ export default function HelpCenterPage() {
           </div>
         ))}
       </div>
-      <div className="text-center mt-6 md:mt-8 lg:mt-12">
-        <Link
-          href="/contact"
-          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800"
-        >
-          Contact Support
-        </Link>
-      </div>
     </section>
   );
 }
