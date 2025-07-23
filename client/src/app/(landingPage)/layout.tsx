@@ -31,7 +31,6 @@ export default function RootLayout({
       <ReduxProvider>
         <Navbar user={user} />
         {children}
-        <Footer />
       </ReduxProvider>
     </div>
   );

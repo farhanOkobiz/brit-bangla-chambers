@@ -7,6 +7,7 @@ import subCategoryRoutes from "./api/subCategoryRoutes.js";
 import blogRoutes from "./api/blogRoutes.js";
 import contactUsRoutes from "./api/contactUsRoutes.js";
 import requestServiceRoutes from "./api/requestServiceRoutes.js";
+import advocateMessageRoutes from "./api/advocateMessageRoutes.js";
 import clientRoutes from "./api/clientRoutes.js";
 import advocateRoutes from "./api/advocateRoutes.js";
 
@@ -21,6 +22,7 @@ router.use("/blog", blogRoutes);
 router.use("/service", serviceRoutes);
 router.use("/contact", contactUsRoutes);
 router.use("/request-service", requestServiceRoutes);
+router.use("/advocate-message", advocateMessageRoutes);
 router.use("/client", clientRoutes);
 router.use("/advocate", advocateRoutes);
 

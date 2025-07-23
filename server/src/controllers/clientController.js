@@ -148,7 +148,7 @@ const updateClientProfile = async (req, res) => {
       dateOfBirth,
       gender,
       presentAddress,
-      permanentAddress,
+      permanentAddress,     
       status
     } = req.body;
 

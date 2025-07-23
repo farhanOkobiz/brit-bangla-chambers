@@ -26,7 +26,7 @@ const ExpertiseItem: React.FC<ExpertiseItemProps> = ({
 function OurExpertise() {
   return (
     <section
-      className="relative py-16 px-4 sm:px-6 lg:px-8 bg-cover bg-center text-white"
+      className="relative py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16 bg-cover bg-center text-white"
       style={{
         backgroundImage:
           "url('https://cdn.pixabay.com/photo/2022/04/10/16/42/lawyer-7123799_640.jpg')",

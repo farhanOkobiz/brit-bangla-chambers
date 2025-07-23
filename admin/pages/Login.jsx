@@ -9,7 +9,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const {  authed, role ,setAuthed, setRole } = useAuth();
+  const {  authed, role , setAuthed, setRole, setUserName } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,9 +34,10 @@ const Login = () => {
 
       if (res.ok) {
         const { role } = res.data.user;
+        console.log("Login successful:", res.data.user);
         setAuthed(true);
         setRole(role);
-        console.log("role", role);
+        setUserName(res.data.user.full_name || email); // Set user name from response
         // Redirect based on role
         if (role === "admin") {
           navigate("/admin/dashboard");

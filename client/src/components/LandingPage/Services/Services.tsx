@@ -98,16 +98,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
 export function Services() {
   return (
-    <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto mb-12 text-center">
-        <p className="text-lg text-gray-600 mb-2">Legal Practices Area</p>
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-          What We Are Expert At
-        </h2>
-        <div className="w-24 h-1 bg-[#d69292] mx-auto mt-4"></div>
+    <section className="bg-gray-50 py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16">
+      <div className="mx-auto mb-12 text-center">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Legal Practices Area
+          </h2>
+          <p className="text-lg text-gray-600 mb-4">Legal Practices Area</p>
+          <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {services.map((service, index) => (
           <ServiceCard
             key={index}
