@@ -25,22 +25,26 @@ const UserManagement = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [filter, setFilter] = useState("all"); // all, active, inactive, banned, pending, approved, rejected
-
-  c
+  const [error, setError] = useState(null);
 
   const fetchUsers = async () => {
     try {
-      setLoading(true);
-      const endpoint = userType === "client" ? "/client/all" : "/advocate/all";
-      const res = await useAxios(endpoint, { method: "GET" });
+      setError(null);
 
-      if (res.ok) {
-        setUsers(res.data || []);
+      // Make sure to provide a valid URL
+      const endpoint = userType === "client" ? "/client/all" : "/advocate/all";
+      const response = await useAxios(endpoint, {
+        method: "GET",
+      });
+
+      if (response.ok) {
+        setUsers(response.data || []);
       } else {
-        console.error(`Failed to fetch ${userType}s:`, res.data);
+        setError(response.data?.message || `Failed to fetch ${userType}s`);
       }
-    } catch (error) {
-      console.error(`Error fetching ${userType}s:`, error);
+    } catch (err) {
+      console.error(`Error fetching ${userType}s:`, err);
+      setError(`An error occurred while fetching ${userType}s`);
     } finally {
       setLoading(false);
     }
@@ -230,6 +234,7 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchUsers();
   }, [userType]);
 
@@ -237,6 +242,21 @@ const UserManagement = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <strong className="font-bold">Error: </strong>
+        <span className="block sm:inline">{error}</span>
+        <button
+          onClick={fetchUsers}
+          className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -382,126 +402,125 @@ const UserManagement = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredUsers.map((user) => (
-                      <tr key={user._id} className="hover:bg-gray-50">
-                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              {user.profile_photo || user.profile_photo_url ? (
-                                <img
-                                  className="h-10 w-10 rounded-full object-cover"
-                                  src={
-                                    user.profile_photo ||
-                                    user.profile_photo_url ||
-                                    "/placeholder.svg"
-                                  }
-                                  alt={user.user_id?.full_name}
-                                />
-                              ) : (
-                                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                  <FaUser className="h-5 w-5 text-gray-600" />
-                                </div>
-                              )}
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {user.user_id?.full_name || "Unknown"}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {userType === "advocate"
-                                  ? user.designation || "Advocate"
-                                  : "Client"}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 flex items-center">
-                            <FaEnvelope className="h-4 w-4 mr-2 text-gray-400" />
-                            {user.user_id?.email || "No email"}
-                          </div>
-                          <div className="text-sm text-gray-500 flex items-center mt-1">
-                            <FaPhone className="h-4 w-4 mr-2 text-gray-400" />
-                            {user.user_id?.phone || "No phone"}
-                          </div>
-                        </td>
-                        {userType === "advocate" && (
-                          <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
-                              {user.experience_years || 0} years exp.
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {user.bar_council_enroll_num || "No enrollment"}
-                            </div>
-                          </td>
-                        )}
-                        {userType === "client" && (
-                          <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
-                              {user.nid_number || "No NID"}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {user.gender || "Not specified"}
-                            </div>
-                          </td>
-                        )}
-                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                              user.status
-                            )}`}
-                          >
-                            {user.status?.charAt(0).toUpperCase() +
-                              user.status?.slice(1)}
-                          </span>
-                        </td>
-                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleViewDetails(user)}
-                              className="text-blue-600 hover:text-blue-900 p-1"
-                              title="View Details"
-                            >
-                              <FaEye className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setShowUpdateForm(true);
-                              }}
-                              className="text-green-600 hover:text-green-900 p-1"
-                              title="Edit"
-                            >
-                              <FaEdit className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(user._id)}
-                              className="text-red-600 hover:text-red-900 p-1"
-                              title="Delete"
-                            >
-                              <FaTrash className="h-4 w-4" />
-                            </button>
-                          </div>
+                    {filteredUsers.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan="6"
+                          className="px-6 py-4 text-center text-gray-500"
+                        >
+                          No {userType}s found
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <tr key={user._id} className="hover:bg-gray-50">
+                          <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10">
+                                {user.profile_photo ||
+                                user.profile_photo_url ? (
+                                  <img
+                                    className="h-10 w-10 rounded-full object-cover"
+                                    src={
+                                      user.profile_photo ||
+                                      user.profile_photo_url ||
+                                      "/placeholder.svg" ||
+                                      "/placeholder.svg"
+                                    }
+                                    alt={user.user_id?.full_name}
+                                  />
+                                ) : (
+                                  <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <FaUser className="h-5 w-5 text-gray-600" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {user.user_id?.full_name || "Unknown"}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {userType === "advocate"
+                                    ? user.designation || "Advocate"
+                                    : "Client"}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900 flex items-center">
+                              <FaEnvelope className="h-4 w-4 mr-2 text-gray-400" />
+                              {user.user_id?.email || "No email"}
+                            </div>
+                            <div className="text-sm text-gray-500 flex items-center mt-1">
+                              <FaPhone className="h-4 w-4 mr-2 text-gray-400" />
+                              {user.user_id?.phone || "No phone"}
+                            </div>
+                          </td>
+                          {userType === "advocate" && (
+                            <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">
+                                {user.experience_years || 0} years exp.
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {user.bar_council_enroll_num || "No enrollment"}
+                              </div>
+                            </td>
+                          )}
+                          {userType === "client" && (
+                            <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">
+                                {user.nid_number || "No NID"}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {user.gender || "Not specified"}
+                              </div>
+                            </td>
+                          )}
+                          <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                                user.status
+                              )}`}
+                            >
+                              {user.status?.charAt(0).toUpperCase() +
+                                user.status?.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleViewDetails(user)}
+                                className="text-blue-600 hover:text-blue-900 p-1"
+                                title="View Details"
+                              >
+                                <FaEye className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setShowUpdateForm(true);
+                                }}
+                                className="text-green-600 hover:text-green-900 p-1"
+                                title="Edit"
+                              >
+                                <FaEdit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(user._id)}
+                                className="text-red-600 hover:text-red-900 p-1"
+                                title="Delete"
+                              >
+                                <FaTrash className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
-
-              {filteredUsers.length === 0 && (
-                <div className="text-center py-12">
-                  <FaUser className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">
-                    No {userType}s found
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {filter === "all"
-                      ? `No ${userType}s have been created yet.`
-                      : `No ${filter} ${userType}s found.`}
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -567,6 +586,7 @@ const UserDetailsModal = ({
                     src={
                       user.profile_photo ||
                       user.profile_photo_url ||
+                      "/placeholder.svg" ||
                       "/placeholder.svg"
                     }
                     alt={user.user_id?.full_name}

@@ -17,13 +17,40 @@ const DataList = ({
   const [searchTerm, setSearchTerm] = useState("");
   console.log("DataList rendered with data:", data);
 
-  const filteredData = data.filter(
-    (item) =>
-      item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = data.filter((item) => {
+    if (!searchTerm) return true;
+
+    const searchLower = searchTerm.toLowerCase();
+
+    // Check common fields
+    if (item.name?.toLowerCase().includes(searchLower)) return true;
+    if (item.details?.toLowerCase().includes(searchLower)) return true;
+    if (item.title?.toLowerCase().includes(searchLower)) return true;
+    if (item.description?.toLowerCase().includes(searchLower)) return true;
+
+    // Check advocate-specific fields
+    if (item.user_id?.full_name?.toLowerCase().includes(searchLower))
+      return true;
+    if (item.user_id?.email?.toLowerCase().includes(searchLower)) return true;
+    if (item.user_id?.phone?.toLowerCase().includes(searchLower)) return true;
+    if (item.designation?.toLowerCase().includes(searchLower)) return true;
+    if (item.bar_council_enroll_num?.toLowerCase().includes(searchLower))
+      return true;
+    if (item.bio?.toLowerCase().includes(searchLower)) return true;
+    if (item.status?.toLowerCase().includes(searchLower)) return true;
+
+    // Check blog-specific fields
+    if (item.author?.toLowerCase().includes(searchLower)) return true;
+    if (item.content?.toLowerCase().includes(searchLower)) return true;
+
+    // Check service-specific fields
+    if (item.service_name?.toLowerCase().includes(searchLower)) return true;
+    if (item.service_description?.toLowerCase().includes(searchLower))
+      return true;
+
+    return false;
+  });
+
   console.log("filteredData : ", filteredData);
 
   return (
@@ -74,10 +101,12 @@ const DataList = ({
                 <FaPlus className="h-5 w-5 lg:h-6 lg:w-6 text-gray-400" />
               </div>
               <h3 className="text-base lg:text-lg font-medium text-gray-900 mb-2">
-                No items yet
+                {searchTerm ? "No matching items found" : "No items yet"}
               </h3>
               <p className="text-gray-500 text-sm lg:text-base">
-                {emptyMessage}
+                {searchTerm
+                  ? `No items match "${searchTerm}". Try a different search term.`
+                  : emptyMessage}
               </p>
             </div>
           </div>
@@ -130,10 +159,10 @@ const DefaultItemRenderer = ({ item }) => (
   <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
     {/* Image */}
     <div className="flex-shrink-0">
-      {item.image ? (
+      {item.image || item.profile_photo_url ? (
         <img
-          src={item.image || "/placeholder.svg"}
-          alt={item.name}
+          src={item.image || item.profile_photo_url || "/placeholder.svg"}
+          alt={item.name || item.user_id?.full_name || "Item"}
           className="w-16 h-16 rounded-lg object-cover border border-gray-200"
         />
       ) : (
@@ -146,12 +175,18 @@ const DefaultItemRenderer = ({ item }) => (
     {/* Info */}
     <div className="flex-1 min-w-0">
       <h3 className="text-base lg:text-lg font-semibold text-gray-900 truncate">
-        {item.name}
+        {item.name || item.user_id?.full_name || item.title || "Unnamed Item"}
       </h3>
-      {item.details && (
+      {(item.details || item.bio || item.description) && (
         <p className="text-gray-600 text-sm lg:text-base mt-1 line-clamp-2">
-          {item.details}
+          {item.details || item.bio || item.description}
         </p>
+      )}
+      {item.user_id?.email && (
+        <p className="text-blue-600 text-sm mt-1">{item.user_id.email}</p>
+      )}
+      {item.designation && (
+        <p className="text-green-600 text-sm mt-1">{item.designation}</p>
       )}
       {item.link && (
         <a

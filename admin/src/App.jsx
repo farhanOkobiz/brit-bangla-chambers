@@ -61,14 +61,11 @@ export default function App() {
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
           <Route path="users" element={<Users />} />
-<<<<<<< HEAD
           <Route path="user-management" element={<UserManagement />} />
-=======
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
 
->>>>>>> development
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />
