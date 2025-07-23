@@ -88,7 +88,7 @@ const AdvocateMessage = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-      <h2 className="text-4xl font-extrabold text-center text-indigo-700 mb-12">
+      <h2 className="text-4xl font-extrabold text-center text-[#5e3030] mb-12">
         Advocate Messages 📩
       </h2>
 
@@ -116,14 +116,14 @@ const AdvocateMessage = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleAccept(msg._id)}
-                        className="text-xs bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-full"
+                        className="text-xs bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-full cursor-pointer"
                       >
                         <CheckCircle className="w-4 h-4 inline mr-1" />
                         Accept
                       </button>
                       <button
                         onClick={() => handleReject(msg._id)}
-                        className="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-full"
+                        className="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-full cursor-pointer"
                       >
                         <XCircle className="w-4 h-4 inline mr-1" />
                         Reject
@@ -179,7 +179,7 @@ const AdvocateMessage = () => {
 
                   <button
                     onClick={() => handleDelete(msg._id)}
-                    className="text-red-600 hover:text-red-800 transition"
+                    className="text-red-600 hover:text-red-800 transition cursor-pointer"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>

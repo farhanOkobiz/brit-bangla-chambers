@@ -82,15 +82,40 @@ export const updateBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const updated = await Blog.findByIdAndUpdate(id, req.body, {
+    // Parse fields safely
+    const { title, content, status, author_model, author } = req.body;
+
+    let tags = [];
+    try {
+      tags = JSON.parse(req.body.tags); // Convert JSON string back to array
+    } catch {
+      tags = [];
+    }
+
+    const updatePayload = {
+      title,
+      content,
+      tags,
+      status,
+      author_model,
+      author,
+    };
+
+    // If an image was uploaded
+    if (req.file) {
+      updatePayload.image = req.file; // or process the file if needed
+    }
+
+    const updated = await Blog.findByIdAndUpdate(id, updatePayload, {
       new: true,
       runValidators: true,
     });
 
-    if (!updated)
+    if (!updated) {
       return res
         .status(404)
         .json({ success: false, message: "Blog not found" });
+    }
 
     res.json({ success: true, data: updated });
   } catch (err) {

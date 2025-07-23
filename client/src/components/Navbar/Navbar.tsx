@@ -53,7 +53,7 @@ export function Navbar({ user }: NavbarProps) {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden md:flex items-center">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -97,7 +97,7 @@ export function Navbar({ user }: NavbarProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               <button className="py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
                 <Link className="" href="/login">
                   Login
@@ -119,7 +119,7 @@ export function Navbar({ user }: NavbarProps) {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
-              <div className="flex flex-col space-y-4 mt-8">
+              <div className="flex flex-col mt-8">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
