@@ -98,13 +98,15 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
 export function Services() {
   return (
-    <section className="bg-gray-50 py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16">
+    <section className="bg-gray-50 py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16">
       <div className="mx-auto mb-12 text-center">
         <div className="text-center mb-14">
+          <p className="text-lg text-gray-600 uppercase">
+            Legal Practices Area
+          </p>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Legal Practices Area
           </h2>
-          <p className="text-lg text-gray-600 mb-4">Legal Practices Area</p>
           <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
         </div>
       </div>
