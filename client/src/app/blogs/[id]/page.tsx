@@ -6,7 +6,16 @@ import Image from "next/image";
 
 function Page() {
   const { id } = useParams();
-  const { data: blog } = useGetSingleBlogQuery(id);
+  const { data } = useGetSingleBlogQuery(id);
+  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
+
+  const blog = data?.data?.data;
+
+  const fullImageUrl = blog?.image
+    ? `${imageUrl?.endsWith("/") ? imageUrl.slice(0, -1) : imageUrl}/${
+        blog.image.startsWith("/") ? blog.image.slice(1) : blog.image
+      }`
+    : "/fallback-image.png"; // fallback to some placeholder image or empty string
 
   return (
     <section
@@ -21,14 +30,12 @@ function Page() {
       {/* Content */}
       <div className="relative z-10 max-w-7xl w-full px-4 mx-auto text-center">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-700 uppercase">
-          {blog?.data.data.title}
+          {blog?.title}
         </h2>
         {/* Author & Date */}
         <p className="text-sm text-gray-500 mb-2">
-          By{" "}
-          <span className="font-semibold">{blog?.data.data.author_model}</span>{" "}
-          ·{" "}
-          {new Date(blog?.data.data.createdAt).toLocaleDateString("en-GB", {
+          By <span className="font-semibold">{blog?.author_model}</span> ·{" "}
+          {new Date(blog?.createdAt).toLocaleDateString("en-GB", {
             day: "numeric",
             month: "short",
             year: "numeric",
@@ -39,12 +46,12 @@ function Page() {
         {/* Cards Grid */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 grid grid-cols-1 md:grid-cols-1 gap-6">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <Image
-                src="https://cdn.pixabay.com/photo/2022/03/07/10/47/bird-7053394_640.jpg"
-                alt={blog?.data.data.title || "Blog Image"}
-                width={640} // ছবির আসল width
-                height={224} // h-56 মানে 14rem ≈ 224px
+                src={fullImageUrl}
+                alt={blog?.title || "Blog Image"}
+                width={700}
+                height={224}
                 className="object-cover w-full"
               />
             </div>
@@ -52,14 +59,14 @@ function Page() {
               {/* Blog content */}
               <div
                 className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
-                dangerouslySetInnerHTML={{ __html: blog?.data.data.content }}
+                dangerouslySetInnerHTML={{ __html: blog?.content }}
               />
 
               {/* Tags */}
               <div className="mt-6">
                 <h4 className="font-semibold text-gray-700 mb-2">Tags:</h4>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {blog?.data.data.tags.map((tag) => (
+                  {blog?.tags.map((tag) => (
                     <span
                       key={tag}
                       className="text-sm px-3 py-1 bg-gray-100 rounded-full text-gray-600"

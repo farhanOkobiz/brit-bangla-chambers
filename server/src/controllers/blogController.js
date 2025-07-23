@@ -3,21 +3,29 @@ import Blog from "../models/blogSchema.js";
 // Create a new blog
 export const createBlog = async (req, res, next) => {
   try {
-    const { image, title, content, tags, published_at, status, author } =
-      req.body;
+    if (!req.body) {
+      return res.status(400).json({ message: "Form data is missing" });
+    }
+
+    const { title, content, tags, status, author } = req.body;
+
+    const image = req.file ? `/uploads/${req.file.filename}` : "";
+
+    const parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
 
     const blog = await Blog.create({
       image,
       title,
       content,
-      tags,
-      published_at,
+      tags: parsedTags,
+      published_at: new Date(),
       status,
       author,
     });
 
     res.status(201).json({ success: true, data: blog });
   } catch (err) {
+    console.error("Create blog error:", err);
     next(err);
   }
 };

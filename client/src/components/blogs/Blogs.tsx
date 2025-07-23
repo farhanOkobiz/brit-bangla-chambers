@@ -7,6 +7,7 @@ import { Blog } from "@/types/blog.interface";
 
 function Blogs() {
   const { data: blogs } = useGetBlogsQuery(undefined);
+  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   return (
     <section
@@ -38,7 +39,7 @@ function Blogs() {
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
                 <Image
-                  src={blog.image}
+                  src={`${imageUrl}${blog.image}`}
                   alt={blog.title}
                   width={800}
                   height={224}

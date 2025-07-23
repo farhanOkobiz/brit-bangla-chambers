@@ -7,6 +7,7 @@ import { Blog } from "@/types/blog.interface";
 
 export default function BlogPage() {
   const { data: blogs } = useGetBlogsQuery(undefined);
+  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   return (
     <section
@@ -45,10 +46,10 @@ export default function BlogPage() {
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
                 <Image
-                  src={blog.image}
+                  src={`${imageUrl}${blog.image}`}
                   alt={blog.title}
-                  width={700} // প্রয়োজন অনুযায়ী adjust করো
-                  height={224} // aspect ratio মেনে height দিন (h-56 = 14rem = 224px)
+                  width={700}
+                  height={150}
                   className="object-cover w-full"
                 />
 
