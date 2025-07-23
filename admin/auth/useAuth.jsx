@@ -1,7 +1,7 @@
 import { useAuth } from './AuthContext';
 
 export default function Auth() {
-  const { authed, setAuthed, role, setRole } = useAuth();
+  const { authed, setAuthed, role, setRole , userName, setUserName } = useAuth();
 
   const handleLogout = () => {
     // Reset auth state
