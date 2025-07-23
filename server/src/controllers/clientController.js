@@ -149,6 +149,7 @@ const updateClientProfile = async (req, res) => {
       gender,
       presentAddress,
       permanentAddress,
+      status
     } = req.body;
 
     // Find the client
@@ -174,6 +175,7 @@ const updateClientProfile = async (req, res) => {
     if (gender) client.gender = gender;
     if (presentAddress) client.present_address = presentAddress;
     if (permanentAddress) client.permanent_address = permanentAddress;
+    if (status) client.status = status;
 
     // === Handle new profile photo ===
     if (req.file) {
