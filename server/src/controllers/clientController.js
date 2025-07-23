@@ -149,6 +149,7 @@ const updateClientProfile = async (req, res) => {
       gender,
       presentAddress,
       permanentAddress,
+      
     } = req.body;
 
     // Find the client
