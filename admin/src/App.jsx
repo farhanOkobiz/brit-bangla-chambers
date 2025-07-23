@@ -15,6 +15,8 @@ import RequestMessage from "../components/message/RequestMessage";
 import Users from "../pages/Admin/Users";
 import ServiceForm from "../components/ServiceForm";
 import AdvocateForm from "../components/AdvocateForm";
+import EditBlog from "../pages/blog/EditBlog";
+import AdvocateMessage from "../components/message/AdvocateMessage";
 import AdvocateManagement from "../components/AdvocateManagement";
 
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
@@ -37,6 +39,7 @@ export default function App() {
           <Route path="dashboard" element={<AdvocateDashboard />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
+          <Route path="dashboard/message" element={<AdvocateMessage />} />
         </Route>
 
         {/* Admin Routes */}
@@ -57,6 +60,10 @@ export default function App() {
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
           <Route path="users" element={<Users />} />
+          <Route path="dashboard/blogs" element={<Blogs />} />
+          <Route path="dashboard/create-blog" element={<CreateBlog />} />
+          <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
+
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

@@ -18,10 +18,10 @@ const StatItem: React.FC<StatItemProps> = ({ value, label }) => {
 
 const StatsAndGrowth: React.FC = () => {
   return (
-    <section className="bg-[#151515] py-20 px-4 sm:px-6 lg:px-8">
+    <section className="bg-[#151515] lg:py-24 md:py-16 py-10 px-4 md:px-8 lg:px-16">
       {" "}
       {/* Dark background */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Stat Item 1 */}
         <StatItem value="1000+" label="Client Consultations" />
 

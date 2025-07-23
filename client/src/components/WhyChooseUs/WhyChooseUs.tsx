@@ -2,7 +2,7 @@ import React from "react";
 
 const WhyChooseUs: React.FC = () => {
   return (
-    <section className="relative p-16  overflow-hidden ">
+    <section className="relative overflow-hidden py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16">
       {/* Background Image/Overlay - Adjust as needed */}
       <div
         className="absolute inset-0 bg-cover bg-center "
@@ -21,10 +21,10 @@ const WhyChooseUs: React.FC = () => {
             <p className="text-sm uppercase tracking-widest text-gray-200">
               WHAT WE ARE EXPERT AT
             </p>
-            <h2 className="text-4xl sm:text-5xl font-bold mt-2">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
               Why Clients Choose Us?
             </h2>
-            <div className="w-16 h-1 bg-white mx-auto mt-4"></div>{" "}
+            <div className="w-24 h-1 bg-white mx-auto mb-4"></div>{" "}
             {/* Separator line */}
           </div>
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAxios } from "../../services/useAxios";
+import { toast } from "react-toastify";
 
 function CreateBlog() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,6 @@ function CreateBlog() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +23,6 @@ function CreateBlog() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setSuccess("");
 
     try {
       const payload = {
@@ -37,7 +36,7 @@ function CreateBlog() {
         data: payload,
       });
 
-      setSuccess("Blog created successfully!");
+      toast.success("Blog created successfully!");
       setFormData({
         image: "",
         title: "",
@@ -57,7 +56,7 @@ function CreateBlog() {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded">
       <h2 className="text-2xl font-bold mb-4">Create New Blog</h2>
-      {success && <div className="mb-4 text-green-600">{success}</div>}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="image"

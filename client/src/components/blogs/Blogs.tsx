@@ -10,7 +10,7 @@ function Blogs() {
 
   return (
     <section
-      className="relative py-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-gray-50 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
       style={{
         backgroundImage: `url('/images/blogs/blog.jpg')`,
       }}
@@ -19,21 +19,14 @@ function Blogs() {
       <div className="absolute inset-0 bg-white/90 bg-opacity-60" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl w-full px-4 mx-auto text-center">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-700 uppercase">
-          our blog
-        </h2>
-
-        <p className="text-lg text-gray-300 mb-4 uppercase tracking-wider">
-          <Link
-            href="#"
-            className="text-4xl md:text-5xl font-bold text-gray-900 transition duration-300 ease-in-out"
-          >
+      <div className="relative z-10 w-full px-4 mx-auto text-center">
+        <div className="text-center mb-14">
+          <p className="text-lg text-gray-600 mb-4"> our blog </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Recent Articles
-          </Link>
-        </p>
-
-        <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
+          </h2>
+          <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
+        </div>
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

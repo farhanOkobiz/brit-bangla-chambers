@@ -212,14 +212,16 @@ export const verifyOtp = async (req, res) => {
 };
 
 //return role
-export const checkAuth = (req, res) => {
+export const checkAuth = async (req, res) => {
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
-    return res.json({ ok: true, role: decoded.role });
+    // Fetch user to get full_name
+    const user = await User.findById(decoded.id).select("full_name");
+    return res.json({ ok: true, role: decoded.role, userName: user?.full_name || "" });
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
