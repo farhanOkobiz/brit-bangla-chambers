@@ -4,7 +4,6 @@ const { Schema, model } = mongoose;
 
 const requestServiceSchema = new Schema(
   {
-<<<<<<< HEAD
     userMessage: {
       name: String,
       email: String,
@@ -12,7 +11,11 @@ const requestServiceSchema = new Schema(
       nid: String,
       presentAddress: String,
       permanentAddress: String,
-      issueType: String,
+      issueType: {
+        type: mongoose.Types.ObjectId,
+        ref: "Specialization",
+        default: null,
+      },
       message: String,
       createdAt: { type: Date, default: Date.now },
     },
@@ -29,22 +32,6 @@ const requestServiceSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Advocate",
       default: null,
-=======
-    specialization : {
-      type: mongoose.Types.ObjectId,
-      ref: "Specialization",
-      
-    },
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    nid: { type: String, required: true },
-    presentAddress: { type: String, required: true },
-    permanentAddress: { type: String, required: true },
-    issueType: {
-      type: String,
-      required: true,
->>>>>>> 6cc6538000aa799539d065ccee59dcd5cab03db6
     },
   },
   { timestamps: true }
