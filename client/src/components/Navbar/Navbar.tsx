@@ -99,7 +99,7 @@ function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full hover:bg-muted"
+                  className="rounded-full  hover:bg-muted"
                 >
                   {data.avatar ? (
                     <Image
