@@ -42,7 +42,7 @@ function ContactUs() {
 
   return (
     <div
-      className="relative flex items-center justify-center p-4"
+      className="relative flex items-center justify-center py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16"
       style={{
         backgroundImage:
           'url("https://cdn.pixabay.com/photo/2015/10/22/06/56/lawyers-1000803_640.jpg")',
@@ -51,11 +51,11 @@ function ContactUs() {
       }}
     >
       <div className="absolute inset-0 bg-black opacity-70"></div>
-      <div className="relative z-10 p-8 md:p-12 rounded-lg shadow-xl max-w-2xl w-full">
+      <div className="relative z-10 rounded-lg shadow-xl max-w-2xl w-full">
         <div className="text-center mb-8">
-          <h1 className="text-white text-4xl md:text-5xl font-serif tracking-wide mb-3">
+          <h2 className="text-white text-4xl md:text-5xl font-bold font-serif tracking-wide mb-4">
             Contact Us
-          </h1>
+          </h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

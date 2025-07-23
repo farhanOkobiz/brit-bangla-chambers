@@ -5,7 +5,7 @@ import Image from "next/image";
 const Advocates: React.FC = () => {
   return (
     <section
-      className="relative py-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
       style={{
         backgroundImage: `url('/images/partners/partner.jpg')`,
       }}
@@ -14,7 +14,7 @@ const Advocates: React.FC = () => {
       <div className="absolute inset-0 bg-black/90 bg-opacity-60" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl w-full px-4 mx-auto text-center">
+      <div className="relative z-10 max-w-7xl w-full mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-4">
           Advocates at Attorna
         </h2>
@@ -41,12 +41,16 @@ const Advocates: React.FC = () => {
               key={idx}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-              <Image
-                src="https://cdn.pixabay.com/photo/2022/04/10/16/41/lawyer-7123798_640.jpg"
-                alt={partner.name}
-                fill
-                className="object-cover rounded"
-              />
+              <div className="w-full h-[300px] relative rounded overflow-hidden">
+                <Image
+                  src="https://cdn.pixabay.com/photo/2022/04/10/16/41/lawyer-7123798_640.jpg"
+                  alt={partner.name}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded"
+                />
+              </div>
+
               <div className="p-6 text-gray-800 text-center">
                 <h3 className="text-2xl font-semibold mb-1">{partner.name}</h3>
                 <p className="text-sm uppercase tracking-wider text-gray-600">
@@ -55,16 +59,6 @@ const Advocates: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Navigation Arrows */}
-        <div className="flex justify-center mt-12 space-x-4">
-          <button className="bg-gray-700 text-white p-3 rounded-full hover:bg-gray-600 transition duration-300">
-            &lt;
-          </button>
-          <button className="bg-gray-700 text-white p-3 rounded-full hover:bg-gray-600 transition duration-300">
-            &gt;
-          </button>
         </div>
       </div>
     </section>
