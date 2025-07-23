@@ -4,6 +4,11 @@ const { Schema, model } = mongoose;
 
 const requestServiceSchema = new Schema(
   {
+    specialization : {
+      type: mongoose.Types.ObjectId,
+      ref: "Specialization",
+      
+    },
     name: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
