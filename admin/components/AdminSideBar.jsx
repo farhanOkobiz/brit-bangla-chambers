@@ -18,6 +18,11 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
   { label: "Users", path: "/admin/users", icon: <FaUser /> },
+  {
+    label: "User Management",
+    path: "/admin/user-management",
+    icon: <FaUser />,
+  },
   { label: "Categories", path: "/admin/categories", icon: <FaFolderOpen /> },
   {
     label: "Subcategories",

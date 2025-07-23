@@ -134,7 +134,7 @@ export const createAdvocateProfile = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Auto-generate slug if not provided
-    let generatedSlug = slug;
+    let generatedSlug ;
     if (!generatedSlug && full_name) {
       generatedSlug = full_name
         .toLowerCase()
