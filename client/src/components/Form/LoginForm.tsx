@@ -1,14 +1,23 @@
 "use client";
 
 import { apiFetch } from "@/api/apiFetch";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { authApi, useGetAuthQuery } from "@/redux/api/authApi";
 
 function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { data } = useGetAuthQuery(undefined);
+
+  useEffect(() => {
+    console.log(" data:", data?.data);
+    if (data?.data && data.data.role === "client") {
+      router.push("/client/dashboard");
+    }
+  }, [data, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

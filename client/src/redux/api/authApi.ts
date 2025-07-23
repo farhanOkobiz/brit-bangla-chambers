@@ -5,6 +5,12 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: customBaseQuery,
   endpoints: (build) => ({
+    getAuth: build.query({
+      query: () => ({
+        url: "auth/check",
+        method: "GET",
+      }),
+    }),
     register: build.mutation({
       query: (body) => ({
         url: "auth/register",
@@ -16,4 +22,4 @@ export const authApi = createApi({
   }),
 });
 
-export const { useRegisterMutation } = authApi;
+export const { useRegisterMutation, useGetAuthQuery } = authApi;

@@ -38,7 +38,7 @@ function Blogs() {
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
                 <Image
-                  src={blog.image}
+                  src={blog.image?.trim() || "/fallback.jpg"}
                   alt={blog.title}
                   width={800}
                   height={224}
