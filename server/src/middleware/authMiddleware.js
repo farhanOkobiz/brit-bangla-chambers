@@ -18,11 +18,9 @@ export const protect = (roles = []) => {
       req.user = await User.findById(decoded.id).select("-password");
       if (!req.user) {
         const roleMsg = roles.length === 1 ? roles[0] : "user";
-        return res
-          .status(401)
-          .json({
-            message: `${roleMsg.charAt(0).toUpperCase() + roleMsg.slice(1)} not found`,
-          });
+        return res.status(401).json({
+          message: `${roleMsg.charAt(0).toUpperCase() + roleMsg.slice(1)} not found`,
+        });
       }
       if (roles.length && !roles.includes(req.user.role)) {
         const roleMsg = roles.length === 1 ? roles[0] : "user";

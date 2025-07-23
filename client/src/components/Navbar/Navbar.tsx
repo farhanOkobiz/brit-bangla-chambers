@@ -40,7 +40,7 @@ export function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className=" sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
       <div className="container flex h-20 items-center justify-between mx-auto">
         <Link href="/" className="flex items-center space-x-2">
           <Image
@@ -58,7 +58,7 @@ export function Navbar({ user }: NavbarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="font-medium transition-colors py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white"
             >
               {item.label}
             </Link>
@@ -76,7 +76,9 @@ export function Navbar({ user }: NavbarProps) {
                   className="flex items-center space-x-2"
                 >
                   <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">{user.name}</span>
+                  <span className="hidden sm:inline py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
+                    {user.name}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -96,12 +98,16 @@ export function Navbar({ user }: NavbarProps) {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
+              <button className="py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
+                <Link className="" href="/login">
+                  Login
+                </Link>
+              </button>
+              <button className="py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white font-medium">
+                <Link className="" href="/signup">
+                  Sign Up
+                </Link>
+              </button>
             </div>
           )}
 
@@ -118,7 +124,7 @@ export function Navbar({ user }: NavbarProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-lg font-medium transition-colors hover:text-primary"
+                    className="text-lg font-medium transition-colors py-2 px-4 rounded hover:bg-[#3c2c2c] hover:text-white "
                     onClick={() => setIsOpen(false)}
                   >
                     {item.label}

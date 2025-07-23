@@ -182,7 +182,7 @@ function RequestServiceForm() {
           type="submit"
           className="w-full bg-black text-white py-3 rounded-md font-bold text-lg hover:bg-gray-800 transition"
         >
-          Confirm Booking
+          Request
         </button>
       </form>
     </div>
