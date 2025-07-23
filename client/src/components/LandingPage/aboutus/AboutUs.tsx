@@ -5,7 +5,7 @@ import Image from "next/image";
 
 function AboutUs() {
   return (
-    <section className="relative py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16">
+    <section className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16">
       {/* Section Header */}
       <div className="text-center mb-14">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">

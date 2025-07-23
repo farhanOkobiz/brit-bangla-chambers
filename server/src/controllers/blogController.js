@@ -3,21 +3,29 @@ import Blog from "../models/blogSchema.js";
 // Create a new blog
 export const createBlog = async (req, res, next) => {
   try {
-    const { image, title, content, tags, published_at, status, author } =
-      req.body;
+    if (!req.body) {
+      return res.status(400).json({ message: "Form data is missing" });
+    }
+
+    const { title, content, tags, status, author } = req.body;
+
+    const image = req.file ? `/uploads/${req.file.filename}` : "";
+
+    const parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
 
     const blog = await Blog.create({
       image,
       title,
       content,
-      tags,
-      published_at,
+      tags: parsedTags,
+      published_at: new Date(),
       status,
       author,
     });
 
     res.status(201).json({ success: true, data: blog });
   } catch (err) {
+    console.error("Create blog error:", err);
     next(err);
   }
 };
@@ -74,15 +82,40 @@ export const updateBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const updated = await Blog.findByIdAndUpdate(id, req.body, {
+    // Parse fields safely
+    const { title, content, status, author_model, author } = req.body;
+
+    let tags = [];
+    try {
+      tags = JSON.parse(req.body.tags); // Convert JSON string back to array
+    } catch {
+      tags = [];
+    }
+
+    const updatePayload = {
+      title,
+      content,
+      tags,
+      status,
+      author_model,
+      author,
+    };
+
+    // If an image was uploaded
+    if (req.file) {
+      updatePayload.image = req.file; // or process the file if needed
+    }
+
+    const updated = await Blog.findByIdAndUpdate(id, updatePayload, {
       new: true,
       runValidators: true,
     });
 
-    if (!updated)
+    if (!updated) {
       return res
         .status(404)
         .json({ success: false, message: "Blog not found" });
+    }
 
     res.json({ success: true, data: updated });
   } catch (err) {

@@ -26,7 +26,7 @@ const ExpertiseItem: React.FC<ExpertiseItemProps> = ({
 function OurExpertise() {
   return (
     <section
-      className="relative py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16 bg-cover bg-center text-white"
+      className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-cover bg-center text-white"
       style={{
         backgroundImage:
           "url('https://cdn.pixabay.com/photo/2022/04/10/16/42/lawyer-7123799_640.jpg')",
@@ -40,7 +40,9 @@ function OurExpertise() {
 
           {/* 🔸 Content above overlay */}
           <div className="relative z-10">
-            <h2 className="text-4xl font-bold mb-4">Our Expertise</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              Our Expertise
+            </h2>
             <div className="w-20 h-1 bg-white  mb-8"></div>
 
             <ExpertiseItem

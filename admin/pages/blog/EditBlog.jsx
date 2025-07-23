@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate, useParams, useRouteError } from "react-router-dom";
 import { useAxios } from "../../services/useAxios";
+import { toast } from "react-toastify";
 
 function EditBlog() {
   const { id } = useParams();
@@ -11,12 +12,12 @@ function EditBlog() {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    image: "",
-    tags: [""],
-    published_at: "",
+    tags: "",
     status: "draft",
-    author: "",
+    author_model: "Advocate",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -42,128 +43,180 @@ function EditBlog() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "tags") {
-      setFormData({ ...formData, tags: value.split(",") });
-    } else {
-      setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
+      if (!imageFile) {
+        toast.error("Please upload an image.");
+        setLoading(false);
+        return;
+      }
+
+      const { title, content, tags, status, author_model } = formData;
+
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", title);
+      formDataToSend.append("content", content);
+      formDataToSend.append("status", status);
+      formDataToSend.append("author_model", author_model);
+      formDataToSend.append("author", "Advocate");
+      formDataToSend.append(
+        "tags",
+        JSON.stringify(
+          typeof tags === "string"
+            ? tags.split(",").map((tag) => tag.trim())
+            : []
+        )
+      );
+      formDataToSend.append("image", imageFile);
+
       const res = await useAxios(`/blog/edit-blog/${id}`, {
         method: "PUT",
-        data: formData,
+        data: formDataToSend,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.ok) {
         Swal.fire("Success", "Blog updated successfully", "success");
         navigate("/admin/dashboard/blogs");
       }
-    } catch (err) {
-      Swal.fire("Error", err?.message || "Failed to update blog", "error");
+      // Reset form
+      // Reset form
+      setFormData({
+        title: "",
+        content: "",
+        tags: "",
+        status: "draft",
+        author_model: "Advocate",
+      });
+      setImageFile(null);
+    } catch (error) {
+      console.error("Create blog error:", error);
+      toast.error(error.response?.data?.message || "Failed to create blog.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  console.log("formData.author:", formData.author);
-
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Edit Blog</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="my-6 mx-6 py-6 px-6 bg-white shadow-lg rounded-2xl">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-6">Edit Blog</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Image Upload */}
         <div>
-          <label className="block font-medium mb-1">Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Blog Image
+          </label>
           <input
-            type="text"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Title
+          </label>
+          <input
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            placeholder="Enter Blog Title"
+            className="w-full p-3 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Content */}
         <div>
-          <label className="block font-medium mb-1">Content</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Content
+          </label>
           <textarea
             name="content"
-            rows={6}
             value={formData.content}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            placeholder="Write your blog content..."
+            rows={6}
+            className="w-full p-3 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Tags */}
         <div>
-          <label className="block font-medium mb-1">Image</label>
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">
-            Tags (comma-separated)
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Tags
           </label>
           <input
-            type="text"
             name="tags"
-            value={formData.tags.join(",")}
+            value={formData.tags}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            placeholder="Tags (comma-separated)"
+            className="w-full p-3 border border-gray-300 rounded-md"
           />
         </div>
 
+        {/* Status */}
         <div>
-          <label className="block font-medium mb-1">Published At</label>
-          <input
-            type="date"
-            name="published_at"
-            value={formData.published_at}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Status</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Status
+          </label>
           <select
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full p-3 border border-gray-300 rounded-md"
           >
             <option value="draft">Draft</option>
             <option value="published">Published</option>
           </select>
         </div>
 
+        {/* Author Model */}
         <div>
-          <label className="block font-medium mb-1">Author</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Author
+          </label>
           <select
-            name="author"
-            value={formData.author}
+            name="author_model"
+            value={formData.author_model}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full p-3 border border-gray-300 rounded-md"
           >
-            <option value="">Select Author</option>
-            <option value="Advocate">Advocate</option>
             <option value="Admin">Admin</option>
+            <option value="Advocate">Advocate</option>
           </select>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 cursor-pointer"
-        >
-          Update Blog
-        </button>
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white font-medium text-lg px-4 py-3 rounded-md hover:bg-blue-700 transition cursor-pointer"
+          >
+            {loading ? "Updating..." : "Update Blog"}
+          </button>
+        </div>
       </form>
     </div>
   );

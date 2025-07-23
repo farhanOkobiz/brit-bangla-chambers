@@ -5,7 +5,7 @@ import Image from "next/image";
 const Advocates: React.FC = () => {
   return (
     <section
-      className="relative py-4 md:py-6 lg:py-8 px-4 md:px-8 lg:px-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
       style={{
         backgroundImage: `url('/images/partners/partner.jpg')`,
       }}
@@ -15,11 +15,7 @@ const Advocates: React.FC = () => {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl w-full mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-4">
-          Advocates at Attorna
-        </h2>
-
-        <p className="text-lg text-gray-300 mb-4 uppercase tracking-wider">
+        <p className="text-lg text-gray-300 uppercase tracking-wider">
           <Link
             href="#"
             className="text-[#754a49] transition duration-300 ease-in-out"
@@ -27,7 +23,9 @@ const Advocates: React.FC = () => {
             View All Advocates
           </Link>
         </p>
-
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          Advocates at Attorna
+        </h2>
         <div className="w-24 h-1 bg-white mx-auto mb-10"></div>
 
         {/* Cards Grid */}

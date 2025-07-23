@@ -25,7 +25,11 @@ export const customBaseQuery: BaseQueryFn<
   }
 
   try {
+<<<<<<< HEAD
     const data = await apiFetch(`${url}`, options as RequestInit & { headers?: Record<string, string> });
+=======
+    const data = await apiFetch(url, options);
+>>>>>>> raihan
     return { data };
   } catch (error: unknown) {
     const err = (error as Partial<{ status: number; data: unknown }>) || {};

@@ -4,12 +4,11 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { useAxios } from "../../services/useAxios";
 import Swal from "sweetalert2";
 
-const BASE_URL = "http://localhost:5000/api/v1";
-
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -89,7 +88,7 @@ function Blogs() {
               {/* Image */}
               <div className="relative">
                 <img
-                  src="https://cdn.pixabay.com/photo/2022/03/07/10/47/bird-7053394_640.jpg"
+                  src={`${imageUrl}${blog?.image}`}
                   alt={blog.title}
                   className="w-full h-56 object-cover"
                 />
