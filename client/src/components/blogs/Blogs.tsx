@@ -10,7 +10,7 @@ function Blogs() {
 
   return (
     <section
-      className="relative py-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-gray-50 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
       style={{
         backgroundImage: `url('/images/blogs/blog.jpg')`,
       }}
@@ -20,15 +20,13 @@ function Blogs() {
 
       {/* Content */}
       <div className="relative z-10 w-full px-4 mx-auto text-center">
-        <h3 className="text-xl md:text-2xl font-bold mb-4 text-gray-700 uppercase">
-          our blog
-        </h3>
-
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Recent Articles
-        </h2>
-
-        <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
+        <div className="text-center mb-14">
+          <p className="text-lg text-gray-600 mb-4"> our blog </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Recent Articles
+          </h2>
+          <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
+        </div>
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

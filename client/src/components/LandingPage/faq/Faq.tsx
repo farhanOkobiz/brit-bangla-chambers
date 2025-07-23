@@ -52,14 +52,14 @@ function formatDate(dateStr: string) {
 
 function Faq() {
   return (
-    <section className="py-20 bg-gray-50">
-      <p className="mb-2 text-center text-gray-600">
-        Answers for clients and advocates
-      </p>
-      <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
-        Frequently Asked Questions
-      </h2>
-      <div className="w-24 h-1 bg-[#d69292] mx-auto mb-12"></div>
+    <section className="py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-gray-50">
+      <div className="text-center mb-14">
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Answers for clients and advocates
+        </h2>
+        <p className="text-lg text-gray-600 mb-4">Frequently Asked Questions</p>
+        <div className="w-24 h-1 bg-[#4f2b2b] mx-auto mb-10"></div>
+      </div>
 
       <div className=" grid grid-cols-1 md:grid-cols-2  gap-8 px-4">
         {/* Left image */}
