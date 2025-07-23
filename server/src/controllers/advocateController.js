@@ -110,6 +110,7 @@ export const createAdvocateProfile = async (req, res) => {
       office_address,
       available_hours,
       contact,
+      languages,
       specialization_ids,
       education,
       certification_ids,
@@ -134,7 +135,7 @@ export const createAdvocateProfile = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Auto-generate slug if not provided
-    let generatedSlug = slug;
+    let generatedSlug;
     if (!generatedSlug && full_name) {
       generatedSlug = full_name
         .toLowerCase()
@@ -175,6 +176,7 @@ export const createAdvocateProfile = async (req, res) => {
       office_address,
       available_hours,
       contact,
+      languages,
       specialization_ids,
       education_ids: educationIds,
       certification_ids,
@@ -211,6 +213,7 @@ export const updateAdvocateProfile = async (req, res) => {
       office_address,
       available_hours,
       contact,
+      languages,
       specialization_ids,
       education_ids,
       certification_ids,
@@ -253,6 +256,7 @@ export const updateAdvocateProfile = async (req, res) => {
     if (bar_council_enroll_num) advocate.bar_council_enroll_num = bar_council_enroll_num;
     if (experience_years) advocate.experience_years = experience_years;
     if (bio) advocate.bio = bio;
+    if(languages) advocate.languages = languages;
     if (office_address) advocate.office_address = office_address;
     if (available_hours) advocate.available_hours = available_hours;
     if (contact) advocate.contact = contact;
