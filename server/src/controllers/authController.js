@@ -221,7 +221,11 @@ export const checkAuth = async (req, res) => {
     req.user = decoded;
     // Fetch user to get full_name
     const user = await User.findById(decoded.id).select("full_name");
-    return res.json({ ok: true, role: decoded.role, userName: user?.full_name || "" });
+    return res.json({
+      ok: true,
+      role: decoded.role,
+      userName: user?.full_name || "",
+    });
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
@@ -261,7 +265,7 @@ export const getUserById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch user" });
   }
-}
+};
 
 // Logout: clear cookies
 export const logout = (req, res) => {

@@ -10,6 +10,7 @@ import requestServiceRoutes from "./api/requestServiceRoutes.js";
 import advocateMessageRoutes from "./api/advocateMessageRoutes.js";
 import clientRoutes from "./api/clientRoutes.js";
 import advocateRoutes from "./api/advocateRoutes.js";
+import caseFileRoutes from "./api/caseFileRoutes.js";
 
 const router = Router();
 
@@ -25,5 +26,6 @@ router.use("/request-service", requestServiceRoutes);
 router.use("/advocate-message", advocateMessageRoutes);
 router.use("/client", clientRoutes);
 router.use("/advocate", advocateRoutes);
+router.use("/caseFile", caseFileRoutes);
 
 export default router;
