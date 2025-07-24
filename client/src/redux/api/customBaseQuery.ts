@@ -18,18 +18,19 @@ export const customBaseQuery: BaseQueryFn<
       method: args.method,
       body: args.body,
       headers:
-        args.headers && typeof args.headers === "object" && !Array.isArray(args.headers)
-          ? { ...args.headers } as Record<string, string>
+        args.headers &&
+        typeof args.headers === "object" &&
+        !Array.isArray(args.headers)
+          ? ({ ...args.headers } as Record<string, string>)
           : undefined,
     };
   }
 
   try {
-<<<<<<< HEAD
-    const data = await apiFetch(`${url}`, options as RequestInit & { headers?: Record<string, string> });
-=======
-    const data = await apiFetch(url, options);
->>>>>>> raihan
+    const data = await apiFetch(
+      `${url}`,
+      options as RequestInit & { headers?: Record<string, string> }
+    );
     return { data };
   } catch (error: unknown) {
     const err = (error as Partial<{ status: number; data: unknown }>) || {};
