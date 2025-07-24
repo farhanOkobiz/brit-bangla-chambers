@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { User, Mail, MapPin, Calendar, Shield, Edit, CheckCircle, XCircle, Clock, FileText } from "lucide-react"
+import { User, Mail, MapPin, Calendar, Shield, CheckCircle, XCircle, Clock, FileText } from "lucide-react"
 import { apiFetch } from "@/api/apiFetch"
+import UpdateClientInfo from "@/components/Profile/UpdateClientInfo"
 
 interface UserData {
   _id: string
@@ -38,59 +39,15 @@ interface ProfileData {
 
 export default function ClientProfile() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null)
-  const [loading, setLoading] = useState(true)
-
+  const [loading, setLoading] = useState(true);
+  const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:5001";
   useEffect(() => {
-    // Simulate API call - replace with actual API call
     const fetchProfile = async () => {
       try {
-         const response = await apiFetch("/client/profile", { method: "GET" })
+        const response = await apiFetch("/client/profile", { method: "GET" })
         if (!response.ok) {
           throw new Error("Failed to fetch profile data")
         }
-
-
-        // const response = await fetch('/client/profile')
-        // const data = await response.json()
-
-        // Mock data based on your example
-        // const mockData: ProfileData = {
-        //   user: {
-        //     _id: "6881f87adfdc7c35dbc6855a",
-        //     role: "client",
-        //     full_name: "Shahriar kabir",
-        //     email: "shahriarkabir078@gmail.com",
-        //     phone: "01795148790",
-        //     otp_verified: true,
-        //     created_at: "2025-07-24T09:10:18.090Z",
-        //     __v: 0,
-        //   },
-        //   client: {
-        //     _id: "6881f87adfdc7c35dbc6855c",
-        //     user_id: {
-        //       _id: "6881f87adfdc7c35dbc6855a",
-        //       role: "client",
-        //       full_name: "Shahriar kabir",
-        //       email: "shahriarkabir078@gmail.com",
-        //       phone: "01795148790",
-        //       otp_verified: true,
-        //       created_at: "2025-07-24T09:10:18.090Z",
-        //       __v: 0,
-        //     },
-        //     nid_number: "214214242141323423",
-        //     date_of_birth: "2011-10-21",
-        //     gender: "male",
-        //     profile_photo: "",
-        //     present_address: "123123",
-        //     permanent_address: "klswfjaslkjlk",
-        //     consultation_history: [],
-        //     status: "inactive",
-        //     createdAt: "2025-07-24T09:10:18.177Z",
-        //     updatedAt: "2025-07-24T09:10:18.177Z",
-        //     __v: 0,
-        //   },
-        // }
-
         setProfileData(response?.data)
       } catch (error) {
         console.error("Error fetching profile:", error)
@@ -101,6 +58,16 @@ export default function ClientProfile() {
 
     fetchProfile()
   }, [])
+
+  const handleProfileUpdate = (updatedClientData: ClientData) => {
+    if (profileData) {
+      setProfileData({
+        ...profileData,
+        client: updatedClientData,
+        user: updatedClientData.user_id,
+      })
+    }
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -159,7 +126,7 @@ export default function ClientProfile() {
               <div className="relative">
                 {client.profile_photo ? (
                   <img
-                    src={client.profile_photo || "/placeholder.svg"}
+                    src={`${IMAGE_URL}${client.profile_photo} `}
                     alt={user.full_name}
                     className="h-24 w-24 rounded-full object-cover"
                   />
@@ -198,10 +165,7 @@ export default function ClientProfile() {
               </div>
 
               {/* Edit Button */}
-              <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                <Edit className="h-4 w-4" />
-                Edit Profile
-              </button>
+              <UpdateClientInfo clientData={client} onUpdate={handleProfileUpdate} />
             </div>
           </div>
         </div>
