@@ -3,9 +3,11 @@
 import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Select from "react-select";
+import { toast } from "react-toastify";
 
 export default function ClientSignupForm() {
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -57,25 +59,65 @@ export default function ClientSignupForm() {
     return newErrors;
   };
 
-  const genderOptions = [
-  { value: "", label: "Select Gender" },
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "other", label: "Other" },
-];
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // TODO: send to backend
-      await apiFetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-      });
+      // Only send fields required by backend (exclude confirmPassword and terms)
+      const postData = { ...formData } as Partial<typeof formData>;
+      delete postData.confirmPassword;
+      delete postData.terms;
+      try {
+        const res = await apiFetch(`/auth/register`, {
+          method: "POST",
+          body: JSON.stringify(postData),
+        });
+
+        
+          // Check for custom OTP status code
+          if (res.status === 201) {
+            const resOTP = await apiFetch(`/auth/send-otp`, {
+              method: "POST",
+              body: JSON.stringify({ email: postData.email }),
+            });
+            console.log("OTP send response:", resOTP);
+           if (resOTP.status === 200) {
+            return router.push(`/verify-otp?&email=${postData.email}`);      
+           }
+          }
+          if(res.status === 400) {
+            toast.error(res.data?.message || "User already exists");
+            setLoading(false);
+            return;
+          }
+    
+        // Registration success: you may want to redirect or show a message
+        // For now, just clear the form
+        setFormData({
+          full_name: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          nidNumber: "",
+          dateOfBirth: "",
+          gender: "",
+          profilePhoto: "",
+          presentAddress: "",
+          permanentAddress: "",
+          terms: false,
+        });
+        setErrors({});    
+      } catch (err: any) {
+      // If using your custom `apiFetch`, you might need to look at `err.data`
+        toast.error("Something went wrong. Please try again.");
+        setLoading(false);
+      }
     }
+    setLoading(false);
   };
 
   return (
@@ -140,13 +182,17 @@ export default function ClientSignupForm() {
           />
 
           <Select
-  name="gender"
-  value={genderOptions.find(o => o.value === formData.gender)}
-  onChange={(selectedOption) =>
-    setFormData({ ...formData, gender: selectedOption?.value || "" })
-  }
-  options={genderOptions}
-/>
+            label="Gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            options={[
+              { value: "", label: "Select Gender" },
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "other", label: "Other" },
+            ]}
+          />
 
           {/* <Input
             label="Profile Photo URL"
@@ -159,15 +205,15 @@ export default function ClientSignupForm() {
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          />
+          /> 
           <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
           />
-
-          <Input
+          
+           <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
@@ -201,11 +247,37 @@ export default function ClientSignupForm() {
 
         {/* Submit */}
         <button
-          type="submit"
-          className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition cursor-pointer"
-        >
-          Sign Up
-        </button>
+  type="submit"
+  disabled={loading}
+  className={`w-full bg-black text-white py-3 rounded-md font-semibold transition cursor-pointer flex items-center justify-center ${
+    loading ? "opacity-60 cursor-not-allowed" : "hover:bg-gray-800"
+  }`}
+>
+  {loading ? (
+    <svg
+      className="animate-spin h-5 w-5 mr-2 text-white"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v8z"
+      />
+    </svg>
+  ) : null}
+  {loading ? "Signing up..." : "Sign Up"}
+</button>
+
       </form>
     </div>
   );
@@ -251,36 +323,36 @@ function Input({
 }
 
 // Reusable Select
-// function Select({
-//   label,
-//   name,
-//   value,
-//   onChange,
-//   options,
-// }: {
-//   label: string;
-//   name: string;
-//   value: string;
-//   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-//   options: { value: string; label: string }[];
-// }) {
-//   return (
-//     <div>
-//       <label className="block text-sm font-medium text-gray-700 mb-1">
-//         {label}
-//       </label>
-//       <select
-//         name={name}
-//         value={value}
-//         onChange={onChange}
-//         className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
-//       >
-//         {options.map(({ value, label }) => (
-//           <option key={value} value={value}>
-//             {label}
-//           </option>
-//         ))}
-//       </select>
-//     </div>
-//   );
-// }
+function Select({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-sm"
+      >
+        {options.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
