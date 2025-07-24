@@ -10,14 +10,17 @@ const CaseFileSchema = new Schema(
       unique: true,
       default: function () {
         const now = new Date();
+        const day = now.getDate();
         const minutes = now.getMinutes().toString().padStart(2, "0");
         const seconds = now.getSeconds().toString().padStart(2, "0");
-        return `CASE-${minutes}${seconds}`;
+        return `CASE-${day}${minutes}${seconds}`;
       },
     },
+
     title: { type: String, required: true }, // eg: "Land Dispute between X and Y"
 
     advocate_id: { type: Types.ObjectId, ref: "Advocate", required: true },
+
     client_id: { type: Types.ObjectId, ref: "User" }, // optional
 
     case_type: {
@@ -46,13 +49,10 @@ const CaseFileSchema = new Schema(
       },
     ],
 
-    hearing_dates: [
-      {
-        date: Date,
-        judge: String,
-        description: String, // what happened in the hearing
-      },
-    ],
+    hearing_dates: {
+      type: [Date],
+      default: [],
+    },
 
     judgment: {
       decision_date: Date,

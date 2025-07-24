@@ -2,8 +2,12 @@ import CaseFile from "../models/caseFileSchema.js";
 
 // ✅ Create Case File
 export const createCaseFile = async (req, res) => {
+  const advocateId = req.user.id;
   try {
-    const caseFile = await CaseFile.create(req.body);
+    const caseFile = await CaseFile.create({
+      ...req.body,
+      advocate_id: advocateId,
+    });
     res.status(201).json({ success: true, data: caseFile });
   } catch (error) {
     res.status(500).json({

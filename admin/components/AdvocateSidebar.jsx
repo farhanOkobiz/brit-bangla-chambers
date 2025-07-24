@@ -9,7 +9,9 @@ import {
   FaBlog,
   FaCogs,
   FaSignOutAlt,
+  FaCarSide,
 } from "react-icons/fa";
+
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
@@ -17,13 +19,28 @@ const menuItems = [
   { label: "Advocate Profile", path: "/advocate/profile" },
   { label: "Dashboard", path: "/advocate/dashboard" },
   { label: "Message", path: "/advocate/dashboard/message" },
-  { label: "My Cases", path: "/advocate/dashboard/my-cases" },
+  ,
+  {
+    label: "My Case",
+    isDropdown: true,
+    subItems: [
+      { label: "Accepted Cases", path: "/advocate/dashboard/accepted-cases" },
+      {
+        label: "All user file",
+        path: "/advocate/dashboard/all-user-file",
+      },
+      {
+        label: "Create user file",
+        path: "/advocate/dashboard/create-user-file",
+      },
+    ],
+  },
+
   { label: "Appointments", path: "/advocate/appointments" },
   { label: "Clients", path: "/advocate/clients" },
   {
     label: "Blogs",
     isDropdown: true,
-    icon: <FaBlog />,
     subItems: [
       { label: "All Blogs", path: "/advocate/dashboard/blogs" },
       { label: "Create Blog", path: "/advocate/dashboard/create-blog" },

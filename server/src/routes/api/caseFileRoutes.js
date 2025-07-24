@@ -6,10 +6,11 @@ import {
   getCaseFileById,
   updateCaseFile,
 } from "../../controllers/caseFileController.js";
+import { checkAdvocate } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createCaseFile); // Create case
+router.post("/", checkAdvocate, createCaseFile); // Create case
 router.get("/", getAllCaseFiles); // Get all cases
 router.get("/:id", getCaseFileById); // Get single case
 router.put("/:id", updateCaseFile); // Update case
