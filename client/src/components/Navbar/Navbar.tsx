@@ -127,7 +127,7 @@ function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">
+                  <Link href="/client/profile">
                     <UserCircle className="w-4 h-4 mr-2" />
                     Profile
                   </Link>
@@ -159,7 +159,7 @@ function Navbar() {
               >
                 <Link href="/login">Login</Link>
               </Button>
-              <Button size="sm" asChild className="hover:bg-muted">
+              <Button size="sm" asChild className="hover:bg-gray-200 hover:text-primary">
                 <Link href="/signup">Sign Up</Link>
               </Button>
             </div>

@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Home, User, Calendar, FileText, Settings, LogOut, Menu, X, Bell, CreditCard, HelpCircle } from "lucide-react"
+import { logout } from "@/api/logout"
 
 interface SidebarItem {
   name: string
@@ -31,11 +32,10 @@ export default function ClientSidebar() {
 
   const handleLogout = async () => {
     try {
-      // Add your logout logic here
-      // await apiFetch("/auth/logout", { method: "POST" })
-      router.push("/")
+      await logout()
+      router.push("/login")
     } catch (error) {
-      console.error("Logout error:", error)
+      console.error("Logout failed", error)
     }
   }
 
