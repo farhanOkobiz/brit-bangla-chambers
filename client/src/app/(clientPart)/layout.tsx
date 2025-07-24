@@ -14,21 +14,32 @@ export default function ClientDashboardLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkClientRole = async () => {
       try {
         const res = await apiFetch("/auth/check", { method: "GET" });
         console.log("Client role check response:", res);
+
         if (!res.ok || res.data?.role !== "client") {
+          toast.warning("Unauthorized access");
           router.replace("/");
           return;
         }
-        setLoading(false);
-      } catch {
-        toast.warning("Authentication failed");
+
+        if (isMounted) setLoading(false);
+      } catch (error) {
+        console.error("Auth error:", error);
+        toast.error("Authentication failed");
         router.replace("/");
       }
     };
+
     checkClientRole();
+
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
 
   if (loading) {
