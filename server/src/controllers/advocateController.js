@@ -116,6 +116,17 @@ export const createAdvocateProfile = async (req, res) => {
           console.error("Error parsing contact JSON:", e);
         }
       }
+      if (
+        requestData.bar_memberships &&
+        typeof requestData.bar_memberships === "string"
+      ) {
+        try {
+          requestData.bar_memberships = JSON.parse(requestData.bar_memberships);
+        } catch (e) {
+          console.error("Error parsing bar_memberships:", e);
+          requestData.bar_memberships = [];
+        }
+      }
 
       if (
         requestData.available_hours &&
@@ -140,12 +151,14 @@ export const createAdvocateProfile = async (req, res) => {
       }
 
       // Convert string booleans to actual booleans
+      
       if (requestData.consultation_available === "true")
         requestData.consultation_available = true;
       if (requestData.consultation_available === "false")
         requestData.consultation_available = false;
       if (requestData.featured === "true") requestData.featured = true;
       if (requestData.featured === "false") requestData.featured = false;
+
     } else {
       // JSON request
       requestData = req.body;
@@ -176,6 +189,7 @@ export const createAdvocateProfile = async (req, res) => {
       stats,
       status,
       featured,
+      bar_memberships,
     } = requestData;
 
     console.log("Parsed data:", {
@@ -274,6 +288,7 @@ export const createAdvocateProfile = async (req, res) => {
       status: status || "pending",
       featured: featured || false,
       profile_photo_url: profilePhotoUrl,
+      bar_memberships: requestData.bar_memberships || [],
     });
 
     // Populate the response

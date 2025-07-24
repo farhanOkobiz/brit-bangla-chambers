@@ -71,7 +71,12 @@ export const createSpecialization = async (req, res) => {
       return res.status(400).json({ error: "Specialization already exists" });
     }
 
-    const newSpecialization = new Specialization({ name, details, image, link });
+    const newSpecialization = new Specialization({
+      name,
+      details,
+      image,
+      link,
+    });
     await newSpecialization.save();
     console.log("Specialization created successfully:", newSpecialization);
 
@@ -133,7 +138,9 @@ export const updateSpecialization = async (req, res) => {
     if (name) {
       const existing = await Specialization.findOne({ name, _id: { $ne: id } });
       if (existing) {
-        return res.status(400).json({ error: "Specialization name already in use" });
+        return res
+          .status(400)
+          .json({ error: "Specialization name already in use" });
       }
     }
 
@@ -163,9 +170,13 @@ export const updateSpecialization = async (req, res) => {
     }
 
     // Update the Specialization
-    const updatedSpecialization = await Specialization.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const updatedSpecialization = await Specialization.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+      }
+    );
 
     // Cleanup old image after successful update (only if new image was uploaded)
     if (req.file && oldImageFilename) {
@@ -191,15 +202,15 @@ export const updateSpecialization = async (req, res) => {
 export const deleteSpecialization = async (req, res) => {
   try {
     console.log("hit deleteSpecialization");
-    const Specialization = await Specialization.findById(req.params.id);
-    if (!Specialization) {
+    const specializationDoc = await Specialization.findById(req.params.id); // <-- fixed
+    if (!specializationDoc) {
       return res.status(404).json({ error: "Specialization not found" });
     }
-    console.log("Specialization found:", Specialization.image);
+    console.log("Specialization found:", specializationDoc.image);
 
     // Delete associated image file
-    if (Specialization.image) {
-      const filename = getFilenameFromUrl(Specialization.image);
+    if (specializationDoc.image) {
+      const filename = getFilenameFromUrl(specializationDoc.image);
       if (filename) {
         deleteFile(getUploadPath(filename));
       }

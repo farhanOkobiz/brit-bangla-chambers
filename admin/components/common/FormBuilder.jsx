@@ -9,6 +9,8 @@ const FormBuilder = ({
   disabled = false,
   initialData = null,
 }) => {
+  console.log("initialData:", initialData);
+
   const initialFormState = fields.reduce((acc, field) => {
     acc[field.name] = field.type === "file" ? null : "";
     return acc;

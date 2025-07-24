@@ -171,6 +171,29 @@ const AdvocateForm = () => {
       ],
     },
 
+    // Languages - Single field that will be converted to array
+    {
+      name: "languages",
+      label: "Languages",
+      type: "text",
+      placeholder:
+        "Enter languages separated by commas (e.g., English, Hindi, Bengali)",
+    },
+
+    // Bar Membership - Single bar name and membership number
+    {
+      name: "bar_name",
+      label: "Bar Name",
+      type: "text",
+      placeholder: "e.g., Supreme Court Bar Association",
+    },
+    {
+      name: "membership_number",
+      label: "Membership Number",
+      type: "text",
+      placeholder: "e.g., SC/2023/001234",
+    },
+
     // Status & Features
     {
       name: "status",
@@ -207,8 +230,8 @@ const AdvocateForm = () => {
     try {
       setLoadingAdvocates(true);
       console.log("Fetching advocates...");
-       // Moved useAxios call here
-      const res = await useAxios("/advocate/all",{method: "GET"});
+      
+      const res = await useAxios("/advocate/all", { method: "GET" });
 
       if (res.ok) {
         console.log("Fetched advocates:", res.data);
@@ -312,6 +335,31 @@ const AdvocateForm = () => {
         JSON.stringify(available_hours)
       );
 
+      // Languages array - convert comma-separated string to array
+      if (formData.get("languages")) {
+        const languagesArray = formData
+          .get("languages")
+          .split(",")
+          .map((lang) => lang.trim())
+          .filter((lang) => lang.length > 0);
+        transformedData.append("languages", JSON.stringify(languagesArray));
+      } else {
+        transformedData.append("languages", JSON.stringify([]));
+      }
+
+      // Bar memberships array - create from single bar name and membership number
+      const barMemberships = [];
+      const barName = formData.get("bar_name");
+      const membershipNumber = formData.get("membership_number");
+
+      if (barName && membershipNumber) {
+        barMemberships.push({
+          bar_name: barName.trim(),
+          membership_number: membershipNumber.trim(),
+        });
+      }
+      transformedData.append("bar_memberships", JSON.stringify(barMemberships));
+
       // Fee structure
       const fee_structure = {
         base_fee: Number.parseInt(formData.get("base_fee")) || 0,
@@ -320,7 +368,10 @@ const AdvocateForm = () => {
       transformedData.append("fee_structure", JSON.stringify(fee_structure));
 
       // Profile photo
-      if (formData.get("profilePhoto")) {
+      if (
+        formData.get("profilePhoto") &&
+        formData.get("profilePhoto").size > 0
+      ) {
         transformedData.append("profilePhoto", formData.get("profilePhoto"));
       }
 
@@ -333,8 +384,8 @@ const AdvocateForm = () => {
         ? `/advocate/update/${editingAdvocate._id}`
         : "/advocate/create";
       const method = editingAdvocate ? "PUT" : "POST";
-       // Moved useAxios call here
 
+      
       const res = await useAxios(url, {
         method,
         data: transformedData,
@@ -399,6 +450,15 @@ const AdvocateForm = () => {
       consultation_available:
         advocate.consultation_available?.toString() || "false",
       featured: advocate.featured?.toString() || "false",
+
+      // Languages - convert array to comma-separated string
+      languages: Array.isArray(advocate.languages)
+        ? advocate.languages.join(", ")
+        : "",
+
+      // Bar memberships - get first membership for editing
+      bar_name: advocate.bar_memberships?.[0]?.bar_name || "",
+      membership_number: advocate.bar_memberships?.[0]?.membership_number || "",
     };
 
     setEditingAdvocate(transformedAdvocate);
@@ -415,9 +475,10 @@ const AdvocateForm = () => {
     }
 
     try {
-     // Moved useAxios call here
+    
       const res = await useAxios(`/advocate/profile/${advocateId}`, {
-        method: "DELETE",});
+        method: "DELETE",
+      });
 
       if (res.ok) {
         alert("Advocate deleted successfully!");
@@ -496,6 +557,29 @@ const AdvocateForm = () => {
               Bar Council: {item.bar_council_enroll_num}
             </p>
           )}
+
+          {/* Display Languages */}
+          {item.languages && item.languages.length > 0 && (
+            <p className="text-gray-600 text-sm mt-1">
+              Languages:{" "}
+              {Array.isArray(item.languages)
+                ? item.languages.join(", ")
+                : item.languages}
+            </p>
+          )}
+
+          {/* Display Bar Memberships */}
+          {item.bar_memberships && item.bar_memberships.length > 0 && (
+            <div className="text-gray-600 text-sm mt-1">
+              <p className="font-medium">Bar Memberships:</p>
+              {item.bar_memberships.map((membership, index) => (
+                <p key={index} className="ml-2">
+                  • {membership.bar_name} ({membership.membership_number})
+                </p>
+              ))}
+            </div>
+          )}
+
           <div className="flex items-center space-x-4 mt-2">
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
