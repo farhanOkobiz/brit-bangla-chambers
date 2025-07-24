@@ -181,6 +181,28 @@ const FormBuilder = ({
                   </div>
                 )}
 
+                {/* Show current image for profile photos */}
+                {initialData?.profile_photo_url &&
+                  field.name === "profilePhoto" && (
+                    <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <img
+                        src={
+                          initialData.profile_photo_url || "/placeholder.svg"
+                        }
+                        alt="Current"
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-blue-900">
+                          Current Image
+                        </p>
+                        <p className="text-xs text-blue-600">
+                          Upload a new image to replace
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                 <div className="relative">
                   <input
                     type="file"

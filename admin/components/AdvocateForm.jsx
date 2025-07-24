@@ -230,7 +230,7 @@ const AdvocateForm = () => {
     try {
       setLoadingAdvocates(true);
       console.log("Fetching advocates...");
-      
+
       const res = await useAxios("/advocate/all", { method: "GET" });
 
       if (res.ok) {
@@ -385,7 +385,6 @@ const AdvocateForm = () => {
         : "/advocate/create";
       const method = editingAdvocate ? "PUT" : "POST";
 
-      
       const res = await useAxios(url, {
         method,
         data: transformedData,
@@ -475,7 +474,6 @@ const AdvocateForm = () => {
     }
 
     try {
-    
       const res = await useAxios(`/advocate/profile/${advocateId}`, {
         method: "DELETE",
       });
@@ -506,24 +504,38 @@ const AdvocateForm = () => {
   const renderAdvocateItem = (item) => {
     console.log("Rendering advocate item:", item);
 
+    // Get API base URL for constructing full image URLs
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
     return (
       <div className="flex items-center space-x-4">
         {/* Profile Photo */}
         <div className="flex-shrink-0">
           {item.profile_photo_url ? (
             <img
-              src={item.profile_photo_url || "/placeholder.svg"}
+              src={`${item.profile_photo_url}`}
               alt={item.user_id?.full_name || "Advocate"}
               className="w-16 h-16 rounded-full object-cover border border-gray-200"
+              onError={(e) => {
+                console.error(
+                  "Image failed to load:",
+                  `${apiBaseUrl}${item.profile_photo_url}`
+                );
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "flex";
+              }}
             />
-          ) : (
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-gray-400 text-xs">No Photo</span>
-            </div>
-          )}
+          ) : null}
+          <div
+            className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center ${
+              item.profile_photo_url ? "hidden" : ""
+            }`}
+          >
+            <span className="text-gray-400 text-xs">No Photo</span>
+          </div>
         </div>
 
-        {/* Info */}
+        {/* Rest of the component remains the same */}
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-gray-900 truncate">
             {item.user_id?.full_name || "Unknown Name"}
@@ -604,6 +616,9 @@ const AdvocateForm = () => {
             )}
             <p className="text-xs text-gray-400">
               Created: {new Date(item.createdAt).toLocaleDateString()}
+            </p>
+            <p className="text-xs text-gray-400">
+              Updated: {new Date(item.updatedAt).toLocaleDateString()}
             </p>
           </div>
         </div>
