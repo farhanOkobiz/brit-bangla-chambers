@@ -2,8 +2,13 @@ import RequestService from "../models/requestServiceSchema.js";
 
 // POST /request-service
 export const createRequestService = async (req, res) => {
+  const clientId = req.user._id;
+
   try {
-    const newRequest = await RequestService.create(req.body);
+    const newRequest = await RequestService.create({
+      ...req.body,
+      clientId: clientId,
+    });
     res.status(201).json({ success: true, data: newRequest });
   } catch (error) {
     res

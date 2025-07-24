@@ -17,7 +17,7 @@ const menuItems = [
   { label: "Advocate Profile", path: "/advocate/profile" },
   { label: "Dashboard", path: "/advocate/dashboard" },
   { label: "Message", path: "/advocate/dashboard/message" },
-  { label: "My Cases", path: "/advocate/cases" },
+  { label: "My Cases", path: "/advocate/dashboard/my-cases" },
   { label: "Appointments", path: "/advocate/appointments" },
   { label: "Clients", path: "/advocate/clients" },
   {

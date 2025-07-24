@@ -5,8 +5,9 @@ import {
   getAllRequestServices,
   deleteRequestService,
 } from "../../controllers/requestServiceController.js";
+import { checkClient } from "../../middleware/authMiddleware.js";
 
-router.post("/", createRequestService);
+router.post("/", checkClient, createRequestService);
 router.get("/", getAllRequestServices);
 router.delete("/:id", deleteRequestService);
 

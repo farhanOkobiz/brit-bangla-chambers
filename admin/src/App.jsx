@@ -19,8 +19,9 @@ import EditBlog from "../pages/blog/EditBlog";
 import AdvocateMessage from "../components/message/AdvocateMessage";
 import AdvocateManagement from "../components/AdvocateManagement";
 import UserManagement from "../components/Users/UserManagement";
-
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
+import MyCases from "../pages/my_cases/MyCases";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/message" element={<AdvocateMessage />} />
+          <Route path="dashboard/my-cases" element={<MyCases />} />
         </Route>
 
         {/* Admin Routes */}

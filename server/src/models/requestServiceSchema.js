@@ -3,6 +3,11 @@ const { Schema, model } = mongoose;
 
 const requestServiceSchema = new Schema(
   {
+    clientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     userMessage: {
       name: String,
       email: String,
