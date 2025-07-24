@@ -11,6 +11,8 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data } = useGetAuthQuery(undefined);
+  const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
+  const ADVOCATE_URL = process.env.NEXT_PUBLIC_ADVOCATE_URL;
 
   useEffect(() => {
     console.log(" data:", data?.data);
@@ -54,8 +56,12 @@ function LoginForm() {
 
       if (user?.role === "client") {
         router.push("/client/dashboard");
-      } else if (user?.role === "admin" || user?.role === "advocate") {
-        router.push("/unauthorized");
+      }  else if (user?.role === "admin" || user?.role === "advocate") {
+    const targetUrl =
+      user.role === "admin"
+        ? `${ADMIN_URL}/admin/dashboard`
+        : `${ADVOCATE_URL}/advocate/dashboard`;
+    window.location.href = targetUrl;
       } else {
         router.push("/");
       }
