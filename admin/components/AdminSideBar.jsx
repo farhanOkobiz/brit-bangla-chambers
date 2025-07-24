@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   FaBars,
@@ -12,12 +14,15 @@ import {
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { useAxios } from "../services/useAxios";
-import { useAuth } from "../auth/AuthContext";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
   { label: "Users", path: "/admin/users", icon: <FaUser /> },
+  {
+    label: "User Management",
+    path: "/admin/user-management",
+    icon: <FaUser />,
+  },
   { label: "Categories", path: "/admin/categories", icon: <FaFolderOpen /> },
   {
     label: "Subcategories",
@@ -44,14 +49,6 @@ const menuItems = [
       { label: "Service Requests", path: "/admin/messages/service" },
     ],
   },
-  {
-    label: "Blogs",
-    isDropdown: true,
-    subItems: [
-      { label: "All Blogs", path: "/admin/dashboard/blogs" },
-      { label: "Create Blog", path: "/admin/dashboard/create-blog" },
-    ],
-  },
   { label: "Settings", path: "/admin/settings", icon: <FaCogs /> },
 ];
 
@@ -59,7 +56,6 @@ const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
-  const { userName, setAuthed , authed } = useAuth();
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -158,13 +154,16 @@ const AdminSidebar = () => {
                   <div key={item.label}>
                     <button
                       onClick={() => toggleDropdown(item.label)}
-                      className={`w-full text-left px-3 py-2 flex justify-between items-center rounded-lg text-sm font-medium cursor-pointer ${
+                      className={`w-full text-left px-4 py-3 flex justify-between items-center rounded-xl text-base font-medium transition-all duration-200 ${
                         openDropdown === item.label
                           ? "bg-blue-50 text-blue-600 shadow-sm"
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      <span className="text-blue-700">{item.label}</span>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-lg">{item.icon}</span>
+                        <span>{item.label}</span>
+                      </div>
                       {openDropdown === item.label ? (
                         <FiChevronUp className="text-lg" />
                       ) : (
@@ -312,30 +311,20 @@ const AdminSidebar = () => {
           {/* Desktop User Profile */}
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-              {/* <img
+              <img
                 className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
                 src="/placeholder.svg?height=32&width=32"
                 alt="Admin"
-              /> */}
+              />
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-gray-800 truncate">
-                  {userName || "Admin User"}
+                  Admin User
                 </h3>
-              
+                <p className="text-xs text-gray-600 truncate">
+                  admin@example.com
+                </p>
               </div>
-              <button
-                className="p-1 text-gray-400 hover:text-red-600 transition-colors"
-                onClick={async () => {
-                  try {
-                    const res = await useAxios("/auth/logout", { method: "POST" });
-                    if (res.ok) {
-                      window.location.href = "/login";
-                    }
-                  } catch (err) {
-                    alert("Logout failed");
-                  }
-                }}
-              >
+              <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
                 <FaSignOutAlt className="h-4 w-4" />
               </button>
             </div>

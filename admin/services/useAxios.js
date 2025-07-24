@@ -1,7 +1,32 @@
 import axios from "axios";
 
 export async function useAxios(url, options = {}) {
+  // Validate that URL is provided
+  if (!url || typeof url !== "string") {
+    console.error(
+      "useAxios: URL is required and must be a string. Received:",
+      url
+    );
+    return {
+      status: 400,
+      ok: false,
+      data: { message: "Invalid URL provided to useAxios" },
+    };
+  }
+
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // Validate that API base URL is configured
+  if (!apiBaseUrl) {
+    console.error(
+      "useAxios: VITE_API_BASE_URL environment variable is not set"
+    );
+    return {
+      status: 500,
+      ok: false,
+      data: { message: "API base URL not configured" },
+    };
+  }
 
   const isFormData = options.data instanceof FormData;
 
@@ -14,13 +39,15 @@ export async function useAxios(url, options = {}) {
     },
   });
 
-  const makeRequest = () =>
-    instance({
+  const makeRequest = () => {
+    console.log(`Making request to: ${apiBaseUrl}${url}`);
+    return instance({
       url,
       method: options.method || "GET",
       data: options.data || undefined,
       params: options.params || undefined,
     });
+  };
 
   try {
     const res = await makeRequest();

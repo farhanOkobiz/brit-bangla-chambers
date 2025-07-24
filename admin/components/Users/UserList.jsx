@@ -19,9 +19,18 @@ const UserList = ({ users, onSelect, onDelete, onVerify, onStatusChange }) => (
           <td className="p-2">{user.role}</td>
           <td className="p-2">{user.status || "-"}</td>
           <td className="p-2 flex gap-2">
-            <button onClick={() => onSelect(user)} className="text-blue-600">View</button>
-            <button onClick={() => onStatusChange(user)} className="text-yellow-600">Change Status</button>
-            <button onClick={() => onDelete(user)} className="text-red-600">Delete</button>
+            <button onClick={() => onSelect(user)} className="text-blue-600">
+              View
+            </button>
+            <button
+              onClick={() => onStatusChange(user)}
+              className="text-yellow-600"
+            >
+              Change Status
+            </button>
+            <button onClick={() => onDelete(user)} className="text-red-600">
+              Delete
+            </button>
           </td>
         </tr>
       ))}

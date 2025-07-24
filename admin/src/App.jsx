@@ -18,6 +18,7 @@ import AdvocateForm from "../components/AdvocateForm";
 import EditBlog from "../pages/blog/EditBlog";
 import AdvocateMessage from "../components/message/AdvocateMessage";
 import AdvocateManagement from "../components/AdvocateManagement";
+import UserManagement from "../components/Users/UserManagement";
 
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
 export default function App() {
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
           <Route path="users" element={<Users />} />
+          <Route path="user-management" element={<UserManagement />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />

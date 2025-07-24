@@ -207,8 +207,8 @@ const AdvocateForm = () => {
     try {
       setLoadingAdvocates(true);
       console.log("Fetching advocates...");
-      const axiosInstance = useAxios(); // Moved useAxios call here
-      const res = await axiosInstance.get("/advocate/all");
+       // Moved useAxios call here
+      const res = await useAxios("/advocate/all",{method: "GET"});
 
       if (res.ok) {
         console.log("Fetched advocates:", res.data);
@@ -333,10 +333,9 @@ const AdvocateForm = () => {
         ? `/advocate/update/${editingAdvocate._id}`
         : "/advocate/create";
       const method = editingAdvocate ? "PUT" : "POST";
-      const axiosInstance = useAxios(); // Moved useAxios call here
+       // Moved useAxios call here
 
-      const res = await axiosInstance.request({
-        url,
+      const res = await useAxios(url, {
         method,
         data: transformedData,
       });
@@ -416,8 +415,9 @@ const AdvocateForm = () => {
     }
 
     try {
-      const axiosInstance = useAxios(); // Moved useAxios call here
-      const res = await axiosInstance.delete(`/advocate/profile/${advocateId}`);
+     // Moved useAxios call here
+      const res = await useAxios(`/advocate/profile/${advocateId}`, {
+        method: "DELETE",});
 
       if (res.ok) {
         alert("Advocate deleted successfully!");
