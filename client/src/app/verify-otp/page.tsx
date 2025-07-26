@@ -14,6 +14,8 @@ export default function VerifyOtpPage() {
   const [loading, setLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(30);
   const [resendLoading, setResendLoading] = useState(false);
+  const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL;
+  const ADVOCATE_URL = process.env.NEXT_PUBLIC_ADVOCATE_URL;
 
   // Countdown for resend button
   useEffect(() => {
@@ -40,16 +42,31 @@ export default function VerifyOtpPage() {
         setLoading(false);
         return;
       }
+      
+      const data = res.data;
+      const user = data.user;
 
-      router.push("/profile");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Something went wrong");
+      if (user?.role === "client") {
+        router.push("/client/dashboard");
+      }  else if (user?.role === "admin" || user?.role === "advocate") {
+    const targetUrl =
+      user.role === "admin"
+        ? `${ADMIN_URL}/admin/dashboard`
+        : `${ADVOCATE_URL}/advocate/dashboard`;
+    window.location.href = targetUrl;
       }
-      setLoading(false);
+      else{
+        setError("Invalid user role");
+      }
+     
     }
+     catch (err: unknown) {
+        setError("Something went wrong during verification, Try again through login");
+      } finally {
+        setLoading(false);
+      }
+    setLoading(false);
+    
   };
 
   const handleResend = async () => {

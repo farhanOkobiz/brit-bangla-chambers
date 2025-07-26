@@ -5,9 +5,16 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Education from "../models/educationSchema.js";
+<<<<<<< HEAD
 import mongoose from "mongoose";
 
 
+=======
+import testimonialSchema from "../models/testimonialSchema.js";
+import caseHistory from "../models/caseHistory.js";
+import documentSchema from "../models/documentSchema.js";
+import certificationScema from "../models/certificationSchema.js";
+>>>>>>> 60b6d7dabf8fe68f992a2cf4c37c23f0119a3ab4
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
