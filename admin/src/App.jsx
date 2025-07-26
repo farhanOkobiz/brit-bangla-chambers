@@ -4,13 +4,14 @@ import AdminPanel from "../pages/AdminPanel";
 import AdvocatePanel from "../pages/AdvocatePanel";
 import Unauthorized from "../components/Unauthorized";
 import ProtectedRoute from "../auth/ProtectedRoute";
-import CategoryForm from "../components/CategoryForm";
+import SpecializationForm from "../components/SpecializationForm";
 import SubcategoryForm from "../components/subCategoryForm";
 import AdminDashboard from "../components/AdminDashboard";
 import AdvocateDashboard from "../components/AdvocateDashboard";
 import Blogs from "../pages/blog/Blogs";
 import CreateBlog from "../pages/blog/CreateBlog";
 import ContactMessage from "../components/request/ContactMessage";
+// import Users from "../pages/Admin/Users";
 import Users from "../pages/Admin/Users";
 import ServiceForm from "../components/ServiceForm";
 import AdvocateForm from "../components/AdvocateForm";
@@ -67,7 +68,7 @@ export default function App() {
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="categories" element={<CategoryForm />} />
+          <Route path="specialization" element={<SpecializationForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="services" element={<ServiceForm />} />
           <Route path="advocates" element={<AdvocateForm />} />

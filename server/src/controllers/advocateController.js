@@ -5,6 +5,10 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Education from "../models/educationSchema.js";
+import testimonialSchema from "../models/testimonialSchema.js";
+import caseHistory from "../models/caseHistory.js";
+import documentSchema from "../models/documentSchema.js";
+import certificationScema from "../models/certificationSchema.js";
 
 // ESM-compatible __dirname setup
 const __filename = fileURLToPath(import.meta.url);
@@ -116,6 +120,17 @@ export const createAdvocateProfile = async (req, res) => {
           console.error("Error parsing contact JSON:", e);
         }
       }
+      if (
+        requestData.bar_memberships &&
+        typeof requestData.bar_memberships === "string"
+      ) {
+        try {
+          requestData.bar_memberships = JSON.parse(requestData.bar_memberships);
+        } catch (e) {
+          console.error("Error parsing bar_memberships:", e);
+          requestData.bar_memberships = [];
+        }
+      }
 
       if (
         requestData.available_hours &&
@@ -140,12 +155,14 @@ export const createAdvocateProfile = async (req, res) => {
       }
 
       // Convert string booleans to actual booleans
+      
       if (requestData.consultation_available === "true")
         requestData.consultation_available = true;
       if (requestData.consultation_available === "false")
         requestData.consultation_available = false;
       if (requestData.featured === "true") requestData.featured = true;
       if (requestData.featured === "false") requestData.featured = false;
+
     } else {
       // JSON request
       requestData = req.body;
@@ -176,6 +193,7 @@ export const createAdvocateProfile = async (req, res) => {
       stats,
       status,
       featured,
+      bar_memberships,
     } = requestData;
 
     console.log("Parsed data:", {
@@ -273,7 +291,8 @@ export const createAdvocateProfile = async (req, res) => {
       stats: stats || {},
       status: status || "pending",
       featured: featured || false,
-      profile_photo_url: profilePhotoUrl,
+      profile_photo_url: `${req.protocol}://${req.get("host")}/uploads/${profilePhotoUrl}`,
+      bar_memberships: requestData.bar_memberships || [],
     });
 
     // Populate the response

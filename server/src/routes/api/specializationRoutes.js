@@ -28,21 +28,21 @@ router.put(
 );
 router.delete("/delete-specialization/:id", checkAdmin, deleteSpecialization);
 
-// Category aliases (since specialization = category in your system)
+// Specialization aliases (since specialization = Specialization in your system)
 router.post(
-  "/create-category",
+  "/create-specialization",
   checkAdmin,
   upload.single("image"),
   createSpecialization
 );
 router.get("/get-all-categories", getAllSpecializations);
-router.get("/get-category/:id", getSpecializationById);
+router.get("/get-Specialization/:id", getSpecializationById);
 router.put(
-  "/update-category/:id",
+  "/update-Specialization/:id",
   checkAdmin,
   upload.single("image"),
   updateSpecialization
 );
-router.delete("/delete-category/:id", checkAdmin, deleteSpecialization);
+router.delete("/delete-Specialization/:id", checkAdmin, deleteSpecialization);
 
 export default router;

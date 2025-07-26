@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { logout } from "../auth/api";
+import  {useNavigate}  from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+
 import {
   FaBars,
   FaTimes,
@@ -53,6 +57,8 @@ const AdvocateSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { setAuthed, setRole, setUserName } = useAuth();
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -62,6 +68,22 @@ const AdvocateSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
+  const handleLogOut = () => {
+    try{
+      const response = logout();
+    if (response) {
+      setAuthed(false);
+      setRole(null);
+      setUserName(null);
+      navigate("/login");
+    }
+    }
+    catch (error) {
+      console.error("Logout failed:", error);
+      // Optionally, you can show an error message to the user
+    }
+    
+  }
 
   return (
     <>
@@ -304,7 +326,7 @@ const AdvocateSidebar = () => {
                   advocate@example.com
                 </p>
               </div>
-              <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+              <button onClick={()=> handleLogOut()} className="p-1 text-gray-400 hover:text-red-600 transition-colors">
                 <FaSignOutAlt className="h-4 w-4" />
               </button>
             </div>

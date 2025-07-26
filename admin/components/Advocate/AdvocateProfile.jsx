@@ -22,9 +22,32 @@ const AdvocateProfile = () => {
     fetchProfile();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
-  if (!profile || !profile.advocate) return <div>No profile found.</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600 text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
+          <div className="text-red-800 font-medium">Error</div>
+          <div className="text-red-600 mt-1">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile || !profile.advocate) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600 text-lg">No profile found.</div>
+      </div>
+    );
+  }
 
   const { user, advocate } = profile;
   const availableHours = advocate.available_hours || {};
@@ -33,44 +56,181 @@ const AdvocateProfile = () => {
   const stats = advocate.stats || {};
 
   return (
-    <div className="advocate-profile">
-      <h2>{user?.full_name || "Advocate"}</h2>
-      <p><strong>Email:</strong> {user?.email}</p>
-      <p><strong>Phone:</strong> {user?.phone}</p>
-      <p><strong>Designation:</strong> {advocate.designation}</p>
-      <p><strong>Bar Council Enroll No:</strong> {advocate.bar_council_enroll_num}</p>
-      <p><strong>Experience (years):</strong> {advocate.experience_years}</p>
-      <p><strong>Bio:</strong> {advocate.bio}</p>
-      <p><strong>Office Address:</strong> {advocate.office_address}</p>
-      <p><strong>Status:</strong> {advocate.status}</p>
-      <p><strong>Featured:</strong> {advocate.featured ? "Yes" : "No"}</p>
-      <p><strong>Consultation Available:</strong> {advocate.consultation_available ? "Yes" : "No"}</p>
-      <p><strong>Slug:</strong> {advocate.slug}</p>
-      <p><strong>Available Hours:</strong></p>
-      <ul>
-        {Object.entries(availableHours).map(([day, hours]) => (
-          <li key={day}><strong>{day}:</strong> {hours || "-"}</li>
-        ))}
-      </ul>
-      <p><strong>Contact:</strong></p>
-      <ul>
-        <li><strong>Phone:</strong> {contact.phone}</li>
-        <li><strong>Facebook:</strong> <a href={contact.facebook} target="_blank" rel="noopener noreferrer">{contact.facebook}</a></li>
-        <li><strong>LinkedIn:</strong> <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">{contact.linkedin}</a></li>
-      </ul>
-      <p><strong>Fee Structure:</strong></p>
-      <ul>
-        <li><strong>Base Fee:</strong> {fee.base_fee}</li>
-        <li><strong>Show Publicly:</strong> {fee.show_publicly ? "Yes" : "No"}</li>
-      </ul>
-      <p><strong>Stats:</strong></p>
-      <ul>
-        <li><strong>Total Consultations:</strong> {stats.total_consultations}</li>
-        <li><strong>Weekly Bookings:</strong> {stats.weekly_bookings}</li>
-        <li><strong>Last Consultation:</strong> {stats.last_consultation ? new Date(stats.last_consultation).toLocaleString() : "-"}</li>
-      </ul>
-      <p><strong>Ratings:</strong> {advocate.avg_rating} ({advocate.total_reviews} reviews)</p>
-      {/* Add more fields as needed, e.g. education, certifications, etc. */}
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {user?.full_name || "Advocate"}
+              </h1>
+              <p className="text-lg text-gray-600 mb-4">{advocate.designation}</p>
+              <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                <span>Bar Enroll: {advocate.bar_council_enroll_num}</span>
+                <span>Experience: {advocate.experience_years} years</span>
+                <span className={`px-3 py-1 rounded-full ${advocate.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                  {advocate.status}
+                </span>
+              </div>
+            </div>
+            <div className="mt-6 md:mt-0 md:ml-8">
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {advocate.avg_rating || 'N/A'}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {advocate.total_reviews} reviews
+                  </div>
+                </div>
+                {advocate.featured && (
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Featured
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* About Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">About</h2>
+              <p className="text-gray-700 leading-relaxed">
+                {advocate.bio || "No bio available."}
+              </p>
+            </div>
+
+            {/* Available Hours */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Available Hours</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {Object.entries(availableHours).map(([day, hours]) => (
+                  <div key={day} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+                    <span className="font-medium text-gray-900 capitalize">{day}</span>
+                    <span className="text-gray-600">{hours || "Closed"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Statistics */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Statistics</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {stats.total_consultations || 0}
+                  </div>
+                  <div className="text-sm text-gray-500">Total Consultations</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {stats.weekly_bookings || 0}
+                  </div>
+                  <div className="text-sm text-gray-500">Weekly Bookings</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-medium text-gray-900">
+                    {stats.last_consultation ? 
+                      new Date(stats.last_consultation).toLocaleDateString() : 
+                      "N/A"
+                    }
+                  </div>
+                  <div className="text-sm text-gray-500">Last Consultation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-8">
+            {/* Contact Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact Information</h2>
+              <div className="space-y-3">
+                <div>
+                  <div className="text-sm font-medium text-gray-500">Email</div>
+                  <div className="text-gray-900">{user?.email || "N/A"}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-500">Phone</div>
+                  <div className="text-gray-900">{user?.phone || contact.phone || "N/A"}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-500">Office Address</div>
+                  <div className="text-gray-900">{advocate.office_address || "N/A"}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            {(contact.facebook || contact.linkedin) && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Social Links</h2>
+                <div className="space-y-3">
+                  {contact.facebook && (
+                    <a 
+                      href={contact.facebook} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="block text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      Facebook Profile
+                    </a>
+                  )}
+                  {contact.linkedin && (
+                    <a 
+                      href={contact.linkedin} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="block text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      LinkedIn Profile
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Fee Structure */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Fee Structure</h2>
+              <div className="space-y-3">
+                <div>
+                  <div className="text-sm font-medium text-gray-500">Base Fee</div>
+                  <div className="text-gray-900 font-medium">
+                    {fee.base_fee ? `$${fee.base_fee}` : "Contact for pricing"}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-500">Public Display</div>
+                  <div className="text-gray-900">
+                    {fee.show_publicly ? "Yes" : "No"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Consultation Status */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Consultation</h2>
+              <div className={`px-4 py-3 rounded-lg text-center font-medium ${
+                advocate.consultation_available 
+                  ? 'bg-green-50 text-green-800 border border-green-200' 
+                  : 'bg-red-50 text-red-800 border border-red-200'
+              }`}>
+                {advocate.consultation_available ? 'Available' : 'Not Available'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
