@@ -38,10 +38,10 @@ function Navbar() {
 
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/services", label: "Services" },
-    { href: "/help-center", label: "Help center" },
     { href: "/about", label: "About" },
+    { href: "/services", label: "Services" },
     { href: "/request-for-service", label: "Request for service" },
+    { href: "/help-center", label: "Help center" },
   ];
 
   const handleLogout = async () => {
