@@ -20,18 +20,19 @@ import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
-  // { label: "Users", path: "/admin/users", icon: <FaUser /> },
+  // { label: "Users", path: "/admizn/users", icon: <FaUser /> },
   {
     label: "User Management",
     path: "/admin/user-management",
     icon: <FaUser />,
   },
-<<<<<<< HEAD
-  { label: "Specialization", path: "/admin/specialization", icon: <FaFolderOpen /> },
-=======
+  {
+    label: "Specialization",
+    path: "/admin/specialization",
+    icon: <FaFolderOpen />,
+  },
   { label: "Service Requests", path: "/admin/messages/service" },
   { label: "Categories", path: "/admin/categories", icon: <FaFolderOpen /> },
->>>>>>> raihan
   {
     label: "Subcategories",
     path: "/admin/sub-categories",
@@ -67,7 +68,7 @@ const AdminSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
-  const { setAuthed, setRole, setUserName , userName} = useAuth();
+  const { setAuthed, setRole, setUserName, userName } = useAuth();
   const navigate = useNavigate();
 
   const handleLogOut = () => {
@@ -79,11 +80,10 @@ const AdminSidebar = () => {
         setUserName(null);
         navigate("/login");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Logout failed:", error);
     }
-  }
+  };
 
   return (
     <>
@@ -340,10 +340,14 @@ const AdminSidebar = () => {
                   Admin User
                 </h3>
                 <p className="text-xs text-gray-600 truncate">
-                  {userName}{" - Admin"}
+                  {userName}
+                  {" - Admin"}
                 </p>
               </div>
-              <button onClick={ ()=> handleLogOut() }className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+              <button
+                onClick={() => handleLogOut()}
+                className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+              >
                 <FaSignOutAlt className="h-4 w-4" />
               </button>
             </div>
