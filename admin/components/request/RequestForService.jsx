@@ -41,7 +41,7 @@ const formatStatusText = (status) => {
     .join(" ");
 };
 
-function RequestMessage() {
+function RequestForService() {
   const [requestsMessage, setRequestsMessage] = useState([]);
   const [selectedAdvocates, setSelectedAdvocates] = useState({});
   const [advocates, setAdvocates] = useState([]);
@@ -81,7 +81,7 @@ function RequestMessage() {
     }
 
     try {
-      const res = await useAxios(`/advocate-message`, {
+      const res = await useAxios(`/request-for-advocate`, {
         method: "POST",
         data: {
           userMessage: item.userMessage,
@@ -110,6 +110,8 @@ function RequestMessage() {
         const onlyAdvocates = allUsers.filter(
           (user) => user.role === "advocate"
         );
+
+        console.log(res);
 
         setAdvocates(onlyAdvocates);
       } catch (error) {
@@ -208,4 +210,4 @@ function RequestMessage() {
   );
 }
 
-export default RequestMessage;
+export default RequestForService;

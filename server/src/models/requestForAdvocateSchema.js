@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { model, models, Schema } = mongoose;
 
-const advocateMessageSchema = new Schema(
+const requestForAdvocateSchema = new Schema(
   {
     userMessage: {
       name: { type: String },
@@ -33,4 +33,4 @@ const advocateMessageSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("AdvocateMessage", advocateMessageSchema);
+export default model("RequestForAdvocate", requestForAdvocateSchema);
