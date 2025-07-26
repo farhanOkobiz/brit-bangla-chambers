@@ -42,6 +42,7 @@ function Navbar() {
     { href: "/services", label: "Services" },
     { href: "/help-center", label: "Help center" },
     { href: "/request-for-service", label: "Request for service" },
+    { href: "/help-center", label: "Help center" },
   ];
 
   const handleLogout = async () => {
@@ -155,7 +156,11 @@ function Navbar() {
               >
                 <Link href="/login">Login</Link>
               </Button>
-              <Button size="sm" asChild className="hover:bg-gray-200 hover:text-primary">
+              <Button
+                size="sm"
+                asChild
+                className="hover:bg-gray-200 hover:text-primary"
+              >
                 <Link href="/signup">Sign Up</Link>
               </Button>
             </div>

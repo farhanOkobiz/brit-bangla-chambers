@@ -10,7 +10,7 @@ const contactSchema = new Schema(
     message: { type: String, required: true },
   },
   {
-    timestamps: { createdAt: true, updatedAt: false },
+    timestamps: { createdAt: true, updatedAt: false }, 
   }
 );
 

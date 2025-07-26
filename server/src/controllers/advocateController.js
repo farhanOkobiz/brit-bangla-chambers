@@ -5,15 +5,68 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Education from "../models/educationSchema.js";
+import mongoose from "mongoose";
+
+
 import testimonialSchema from "../models/testimonialSchema.js";
 import caseHistory from "../models/caseHistory.js";
 import documentSchema from "../models/documentSchema.js";
 import certificationScema from "../models/certificationSchema.js";
 
-// ESM-compatible __dirname setup
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const uploadPath = path.join(__dirname, "..", "uploads");
+
+// === Helper Functions ===
+
+// Extract filename from URL
+const getFilenameFromUrl = (url) => {
+  const parts = url.split("/uploads/");
+  return parts.length > 1 ? parts[1] : null;
+};
+
+// Absolute path to uploaded file
+const getUploadPath = (filename) => {
+  return path.join(__dirname, "..", "..", "uploads", filename);
+};
+
+// Delete file safely
+const deleteFile = (filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log("File deleted:", filePath);
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error("Failed to delete file:", err);
+    return false;
+  }
+};
+
+// Parse FormData JSON fields
+const parseJsonFields = (requestData, fields) => {
+  fields.forEach((key) => {
+    if (requestData[key] && typeof requestData[key] === "string") {
+      try {
+        requestData[key] = JSON.parse(requestData[key]);
+      } catch (err) {
+        console.error(`Error parsing ${key}:`, err);
+        requestData[key] = Array.isArray(key) ? [] : {};
+      }
+    }
+  });
+};
+
+// Convert boolean strings
+const parseBooleans = (requestData, keys) => {
+  keys.forEach((key) => {
+    if (requestData[key] === "true") requestData[key] = true;
+    if (requestData[key] === "false") requestData[key] = false;
+  });
+};
+
+
 
 export const showAdvocate = async (req, res) => {
   try {
@@ -99,73 +152,26 @@ export const showAdvocateById = async (req, res) => {
 
 // Create advocate profile
 export const createAdvocateProfile = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  let uploadedFilename = null;
+
   try {
-    console.log("=== CREATE ADVOCATE DEBUG ===");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
-    console.log("Content-Type:", req.headers["content-type"]);
+    console.log("=== CREATE ADVOCATE PROFILE ===");
+    const isFormData = req.headers["content-type"]?.includes(
+      "multipart/form-data"
+    );
+    let requestData = isFormData ? { ...req.body } : req.body;
 
-    // Handle both JSON and FormData requests
-    let requestData = {};
-
-    if (req.headers["content-type"]?.includes("multipart/form-data")) {
-      // FormData request - data is in req.body
-      requestData = { ...req.body };
-
-      // Parse JSON strings back to objects
-      if (requestData.contact && typeof requestData.contact === "string") {
-        try {
-          requestData.contact = JSON.parse(requestData.contact);
-        } catch (e) {
-          console.error("Error parsing contact JSON:", e);
-        }
-      }
-      if (
-        requestData.bar_memberships &&
-        typeof requestData.bar_memberships === "string"
-      ) {
-        try {
-          requestData.bar_memberships = JSON.parse(requestData.bar_memberships);
-        } catch (e) {
-          console.error("Error parsing bar_memberships:", e);
-          requestData.bar_memberships = [];
-        }
-      }
-
-      if (
-        requestData.available_hours &&
-        typeof requestData.available_hours === "string"
-      ) {
-        try {
-          requestData.available_hours = JSON.parse(requestData.available_hours);
-        } catch (e) {
-          console.error("Error parsing available_hours JSON:", e);
-        }
-      }
-
-      if (
-        requestData.fee_structure &&
-        typeof requestData.fee_structure === "string"
-      ) {
-        try {
-          requestData.fee_structure = JSON.parse(requestData.fee_structure);
-        } catch (e) {
-          console.error("Error parsing fee_structure JSON:", e);
-        }
-      }
-
-      // Convert string booleans to actual booleans
-      
-      if (requestData.consultation_available === "true")
-        requestData.consultation_available = true;
-      if (requestData.consultation_available === "false")
-        requestData.consultation_available = false;
-      if (requestData.featured === "true") requestData.featured = true;
-      if (requestData.featured === "false") requestData.featured = false;
-
-    } else {
-      // JSON request
-      requestData = req.body;
+    if (isFormData) {
+      parseJsonFields(requestData, [
+        "contact",
+        "bar_memberships",
+        "available_hours",
+        "fee_structure",
+      ]);
+      parseBooleans(requestData, ["consultation_available", "featured"]);
     }
 
     const {
@@ -177,7 +183,6 @@ export const createAdvocateProfile = async (req, res) => {
       bar_council_enroll_num,
       experience_years,
       bio,
-      slug,
       office_address,
       available_hours,
       contact,
@@ -196,359 +201,327 @@ export const createAdvocateProfile = async (req, res) => {
       bar_memberships,
     } = requestData;
 
-    console.log("Parsed data:", {
-      full_name,
-      email,
-      phone,
-      designation,
-      status,
-      consultation_available,
-      featured,
-    });
+    // Handle file
+    if (!req.file) {
+      return res.status(400).json({ error: "Profile photo is required." });
+    }
 
-    // Validate required fields
+    uploadedFilename = req.file.filename;
+    const profilePhotoUrl = `${req.protocol}://${req.get("host")}/uploads/${uploadedFilename}`;
+
+    // Basic validation
     if (!full_name || !email || !phone || !password) {
+      deleteFile(getUploadPath(uploadedFilename));
       return res.status(400).json({
         message: "Missing required fields",
         required: ["full_name", "email", "phone", "password"],
-        received: {
-          full_name,
-          email,
-          phone,
-          password: password ? "***" : undefined,
-        },
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+    // Check if user exists
+    const existing = await User.findOne({
+      $or: [{ email }, { phone }],
+    }).session(session);
+    if (existing) {
+      deleteFile(getUploadPath(uploadedFilename));
+      return res.status(400).json({ message: "User already exists." });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    let generatedSlug = "";
 
-    // Auto-generate slug if not provided
-    let generatedSlug = slug;
-    if (!generatedSlug && full_name) {
-      generatedSlug = full_name
+   generatedSlug =
+      full_name && full_name.length > 0
+        ? full_name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-    }
+        .replace(/^-+|-+$/g, "")
+        : `advocate-${Date.now()}`;
+      
+    // Create user
+    const user = await User.create(
+      [
+        {
+          full_name,
+          email,
+          phone,
+          password: hashedPassword,
+          role: "advocate",
+          otp_verified: false,
+        },
+      ],
+      { session }
+    );
 
-    // Create new user
-    const user = await User.create({
-      full_name,
-      email,
-      phone,
-      password: hashedPassword,
-      role: "advocate",
-    });
-
-    // Create education records and collect their _id
+    // Create education entries
     const educationIds = [];
     if (Array.isArray(education)) {
       for (const edu of education) {
-        const newEdu = await Education.create({
-          ...edu,
-          user_type: "Advocate",
-          user_id: user._id,
-        });
-        educationIds.push(newEdu._id);
+        const newEdu = await Education.create(
+          [{ ...edu, user_type: "Advocate", user_id: user[0]._id }],
+          { session }
+        );
+        educationIds.push(newEdu[0]._id);
       }
     }
 
-    // Handle profile photo
-    let profilePhotoUrl = null;
-    if (req.file) {
-      profilePhotoUrl = `/uploads/${req.file.filename}`;
-    }
+    // Create advocate profile
+    const advocate = await Advocate.create(
+      [
+        {
+          user_id: user[0]._id,
+          designation: designation || "",
+          bar_council_enroll_num: bar_council_enroll_num || "",
+          experience_years: experience_years ? parseInt(experience_years) : 0,
+          bio: bio || "",
+          slug: generatedSlug,
+          office_address: office_address || "",
+          available_hours: available_hours || {},
+          contact: contact || {},
+          languages: languages || [],
+          specialization_ids: specialization_ids || [],
+          education_ids: educationIds,
+          certification_ids: certification_ids || [],
+          testimonial_ids: testimonial_ids || [],
+          case_history_ids: case_history_ids || [],
+          document_ids: document_ids || [],
+          consultation_available: consultation_available || false,
+          fee_structure: fee_structure || { base_fee: 0, show_publicly: false },
+          stats: stats || {},
+          status: status || "pending",
+          featured: featured || false,
+          profile_photo_url: profilePhotoUrl,
+          bar_memberships: bar_memberships || [],
+        },
+      ],
+      { session }
+    );
 
-    // Create associated advocate profile
-    const advocate = await Advocate.create({
-      user_id: user._id,
-      designation: designation || "",
-      bar_council_enroll_num: bar_council_enroll_num || "",
-      experience_years: experience_years
-        ? Number.parseInt(experience_years)
-        : 0,
-      bio: bio || "",
-      slug: generatedSlug || "",
-      office_address: office_address || "",
-      available_hours: available_hours || {},
-      contact: contact || {},
-      languages: languages || [],
-      specialization_ids: specialization_ids || [],
-      education_ids: educationIds,
-      certification_ids: certification_ids || [],
-      testimonial_ids: testimonial_ids || [],
-      case_history_ids: case_history_ids || [],
-      document_ids: document_ids || [],
-      consultation_available: consultation_available || false,
-      fee_structure: fee_structure || { base_fee: 0, show_publicly: false },
-      stats: stats || {},
-      status: status || "pending",
-      featured: featured || false,
-      profile_photo_url: `${req.protocol}://${req.get("host")}/uploads/${profilePhotoUrl}`,
-      bar_memberships: requestData.bar_memberships || [],
-    });
+    await session.commitTransaction();
+    session.endSession();
 
-    // Populate the response
-    const populatedAdvocate = await advocate.populate("user_id", "-password");
+    const populated = await advocate[0].populate("user_id", "-password");
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Advocate profile created successfully",
-      user,
-      advocate: populatedAdvocate,
+      user: user[0],
+      advocate: populated,
     });
   } catch (error) {
-    console.error("Advocate profile creation error:", error);
+    console.error("Error creating advocate profile:", error);
 
-    // Clean up uploaded file if there was an error
-    if (req.file) {
-      const filePath = path.join(uploadPath, req.file.filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+    if (uploadedFilename) {
+      deleteFile(getUploadPath(uploadedFilename));
     }
 
-    res.status(500).json({ message: "Server error", error: error.message });
+    await session.abortTransaction();
+    session.endSession();
+
+    return res.status(500).json({
+      message: "Server error while creating profile",
+      error: error.message,
+    });
   }
 };
 
 // Update advocate profile (with photo upload)
 export const updateAdvocateProfile = async (req, res) => {
-  let newProfilePhotoPath;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  let newProfilePhotoFilename = null;
+
   try {
     const { id } = req.params;
+    const isFormData = req.headers["content-type"]?.includes(
+      "multipart/form-data"
+    );
+    let requestData = isFormData ? { ...req.body } : req.body;
 
-    console.log("=== UPDATE ADVOCATE DEBUG ===");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
-    console.log("Content-Type:", req.headers["content-type"]);
-
-    // Handle both JSON and FormData requests
-    let requestData = {};
-
-    if (req.headers["content-type"]?.includes("multipart/form-data")) {
-      // FormData request - data is in req.body
-      requestData = { ...req.body };
-
-      // Parse JSON strings back to objects
-      if (requestData.contact && typeof requestData.contact === "string") {
-        try {
-          requestData.contact = JSON.parse(requestData.contact);
-        } catch (e) {
-          console.error("Error parsing contact JSON:", e);
+    // === Parse if FormData ===
+    if (isFormData) {
+      const parseJSONField = (field) => {
+        if (requestData[field] && typeof requestData[field] === "string") {
+          try {
+            requestData[field] = JSON.parse(requestData[field]);
+          } catch {}
         }
-      }
+      };
+      ["contact", "available_hours", "fee_structure", "education"].forEach(
+        parseJSONField
+      );
 
-      if (
-        requestData.available_hours &&
-        typeof requestData.available_hours === "string"
-      ) {
-        try {
-          requestData.available_hours = JSON.parse(requestData.available_hours);
-        } catch (e) {
-          console.error("Error parsing available_hours JSON:", e);
-        }
-      }
-
-      if (
-        requestData.fee_structure &&
-        typeof requestData.fee_structure === "string"
-      ) {
-        try {
-          requestData.fee_structure = JSON.parse(requestData.fee_structure);
-        } catch (e) {
-          console.error("Error parsing fee_structure JSON:", e);
-        }
-      }
-
-      // Convert string booleans to actual booleans
       if (requestData.consultation_available === "true")
         requestData.consultation_available = true;
       if (requestData.consultation_available === "false")
         requestData.consultation_available = false;
       if (requestData.featured === "true") requestData.featured = true;
       if (requestData.featured === "false") requestData.featured = false;
-    } else {
-      // JSON request
-      requestData = req.body;
     }
 
-    const {
-      full_name,
-      phone,
-      designation,
-      bar_council_enroll_num,
-      experience_years,
-      bio,
-      office_address,
-      available_hours,
-      contact,
-      languages,
-      specialization_ids,
-      education_ids,
-      certification_ids,
-      testimonial_ids,
-      case_history_ids,
-      document_ids,
-      consultation_available,
-      fee_structure,
-      stats,
-      status,
-      featured,
-    } = requestData;
-
-    // Handle empty string for booleans
-    const safeConsultationAvailable =
-      consultation_available === "" ? undefined : consultation_available;
-    const safeFeatured = featured === "" ? undefined : featured;
-
-    // For nested fee_structure.show_publicly
-    if (fee_structure && typeof fee_structure.show_publicly !== "undefined") {
-      fee_structure.show_publicly =
-        fee_structure.show_publicly === ""
-          ? undefined
-          : fee_structure.show_publicly;
-    }
-
-    // Find the advocate
-    const advocate = await Advocate.findById(id);
+    const advocate = await Advocate.findById(id).session(session);
     if (!advocate) {
       return res.status(404).json({ message: "Advocate profile not found" });
     }
 
-    // Find the associated user
-    const user = await User.findById(advocate.user_id);
+    const user = await User.findById(advocate.user_id).session(session);
     if (!user) {
       return res.status(404).json({ message: "Associated user not found" });
     }
 
-    // === Update user fields ===
-    if (full_name) user.full_name = full_name;
-    if (phone) user.phone = phone;
-    await user.save();
+    // === Update user ===
+    if (requestData.full_name) user.full_name = requestData.full_name;
+    if (requestData.phone) user.phone = requestData.phone;
+    await user.save({ session });
 
     // === Update advocate fields ===
-    if (designation !== undefined) advocate.designation = designation;
-    if (bar_council_enroll_num !== undefined)
-      advocate.bar_council_enroll_num = bar_council_enroll_num;
-    if (experience_years !== undefined)
-      advocate.experience_years = Number.parseInt(experience_years) || 0;
-    if (bio !== undefined) advocate.bio = bio;
-    if (languages !== undefined) advocate.languages = languages;
-    if (office_address !== undefined) advocate.office_address = office_address;
-    if (available_hours !== undefined)
-      advocate.available_hours = available_hours;
-    if (contact !== undefined) advocate.contact = contact;
-    if (specialization_ids !== undefined)
-      advocate.specialization_ids = specialization_ids;
+    Object.assign(advocate, {
+      designation: requestData.designation ?? advocate.designation,
+      bar_council_enroll_num:
+        requestData.bar_council_enroll_num ?? advocate.bar_council_enroll_num,
+      experience_years: parseInt(requestData.experience_years) || 0,
+      bio: requestData.bio ?? advocate.bio,
+      office_address: requestData.office_address ?? advocate.office_address,
+      available_hours: requestData.available_hours ?? advocate.available_hours,
+      contact: requestData.contact ?? advocate.contact,
+      languages: requestData.languages ?? advocate.languages,
+      specialization_ids:
+        requestData.specialization_ids ?? advocate.specialization_ids,
+      certification_ids:
+        requestData.certification_ids ?? advocate.certification_ids,
+      testimonial_ids: requestData.testimonial_ids ?? advocate.testimonial_ids,
+      case_history_ids:
+        requestData.case_history_ids ?? advocate.case_history_ids,
+      document_ids: requestData.document_ids ?? advocate.document_ids,
+      consultation_available:
+        requestData.consultation_available ?? advocate.consultation_available,
+      fee_structure: requestData.fee_structure ?? advocate.fee_structure,
+      stats: requestData.stats ?? advocate.stats,
+      status: requestData.status ?? advocate.status,
+      featured: requestData.featured ?? advocate.featured,
+    });
 
-    // Handle education update/creation
+    // === Handle Education (update or insert) ===
     if (Array.isArray(requestData.education)) {
-      const updatedEducationIds = [];
+      const educationIds = [];
+
       for (const edu of requestData.education) {
         if (edu._id) {
-          // Update existing education
-          await Education.findByIdAndUpdate(edu._id, edu);
-          updatedEducationIds.push(edu._id);
+          await Education.findByIdAndUpdate(edu._id, edu, { session });
+          educationIds.push(edu._id);
         } else {
-          // Create new education
-          const newEdu = await Education.create({
-            ...edu,
-            user_type: "Advocate",
-            user_id: advocate.user_id,
-          });
-          updatedEducationIds.push(newEdu._id);
+          const newEdu = await Education.create(
+            [
+              {
+                ...edu,
+                user_id: advocate.user_id,
+                user_type: "Advocate",
+              },
+            ],
+            { session }
+          );
+          educationIds.push(newEdu[0]._id);
         }
       }
-      advocate.education_ids = updatedEducationIds;
-    } else if (education_ids !== undefined) {
-      advocate.education_ids = education_ids;
+
+      advocate.education_ids = educationIds;
     }
 
-    if (certification_ids !== undefined)
-      advocate.certification_ids = certification_ids;
-    if (testimonial_ids !== undefined)
-      advocate.testimonial_ids = testimonial_ids;
-    if (case_history_ids !== undefined)
-      advocate.case_history_ids = case_history_ids;
-    if (document_ids !== undefined) advocate.document_ids = document_ids;
-    if (safeConsultationAvailable !== undefined)
-      advocate.consultation_available = safeConsultationAvailable;
-    if (fee_structure !== undefined) advocate.fee_structure = fee_structure;
-    if (stats !== undefined) advocate.stats = stats;
-    if (status !== undefined) advocate.status = status;
-    if (safeFeatured !== undefined) advocate.featured = safeFeatured;
-
-    // === Handle new profile photo ===
+    // === Handle profile photo ===
     if (req.file) {
-      newProfilePhotoPath = path.join(uploadPath, req.file.filename);
-      // Delete old profile photo if exists
+      newProfilePhotoFilename = req.file.filename;
+      const newPath = `${req.protocol}://${req.get("host")}/uploads/${newProfilePhotoFilename}`;
+
+      // Delete old photo if exists
       if (advocate.profile_photo_url) {
-        const oldPhotoPath = path.join(
-          uploadPath,
+        const oldPhotoPath = getUploadPath(
           path.basename(advocate.profile_photo_url)
         );
-        if (fs.existsSync(oldPhotoPath)) {
-          fs.unlinkSync(oldPhotoPath);
-        }
+        if (fs.existsSync(oldPhotoPath)) fs.unlinkSync(oldPhotoPath);
       }
-      advocate.profile_photo_url = `/uploads/${req.file.filename}`;
+
+      advocate.profile_photo_url = newPath;
     }
 
-    await advocate.save();
-    const populatedAdvocate = await advocate.populate("user_id", "-password");
+    await advocate.save({ session });
+    await session.commitTransaction();
+    session.endSession();
 
-    res
-      .status(200)
-      .json({
-        message: "Advocate profile updated successfully",
-        advocate: populatedAdvocate,
-      });
+    const populated = await advocate.populate("user_id", "-password");
+
+    return res.status(200).json({
+      message: "Advocate profile updated successfully",
+      advocate: populated,
+    });
   } catch (error) {
-    if (newProfilePhotoPath && fs.existsSync(newProfilePhotoPath)) {
-      fs.unlinkSync(newProfilePhotoPath);
+    if (newProfilePhotoFilename) {
+      deleteFile(getUploadPath(newProfilePhotoFilename));
     }
-    console.error("Advocate profile update error:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error updating advocate:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
 
 // Delete advocate profile
 export const deleteAdvocateProfile = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const { id } = req.params;
-    // Find the advocate profile
-    const advocate = await Advocate.findById(id);
+
+    const advocate = await Advocate.findById(id).session(session);
     if (!advocate) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ message: "Advocate profile not found" });
     }
-    // === Delete profile photo from uploads folder ===
+
+    // === Delete profile photo ===
     if (advocate.profile_photo_url) {
-      const photoPath = path.join(
-        uploadPath,
+      const photoPath = getUploadPath(
         path.basename(advocate.profile_photo_url)
       );
       if (fs.existsSync(photoPath)) {
         fs.unlinkSync(photoPath);
       }
     }
-    // Delete the advocate profile
-    await Advocate.findByIdAndDelete(id);
-    // Delete the associated user
-    const deletedUser = await User.findByIdAndDelete(advocate.user_id);
+
+    // === Delete related Education ===
+    if (advocate.education_ids && advocate.education_ids.length > 0) {
+      await Education.deleteMany({
+        _id: { $in: advocate.education_ids },
+      }).session(session);
+    }
+
+    // === Delete advocate profile ===
+    await Advocate.findByIdAndDelete(id).session(session);
+
+    // === Delete associated user ===
+    const deletedUser = await User.findByIdAndDelete(advocate.user_id).session(
+      session
+    );
     if (!deletedUser) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ message: "Associated user not found" });
     }
-    res
-      .status(200)
-      .json({ message: "Advocate profile and photo deleted successfully" });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      message:
+        "Advocate profile, user, photo, and related education deleted successfully",
+    });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error("Delete advocate error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }

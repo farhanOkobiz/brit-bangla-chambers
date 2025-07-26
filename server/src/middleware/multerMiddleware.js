@@ -1,3 +1,4 @@
+// middleware/upload.js
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -7,7 +8,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create uploads folder in project root (not in src)
+// Uploads directory in project root
 const uploadDir = path.join(__dirname, "..", "..", "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -25,20 +26,22 @@ const storage = multer.diskStorage({
   },
 });
 
-// Allow only image files
-const imageFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|webp|gif/;
+// General file filter for images + PDFs
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|webp|gif|pdf/;
   const isValidType =
-    allowed.test(file.mimetype) &&
-    allowed.test(path.extname(file.originalname).toLowerCase());
-  isValidType ? cb(null, true) : cb(new Error("Only image files are allowed!"));
+    allowedTypes.test(file.mimetype) &&
+    allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  isValidType
+    ? cb(null, true)
+    : cb(new Error("Only image or PDF files are allowed!"));
 };
 
-// Export multer upload middleware
+// Export multer middleware
 const upload = multer({
   storage,
-  fileFilter: imageFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
 });
 
 export default upload;

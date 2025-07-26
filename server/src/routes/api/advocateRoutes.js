@@ -16,6 +16,7 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { addCertificationToAdvocate } from "../../controllers/certificationController.js";
 
+
 const router = Router();
 //Get individual advocate profile
 router.get("/profile", checkAdvocate, showAdvocate);
