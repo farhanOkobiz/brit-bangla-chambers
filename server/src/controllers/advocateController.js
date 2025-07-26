@@ -5,6 +5,10 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Education from "../models/educationSchema.js";
+import testimonialSchema from "../models/testimonialSchema.js";
+import caseHistory from "../models/caseHistory.js";
+import documentSchema from "../models/documentSchema.js";
+import certificationScema from "../models/certificationSchema.js";
 
 // ESM-compatible __dirname setup
 const __filename = fileURLToPath(import.meta.url);
