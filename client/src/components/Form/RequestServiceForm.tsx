@@ -1,10 +1,17 @@
 import { apiFetch } from "@/api/apiFetch";
 import { useGetAuthQuery } from "@/redux/api/authApi";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+interface item {
+  _id: number;
+  name: string;
+}
+
 function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
+  const router = useRouter();
 
   const [form, setForm] = useState({
     name: "",
@@ -40,14 +47,13 @@ function RequestServiceForm() {
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        toast.warning(
-          "Failed to submit: " + (errData.message || "Unknown error")
-        );
+        toast.warning("Failed to submit");
         return;
       }
 
       toast.success("Request sent successfully!");
+      console.log("ok");
+
       setForm({
         name: "",
         email: "",
@@ -58,6 +64,7 @@ function RequestServiceForm() {
         issueType: "",
         message: "",
       });
+      router.push("/");
     } catch {
       toast.warning("Error submitting the form. Please try again.");
     }
@@ -151,9 +158,9 @@ function RequestServiceForm() {
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
           >
             <option value="">Select Issue Type</option>
-            {specialization?.map((item) => (
-              <option key={item._id} value={item.name}>
-                {item.name}
+            {specialization?.map((item: item) => (
+              <option key={item?._id} value={item?.name}>
+                {item?.name}
               </option>
             ))}
             <option value="idonotknow">I do not know</option>

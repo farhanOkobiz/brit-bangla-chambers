@@ -28,7 +28,7 @@ export async function logout() {
 //category functions
 export async function createCategory(name, image, description, link) {
   const res = await useAxios(
-    "http://localhost:5000/api/v1/category/create-category",
+    "http://localhost:5000/api/v1/category/create-specialization",
     {
       method: "POST",
       body: { name, image, description, link },

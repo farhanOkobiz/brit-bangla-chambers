@@ -3,17 +3,6 @@ import { toast } from "react-toastify";
 import { useAxios } from "../../services/useAxios";
 import { FiTrash2 } from "react-icons/fi";
 
-const advocates = [
-  {
-    advocateId: "64b8cfe7f123456789abc001",
-    advocateName: "Advocate Rahim Uddin",
-  },
-  {
-    advocateId: "64b8cfe7f123456789abc002",
-    advocateName: "Advocate Nasrin Akter",
-  },
-];
-
 const getStatusBadge = (status) => {
   let colorClass = "";
   let text = formatStatusText(status);
@@ -52,9 +41,10 @@ const formatStatusText = (status) => {
     .join(" ");
 };
 
-function RequestMessage() {
+function RequestForService() {
   const [requestsMessage, setRequestsMessage] = useState([]);
   const [selectedAdvocates, setSelectedAdvocates] = useState({});
+  const [advocates, setAdvocates] = useState([]);
 
   const fetchRequests = async () => {
     try {
@@ -91,7 +81,7 @@ function RequestMessage() {
     }
 
     try {
-      const res = await useAxios(`/advocate-message`, {
+      const res = await useAxios(`/request-for-advocate`, {
         method: "POST",
         data: {
           userMessage: item.userMessage,
@@ -109,6 +99,28 @@ function RequestMessage() {
       toast.warning("An error occurred.");
     }
   };
+
+  useEffect(() => {
+    async function getAllAdvocates() {
+      try {
+        const res = await useAxios("auth/users"); // Assuming backend returns all users
+        const allUsers = res?.data?.users || [];
+
+        // Filter only users with role === "advocate"
+        const onlyAdvocates = allUsers.filter(
+          (user) => user.role === "advocate"
+        );
+
+        console.log(res);
+
+        setAdvocates(onlyAdvocates);
+      } catch (error) {
+        console.error("Failed to fetch advocates:", error);
+      }
+    }
+
+    getAllAdvocates();
+  }, []);
 
   useEffect(() => {
     fetchRequests();
@@ -171,8 +183,8 @@ function RequestMessage() {
             >
               <option value="">Select Advocate</option>
               {advocates.map((adv) => (
-                <option key={adv.advocateId} value={adv.advocateId}>
-                  {adv.advocateName}
+                <option key={adv._id} value={adv._id}>
+                  {adv.full_name}
                 </option>
               ))}
             </select>
@@ -198,4 +210,4 @@ function RequestMessage() {
   );
 }
 
-export default RequestMessage;
+export default RequestForService;
