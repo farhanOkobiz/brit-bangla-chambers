@@ -5,20 +5,20 @@ import { useAxios } from "../services/useAxios"; // Fixed: Changed from default 
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
-const CategoryForm = () => {
+const SpecializationForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [Specialization, setSpecialization] = useState([]);
+  const [loadingSpecialization, setLoadingSpecialization] = useState(true);
+  const [editingSpecialization, setEditingSpecialization] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const fields = [
-    { name: "name", label: "Category Name", type: "text", required: true },
+    { name: "name", label: "Specialization Name", type: "text", required: true },
     {
       name: "details", // Changed from "description" to "details" to match the database field
       label: "Description",
       type: "textarea",
-      placeholder: "Enter category description...",
+      placeholder: "Enter Specialization description...",
     },
     {
       name: "link",
@@ -35,23 +35,23 @@ const CategoryForm = () => {
     },
   ];
 
-  const fetchCategories = async () => {
+  const fetchSpecialization = async () => {
     try {
-      setLoadingCategories(true);
-      const res = await useAxios("/specialization/get-all-categories", {
+      setLoadingSpecialization(true);
+      const res = await useAxios("/specialization/get-all-Specialization", {
         method: "GET",
       });
 
       if (res.ok) {
-        console.log("Fetched categories:", res.data);
-        setCategories(res.data || []);
+        console.log("Fetched Specialization:", res.data);
+        setSpecialization(res.data || []);
       } else {
-        console.error("Failed to fetch categories:", res.data);
+        console.error("Failed to fetch Specialization:", res.data);
       }
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error fetching Specialization:", error);
     } finally {
-      setLoadingCategories(false);
+      setLoadingSpecialization(false);
     }
   };
 
@@ -65,10 +65,10 @@ const CategoryForm = () => {
         console.log(pair[0] + ": ", pair[1]);
       }
 
-      const url = editingCategory
-        ? `/specialization/update-category/${editingCategory._id}`
-        : "/specialization/create-category";
-      const method = editingCategory ? "PUT" : "POST";
+      const url = editingSpecialization
+        ? `/specialization/update-Specialization/${editingSpecialization._id}`
+        : "/specialization/create-specialization";
+      const method = editingSpecialization ? "PUT" : "POST";
 
       const res = await useAxios(url, {
         method,
@@ -77,15 +77,15 @@ const CategoryForm = () => {
 
       if (res.ok) {
         alert(
-          editingCategory
-            ? "Category updated successfully!"
-            : "Category created successfully!"
+          editingSpecialization
+            ? "Specialization updated successfully!"
+            : "Specialization created successfully!"
         );
-        setEditingCategory(null);
+        setEditingSpecialization(null);
         setShowCreateForm(false);
 
-        // Immediately refresh the categories list
-        await fetchCategories();
+        // Immediately refresh the Specialization list
+        await fetchSpecialization();
 
         return true; // Indicate success
       } else {
@@ -93,58 +93,58 @@ const CategoryForm = () => {
         return false; // Indicate failure
       }
     } catch (error) {
-      console.error("Error submitting category:", error);
-      alert("Failed to submit category. Please try again.");
+      console.error("Error submitting Specialization:", error);
+      alert("Failed to submit Specialization. Please try again.");
       return false; // Indicate failure
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleEdit = (category) => {
-    console.log("Editing category:", category);
-    setEditingCategory(category);
+  const handleEdit = (Specialization) => {
+    console.log("Editing Specialization:", Specialization);
+    setEditingSpecialization(Specialization);
     setShowCreateForm(true);
   };
 
-  const handleDelete = async (categoryId) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) {
+  const handleDelete = async (SpecializationId) => {
+    if (!window.confirm("Are you sure you want to delete this Specialization?")) {
       return;
     }
 
     try {
       const res = await useAxios(
-        `/specialization/delete-category/${categoryId}`,
+        `/specialization/delete-Specialization/${SpecializationId}`,
         {
           method: "DELETE",
         }
       );
 
       if (res.ok) {
-        alert("Category deleted successfully!");
-        // Immediately refresh the categories list
-        await fetchCategories();
+        alert("Specialization deleted successfully!");
+        // Immediately refresh the Specialization  list
+        await fetchSpecialization();
       } else {
-        alert(res.data?.error || "Failed to delete category");
+        alert(res.data?.error || "Failed to delete Specialization");
       }
     } catch (error) {
-      console.error("Error deleting category:", error);
-      alert("Failed to delete category. Please try again.");
+      console.error("Error deleting Specialization:", error);
+      alert("Failed to delete Specialization. Please try again.");
     }
   };
 
   const handleCancelEdit = () => {
-    setEditingCategory(null);
+    setEditingSpecialization(null);
   };
 
   const handleToggleForm = () => {
     setShowCreateForm(!showCreateForm);
-    if (editingCategory) {
-      setEditingCategory(null);
+    if (editingSpecialization) {
+      setEditingSpecialization(null);
     }
   };
 
-  const renderCategoryItem = (item) => (
+  const renderSpecializationItem = (item) => (
     <div className="flex items-center space-x-4">
       {/* Image */}
       <div className="flex-shrink-0">
@@ -190,7 +190,7 @@ const CategoryForm = () => {
 
   // Ensure all hooks are called at the top level
   useEffect(() => {
-    fetchCategories();
+    fetchSpecialization();
   }, []);
 
   return (
@@ -199,8 +199,8 @@ const CategoryForm = () => {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-            <p className="text-gray-600 mt-1">Create and manage categories</p>
+            <h1 className="text-2xl font-bold text-gray-900">Specialization</h1>
+            <p className="text-gray-600 mt-1">Create and manage Specialization</p>
           </div>
         </div>
       </div>
@@ -209,27 +209,27 @@ const CategoryForm = () => {
         <div className="max-w-7xl mx-auto">
           {/* Form Modal */}
           <FormModal
-            title="Category"
+            title="Specialization"
             fields={fields}
             onSubmit={handleSubmit}
             isLoading={isLoading}
-            editingItem={editingCategory}
+            editingItem={editingSpecialization}
             onCancel={handleCancelEdit}
             showForm={showCreateForm}
             onToggleForm={handleToggleForm}
-            buttonText="Add Category"
+            buttonText="Add Specialization"
           />
 
-          {/* Categories List */}
+          {/* Specialization  List */}
           <DataList
-            title="Categories List"
-            data={categories}
-            loading={loadingCategories}
+            title="Specialization  List"
+            data={Specialization}
+            loading={loadingSpecialization}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            renderItem={renderCategoryItem}
-            emptyMessage="Create your first category to get started."
-            searchPlaceholder="Search categories..."
+            renderItem={renderSpecializationItem}
+            emptyMessage="Create your first Specialization to get started."
+            searchPlaceholder="Search Specialization..."
           />
         </div>
       </div>
@@ -237,4 +237,4 @@ const CategoryForm = () => {
   );
 };
 
-export default CategoryForm;
+export default SpecializationForm;
