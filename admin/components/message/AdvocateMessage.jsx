@@ -14,15 +14,38 @@ import {
 
 const AdvocateMessage = () => {
   const [messages, setMessages] = useState([]);
+  const [advocates, setAdvocates] = useState([]);
 
-  const refreshMessages = async () => {
+  const advocateMessages = async () => {
     try {
       const response = await useAxios("/advocate-message");
-      setMessages(response.data.messages || []);
+      const allMessages = response.data.messages || [];
+
+      // Filter only messages where advocateId matches the logged-in advocate
+      const filteredMessages = allMessages.filter(
+        (msg) => msg.advocateId === advocates?._id
+      );
+
+      setMessages(filteredMessages);
     } catch {
       toast.warning("Failed to refresh messages");
     }
   };
+
+  // get All Advocates
+  async function getAllAdvocates() {
+    try {
+      const res = await useAxios("auth/users"); // Assuming backend returns all users
+      const allUsers = res?.data?.users || [];
+
+      // Filter only users with role === "advocate"
+      const onlyAdvocates = allUsers.filter((user) => user.role === "advocate");
+
+      setAdvocates(onlyAdvocates);
+    } catch (error) {
+      console.error("Failed to fetch advocates:", error);
+    }
+  }
 
   const handleAccept = async (id) => {
     try {
@@ -83,11 +106,15 @@ const AdvocateMessage = () => {
   };
 
   useEffect(() => {
-    refreshMessages();
+    advocateMessages();
+  }, []);
+
+  useEffect(() => {
+    getAllAdvocates();
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 mt-6 mt-0">
       <h2 className="text-4xl font-extrabold text-center text-[#5e3030] mb-12">
         Advocate Messages 📩
       </h2>
