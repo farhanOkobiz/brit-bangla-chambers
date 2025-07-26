@@ -14,6 +14,9 @@ import {
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { useAuth } from "../auth/AuthContext";
+import { logout } from "../auth/api";
+import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
@@ -65,6 +68,23 @@ const AdminSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
+  const { setAuthed, setRole, setUserName , userName} = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    try {
+      const response = logout();
+      if (response) {
+        setAuthed(false);
+        setRole(null);
+        setUserName(null);
+        navigate("/login");
+      }
+    }
+    catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }
 
   return (
     <>
@@ -321,10 +341,10 @@ const AdminSidebar = () => {
                   Admin User
                 </h3>
                 <p className="text-xs text-gray-600 truncate">
-                  admin@example.com
+                  {userName}{" - Admin"}
                 </p>
               </div>
-              <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+              <button onClick={ ()=> handleLogOut() }className="p-1 text-gray-400 hover:text-red-600 transition-colors">
                 <FaSignOutAlt className="h-4 w-4" />
               </button>
             </div>
