@@ -1,5 +1,5 @@
-import AdvocateMessage from "../../src/models/AdvocateMessageSchema.js";
-import RequestService from "../../src/models/requestServiceSchema.js";
+import RequestForAdvocate from "../models/requestForAdvocateSchema.js";
+import RequestService from "../models/requestServiceSchema.js";
 
 export const createAdvocateMessage = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ export const createAdvocateMessage = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const newMessage = new AdvocateMessage({
+    const newMessage = new RequestForAdvocate({
       userMessage,
       advocateId,
       userMessageId,
@@ -34,7 +34,8 @@ export const createAdvocateMessage = async (req, res) => {
 
 export const getAdvocateMessage = async (req, res) => {
   try {
-    const messages = await AdvocateMessage.find();
+    const messages = await RequestForAdvocate.find();
+    console.log(messages);
 
     res.json({ success: true, messages });
   } catch (error) {
@@ -49,14 +50,14 @@ export const acceptedMessageStatus = async (req, res) => {
     console.log(`Updating status for message ID: ${id}`);
 
     // Step 1: Update AdvocateMessage status
-    const updated = await AdvocateMessage.findByIdAndUpdate(
+    const updated = await RequestForAdvocate.findByIdAndUpdate(
       id,
       { status: "accepted" },
       { new: true }
     );
 
     if (!updated) {
-      return res.status(404).json({ message: "Message not found" });
+      return res.status(404).json({ message: "request failed" });
     }
 
     // Step 2: Also update related requestService status
@@ -79,14 +80,14 @@ export const acceptedMessageStatus = async (req, res) => {
   }
 };
 
-// Reject: Delete message
+// Reject:
 export const rejectedMessageStatus = async (req, res) => {
   try {
     const { id } = req.params;
     console.log(`Updating status for message ID: ${id}`);
 
     // Step 1: Update AdvocateMessage status
-    const updated = await AdvocateMessage.findByIdAndUpdate(
+    const updated = await RequestForAdvocate.findByIdAndUpdate(
       id,
       { status: "rejected" },
       { new: true }
@@ -121,7 +122,7 @@ export const deleteAdvocateMessage = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleted = await AdvocateMessage.findByIdAndDelete(id);
+    const deleted = await RequestForAdvocate.findByIdAndDelete(id);
 
     if (!deleted) {
       return res.status(404).json({ message: "Message not found" });
@@ -131,5 +132,22 @@ export const deleteAdvocateMessage = async (req, res) => {
   } catch (error) {
     console.error("Delete error:", error);
     res.status(500).json({ message: "Failed to delete advocate message" });
+  }
+};
+
+export const getRequestForAdvocate = async (req, res) => {
+  try {
+    const advocate_id = req.user._id;
+
+    const messages = await RequestService.find({
+      forwardedTo: advocate_id,
+    }).sort({ createdAt: -1 });
+
+    console.log(messages);
+
+    res.json({ success: true, messages });
+  } catch (error) {
+    console.error("Error fetching advocate messages:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

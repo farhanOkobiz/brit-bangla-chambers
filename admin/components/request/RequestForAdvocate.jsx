@@ -12,51 +12,31 @@ import {
   User,
 } from "lucide-react";
 
-const AdvocateMessage = () => {
-  const [messages, setMessages] = useState([]);
-  const [advocates, setAdvocates] = useState([]);
+const RequestForAdvocate = () => {
+  const [request, setRequest] = useState([]);
 
   const advocateMessages = async () => {
     try {
-      const response = await useAxios("/advocate-message");
-      const allMessages = response.data.messages || [];
+      const response = await useAxios("/request-for-advocate/advocate");
+      const allMessages = response?.data?.messages || [];
 
       // Filter only messages where advocateId matches the logged-in advocate
-      const filteredMessages = allMessages.filter(
-        (msg) => msg.advocateId === advocates?._id
-      );
 
-      setMessages(filteredMessages);
+      setRequest(allMessages);
     } catch {
       toast.warning("Failed to refresh messages");
     }
   };
 
-  // get All Advocates
-  async function getAllAdvocates() {
-    try {
-      const res = await useAxios("auth/users"); // Assuming backend returns all users
-      const allUsers = res?.data?.users || [];
-
-      // Filter only users with role === "advocate"
-      const onlyAdvocates = allUsers.filter((user) => user.role === "advocate");
-
-      setAdvocates(onlyAdvocates);
-    } catch (error) {
-      console.error("Failed to fetch advocates:", error);
-    }
-  }
-
   const handleAccept = async (id) => {
     try {
-      const response = await useAxios(`/advocate-message/accepted/${id}`, {
+      const response = await useAxios(`/request-service/accepted/${id}`, {
         method: "PATCH",
         data: { status: true },
       });
-      response.ok
-        ? toast.success("Message accepted")
-        : toast.error("Failed to accept message");
-      refreshMessages();
+
+      toast.success("Message accepted");
+      advocateMessages();
     } catch {
       toast.error("Failed to accept message");
     }
@@ -64,13 +44,11 @@ const AdvocateMessage = () => {
 
   const handleReject = async (id) => {
     try {
-      const response = await useAxios(`/advocate-message/rejected/${id}`, {
+      const response = await useAxios(`/request-service/rejected/${id}`, {
         method: "PATCH",
       });
-      response.ok
-        ? toast.success("Message rejected")
-        : toast.error("Failed to reject message");
-      refreshMessages();
+      toast.success("Message rejected");
+      advocateMessages();
     } catch {
       toast.error("Failed to reject message");
     }
@@ -89,7 +67,7 @@ const AdvocateMessage = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const response = await useAxios(`/advocate-message/${id}`, {
+        const response = await useAxios(`/request-for-advocate/${id}`, {
           method: "DELETE",
         });
 
@@ -109,23 +87,18 @@ const AdvocateMessage = () => {
     advocateMessages();
   }, []);
 
-  useEffect(() => {
-    getAllAdvocates();
-  }, []);
-
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 mt-6 mt-0">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 mt-6 lg:mt-0">
       <h2 className="text-4xl font-extrabold text-center text-[#5e3030] mb-12">
-        Advocate Messages 📩
+        Request for Advocate
       </h2>
 
-      {messages.length === 0 ? (
+      {request.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">No messages found.</p>
       ) : (
         <div className="grid gap-8 md:grid-cols-2">
-          {messages.map((msg) => {
+          {request.map((msg) => {
             const m = msg.userMessage;
-
             return (
               <div
                 key={msg._id}
@@ -139,7 +112,8 @@ const AdvocateMessage = () => {
                     </h3>
                   </div>
 
-                  {msg.status === "pending" ? (
+                  {msg.status === "pending" ||
+                  msg.status === "sent_to_advocate" ? (
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleAccept(msg._id)}
@@ -220,4 +194,4 @@ const AdvocateMessage = () => {
   );
 };
 
-export default AdvocateMessage;
+export default RequestForAdvocate;

@@ -23,6 +23,7 @@ const menuItems = [
     path: "/admin/user-management",
     icon: <FaUser />,
   },
+  { label: "Service Requests", path: "/admin/messages/service" },
   { label: "Categories", path: "/admin/categories", icon: <FaFolderOpen /> },
   {
     label: "Subcategories",
@@ -40,15 +41,9 @@ const menuItems = [
     ],
   },
   { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
-  {
-    label: "Messages",
-    isDropdown: true,
-    icon: <FaFolderOpen />,
-    subItems: [
-      { label: "Contact Messages", path: "/admin/messages/contact" },
-      { label: "Service Requests", path: "/admin/messages/service" },
-    ],
-  },
+
+  { label: "Contact Messages", path: "/admin/messages/contact" },
+
   { label: "Settings", path: "/admin/settings", icon: <FaCogs /> },
 ];
 
