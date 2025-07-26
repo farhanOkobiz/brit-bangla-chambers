@@ -20,13 +20,13 @@ import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
-  { label: "Users", path: "/admin/users", icon: <FaUser /> },
+  // { label: "Users", path: "/admin/users", icon: <FaUser /> },
   {
     label: "User Management",
     path: "/admin/user-management",
     icon: <FaUser />,
   },
-  { label: "Categories", path: "/admin/categories", icon: <FaFolderOpen /> },
+  { label: "Specialization", path: "/admin/specialization", icon: <FaFolderOpen /> },
   {
     label: "Subcategories",
     path: "/admin/sub-categories",

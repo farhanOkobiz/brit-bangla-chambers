@@ -4,7 +4,7 @@ import AdminPanel from "../pages/AdminPanel";
 import AdvocatePanel from "../pages/AdvocatePanel";
 import Unauthorized from "../components/Unauthorized";
 import ProtectedRoute from "../auth/ProtectedRoute";
-import CategoryForm from "../components/CategoryForm";
+import SpecializationForm from "../components/SpecializationForm";
 import SubcategoryForm from "../components/subCategoryForm";
 import AdminDashboard from "../components/AdminDashboard";
 import AdvocateDashboard from "../components/AdvocateDashboard";
@@ -12,7 +12,7 @@ import Blogs from "../pages/blog/Blogs";
 import CreateBlog from "../pages/blog/CreateBlog";
 import ContactMessage from "../components/message/ContactMessage";
 import RequestMessage from "../components/message/RequestMessage";
-import Users from "../pages/Admin/Users";
+// import Users from "../pages/Admin/Users";
 import ServiceForm from "../components/ServiceForm";
 import AdvocateForm from "../components/AdvocateForm";
 import EditBlog from "../pages/blog/EditBlog";
@@ -47,7 +47,6 @@ export default function App() {
           <Route path="dashboard/message" element={<AdvocateMessage />} />
           <Route path="dashboard/accepted-cases" element={<MyCases />} />
           <Route path="dashboard/all-user-file" element={<AllUserFile />} />
-          
           <Route
             path="dashboard/create-user-file"
             element={<CreateUserFile />}
@@ -68,14 +67,14 @@ export default function App() {
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="categories" element={<CategoryForm />} />
+          <Route path="specialization" element={<SpecializationForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="services" element={<ServiceForm />} />
           <Route path="advocates" element={<AdvocateForm />} />
           <Route path="advocates/management" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestMessage />} />
-          <Route path="users" element={<Users />} />
+          {/* <Route path="users" element={<Users />} /> */}
           <Route path="user-management" element={<UserManagement />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
