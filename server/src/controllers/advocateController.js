@@ -291,7 +291,7 @@ export const createAdvocateProfile = async (req, res) => {
       stats: stats || {},
       status: status || "pending",
       featured: featured || false,
-      profile_photo_url: profilePhotoUrl,
+      profile_photo_url: `${req.protocol}://${req.get("host")}/uploads/${profilePhotoUrl}`,
       bar_memberships: requestData.bar_memberships || [],
     });
 
