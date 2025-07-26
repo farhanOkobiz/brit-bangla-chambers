@@ -14,7 +14,8 @@ import {
   checkAdvocate,
   protect,
 } from "../../middleware/authMiddleware.js";
-import { addCertificationToAdvocate } from "../../controllers/certificationController.js";
+import { updateOrCreateCertifications } from "../../controllers/certificationController.js";
+
 
 
 const router = Router();
@@ -50,6 +51,6 @@ router.put(
 router.delete("/profile/:id", checkAdmin, deleteAdvocateProfile);
 
 // Add certification to advocate
-router.post("/certification/:advocateId", addCertificationToAdvocate);
+router.post("/certification/:advocateId", updateOrCreateCertifications);
 
 export default router;

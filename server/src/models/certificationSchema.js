@@ -10,7 +10,7 @@ const CertificationSchema = new Schema(
     year: { type: Number, required: true },          // e.g. 2023
     certificate_type: { type: String },              // e.g. "Enrollment", "Training", "License"
     certificate_url: { type: String },               // link to uploaded file or proof
-    description: { type: String },                   // short summary or notes
+    description: { type: String },                 // short summary or notes
   },
   {
     timestamps: true,
