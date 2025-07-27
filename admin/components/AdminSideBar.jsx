@@ -5,14 +5,12 @@ import {
   FaBars,
   FaTimes,
   FaTachometerAlt,
-  FaUser,
-  FaFolderOpen,
-  FaCogs,
   FaChartBar,
   FaGavel,
   FaSignOutAlt,
   FaUsers,
   FaClipboardList,
+  FaConciergeBell,
   FaTags,
   FaEnvelope,
   FaCog,
@@ -38,7 +36,7 @@ const menuItems = [
   {
     label: "Service Requests",
     path: "/admin/messages/service",
-    icon: <FaEnvelope />,
+    icon: <FaConciergeBell />,
   },
   {
     label: "Subcategories",
@@ -56,7 +54,11 @@ const menuItems = [
     ],
   },
   { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
-  { label: "Contact Messages", path: "/admin/messages/contact", icon: <FaEnvelope /> },
+  {
+    label: "Contact Messages",
+    path: "/admin/messages/contact",
+    icon: <FaEnvelope />,
+  },
   { label: "Settings", path: "/admin/settings", icon: <FaCog /> },
 ];
 

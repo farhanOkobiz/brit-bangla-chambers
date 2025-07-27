@@ -36,6 +36,14 @@ const RequestForAdvocate = () => {
       });
 
       toast.success("Message accepted");
+
+      if (response?.ok) {
+        await useAxios("/showOwnCaseFile/createCaseFile", {
+          method: "POST",
+          data: request,
+        });
+      }
+
       advocateMessages();
     } catch {
       toast.error("Failed to accept message");

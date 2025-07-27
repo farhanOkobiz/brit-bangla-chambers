@@ -9,6 +9,7 @@ const MyCases = () => {
         method: "POST",
         data,
       });
+
       // toast.success("Case history submitted successfully!");
     } catch (err) {
       console.error(err);
