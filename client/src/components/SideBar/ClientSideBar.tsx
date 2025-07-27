@@ -1,47 +1,76 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import { Home, User, Calendar, FileText, Settings, LogOut, Menu, X, Bell, CreditCard, HelpCircle } from "lucide-react"
-import { logout } from "@/api/logout"
+import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Home,
+  User,
+  Calendar,
+  FileText,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Bell,
+  CreditCard,
+  HelpCircle,
+  MessageCircle,
+} from "lucide-react";
+import { logout } from "@/api/logout";
 
 interface SidebarItem {
-  name: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  badge?: string
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
 }
 
 const sidebarItems: SidebarItem[] = [
   { name: "Dashboard", href: "/client/dashboard", icon: Home },
   { name: "Profile", href: "/client/profile", icon: User },
-  { name: "Appointments", href: "/client/appointments", icon: Calendar, badge: "3" },
-  { name: "Consultations", href: "/client/consultations", icon: FileText },
-  { name: "Notifications", href: "/client/notifications", icon: Bell, badge: "5" },
+  {
+    name: "Appointments",
+    href: "/client/appointments",
+    icon: Calendar,
+    badge: "3",
+  },
+  {
+    name: "My case file",
+    href: "/client/my-case-file",
+    icon: FileText,
+    badge: "3",
+  },
+  { name: "Consultations", href: "/client/consultations", icon: MessageCircle },
+  {
+    name: "Notifications",
+    href: "/client/notifications",
+    icon: Bell,
+    badge: "5",
+  },
   { name: "Billing", href: "/client/billing", icon: CreditCard },
   { name: "Help & Support", href: "/client/support", icon: HelpCircle },
   { name: "Settings", href: "/client/settings", icon: Settings },
-]
+];
 
 export default function ClientSidebar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {
-      await logout()
-      router.push("/login")
+      await logout();
+      router.push("/login");
     } catch (error) {
-      console.error("Logout failed", error)
+      console.error("Logout failed", error);
     }
-  }
+  };
 
   const isActive = (href: string) => {
-    return pathname === href
-  }
+    return pathname === href;
+  };
 
   return (
     <>
@@ -51,7 +80,11 @@ export default function ClientSidebar() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 rounded-md bg-white shadow-md border border-gray-200 hover:bg-gray-50"
         >
-          {isMobileMenuOpen ? <X className="h-6 w-6 text-gray-600" /> : <Menu className="h-6 w-6 text-gray-600" />}
+          {isMobileMenuOpen ? (
+            <X className="h-6 w-6 text-gray-600" />
+          ) : (
+            <Menu className="h-6 w-6 text-gray-600" />
+          )}
         </button>
       </div>
 
@@ -78,7 +111,9 @@ export default function ClientSidebar() {
               </div>
             </div>
             <div className="ml-3">
-              <h2 className="text-lg font-semibold text-gray-900">Client Portal</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Client Portal
+              </h2>
             </div>
           </div>
         </div>
@@ -86,15 +121,15 @@ export default function ClientSidebar() {
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
           {sidebarItems.map((item) => {
-            const Icon = item.icon
-            const active = isActive(item.href)
+            const Icon = item.icon;
+            const active = isActive(item.href);
 
             return (
               <button
                 key={item.name}
                 onClick={() => {
-                  router.push(item.href)
-                  setIsMobileMenuOpen(false)
+                  router.push(item.href);
+                  setIsMobileMenuOpen(false);
                 }}
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   active
@@ -103,7 +138,11 @@ export default function ClientSidebar() {
                 }`}
               >
                 <div className="flex items-center">
-                  <Icon className={`mr-3 h-5 w-5 ${active ? "text-blue-700" : "text-gray-400"}`} />
+                  <Icon
+                    className={`mr-3 h-5 w-5 ${
+                      active ? "text-blue-700" : "text-gray-400"
+                    }`}
+                  />
                   {item.name}
                 </div>
                 {item.badge && (
@@ -112,7 +151,7 @@ export default function ClientSidebar() {
                   </span>
                 )}
               </button>
-            )
+            );
           })}
         </nav>
 
@@ -140,5 +179,5 @@ export default function ClientSidebar() {
         </div>
       </div>
     </>
-  )
+  );
 }

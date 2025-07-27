@@ -33,9 +33,11 @@ export const getAllCaseFiles = async (req, res) => {
 };
 
 // ✅ Get Single Case File by ID
-export const getCaseFileById = async (req, res) => {
+export const getSingleCaseFile = async (req, res) => {
   try {
-    const caseFile = await CaseFile.findById(req.params.id).populate(
+    const client_id = req?.user?.id;
+
+    const caseFile = await CaseFile.find({ client_id: client_id }).populate(
       "advocate_id client_id"
     );
     if (!caseFile) {
@@ -43,6 +45,8 @@ export const getCaseFileById = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Case not found" });
     }
+    console.log(caseFile);
+
     res.status(200).json({ success: true, data: caseFile });
   } catch (error) {
     res.status(500).json({
