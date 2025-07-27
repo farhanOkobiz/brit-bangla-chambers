@@ -22,7 +22,11 @@ export const createCaseFile = async (req, res) => {
 // ✅ Get All Case Files
 export const getAllCaseFiles = async (req, res) => {
   try {
-    const caseFiles = await CaseFile.find().populate("advocate_id");
+    const id = req?.user?.id;
+
+    const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
+      "advocate_id"
+    );
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
     res.status(500).json({
@@ -33,7 +37,7 @@ export const getAllCaseFiles = async (req, res) => {
   }
 };
 
-// ✅ Get Single Case File by ID
+// ✅ Get Single Case File
 export const getSingleCaseFile = async (req, res) => {
   try {
     const client_id = req?.user?.id;
@@ -47,6 +51,30 @@ export const getSingleCaseFile = async (req, res) => {
         .json({ success: false, message: "Case not found" });
     }
     console.log(caseFile);
+
+    res.status(200).json({ success: true, data: caseFile });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch case",
+      error: error.message,
+    });
+  }
+};
+
+// ✅ Get Single Case File by id
+export const getSingleCaseFileById = async (req, res) => {
+  try {
+    const id = req?.params?.id;
+
+    console.log(id);
+
+    const caseFile = await CaseFile.findById(id).populate("advocate_id");
+    if (!caseFile) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Case not found" });
+    }
 
     res.status(200).json({ success: true, data: caseFile });
   } catch (error) {
