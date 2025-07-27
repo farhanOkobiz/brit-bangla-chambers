@@ -2,6 +2,8 @@ import { apiFetch } from "@/api/apiFetch";
 import { useGetAuthQuery } from "@/redux/api/authApi";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
 
 interface item {
@@ -12,6 +14,35 @@ interface item {
 function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const selectedService = useSelector((state: any) => state.selectedService);
+  // Hydrate Redux from localStorage if empty
+  React.useEffect(() => {
+    console.log("Selected service:", selectedService);
+    if (!selectedService?.id) {
+      const stored = localStorage.getItem("selectedService");
+      console.log("Stored service:", stored);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          dispatch({ type: "selectedService/setSelectedService", payload: parsed });
+        } catch {}
+      }
+    }
+  }, [selectedService, dispatch]);
+
+  // Use localStorage for initial form state if Redux is empty
+  const getInitialIssueType = () => {
+    if (selectedService?.name) return selectedService.name;
+    const stored = localStorage.getItem("selectedService");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.name || "";
+      } catch {}
+    }
+    return "";
+  };
 
   const [form, setForm] = useState({
     name: "",
@@ -20,7 +51,7 @@ function RequestServiceForm() {
     nid: "",
     presentAddress: "",
     permanentAddress: "",
-    issueType: "",
+    issueType: getInitialIssueType(),
     message: "",
   });
 
@@ -36,14 +67,30 @@ function RequestServiceForm() {
     e.preventDefault();
 
     try {
+      const payload: any = {
+        userMessage: form,
+      };
+      // Use Redux or localStorage for serviceId
+      let serviceId = selectedService?.id;
+      if (!serviceId) {
+        const stored = localStorage.getItem("selectedService");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            serviceId = parsed.id;
+          } catch {}
+        }
+      }
+      if (serviceId) {
+        payload.serviceId = serviceId;
+      }
+
       const response = await apiFetch("/request-service", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userMessage: form,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -52,8 +99,8 @@ function RequestServiceForm() {
       }
 
       toast.success("Request sent successfully!");
-      console.log("ok");
-
+      dispatch(clearSelectedService());
+      localStorage.removeItem("selectedService");
       setForm({
         name: "",
         email: "",
@@ -156,6 +203,7 @@ function RequestServiceForm() {
             onChange={handleChange}
             required
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
+            disabled={!!selectedService?.name}
           >
             <option value="">Select Issue Type</option>
             {specialization?.map((item: item) => (

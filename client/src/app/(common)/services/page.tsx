@@ -1,5 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setSelectedService } from "@/redux/slices/selectedServiceSlice";
+import { useRouter } from "next/navigation";
 import { Calendar, Tag, Filter, X, Search } from "lucide-react";
 
 type Root = IServicesDisplay[];
@@ -38,9 +41,7 @@ interface CreatedBy {
 
 const ServicesDisplay = () => {
   const [services, setServices] = useState<IServicesDisplay[]>([]);
-  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>(
-    []
-  );
+  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -49,10 +50,11 @@ const ServicesDisplay = () => {
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { apiFetch } = require("../../../api/apiFetch");
-  const [selectedService, setSelectedService] =
-    useState<IServicesDisplay | null>(null);
+  const [selectedService, setSelectedServiceModal] = useState<IServicesDisplay | null>(null);
   const [showModal, setShowModal] = useState(false);
   const image_url = process.env.NEXT_PUBLIC_IMAGE_URL;
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -111,7 +113,7 @@ const ServicesDisplay = () => {
           service.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
+    console.log("Filtered services:", filtered);
     setFilteredServices(filtered);
   }, [services, selectedCategory, selectedSubcategory, searchTerm]);
 
@@ -322,15 +324,35 @@ const ServicesDisplay = () => {
                                 <Calendar className="w-3 h-3 mr-1" />
                                 {formatDate(service.created_at)}
                               </div>
-                              <button
-                                onClick={() => {
-                                  setSelectedService(service);
-                                  setShowModal(true);
-                                }}
-                                className="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-medium hover:bg-blue-100 transition-colors cursor-pointer"
-                              >
-                                View
-                              </button>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedServiceModal(service);
+                                    setShowModal(true);
+                                  }}
+                                  className="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-medium hover:bg-blue-100 transition-colors cursor-pointer"
+                                >
+                                  View
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    dispatch(setSelectedService({
+                                      id: service._id,
+                                      name: service.title,
+                                      serviceImage: service.serviceImage,
+                                    }));
+                                    localStorage.setItem("selectedService", JSON.stringify({
+                                      id: service._id,
+                                      name: service.title,
+                                      serviceImage: service.serviceImage,
+                                    }));
+                                    router.push("/request-for-service");
+                                  }}
+                                  className="bg-green-50 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-100 transition-colors cursor-pointer"
+                                >
+                                  Request This Service
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
