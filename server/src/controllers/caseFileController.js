@@ -23,6 +23,7 @@ export const createCaseFile = async (req, res) => {
 export const getAllCaseFiles = async (req, res) => {
   try {
     const id = req?.user?.id;
+    console.log(id);
 
     const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
       "advocate_id"

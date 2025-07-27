@@ -38,9 +38,36 @@ const RequestForAdvocate = () => {
       toast.success("Message accepted");
 
       if (response?.ok) {
+<<<<<<< HEAD
         await useAxios("/showOwnCaseFile/createCaseFile", {
           method: "POST",
           data: request,
+=======
+        const acceptedRequest = request.find((r) => r._id === id);
+
+        const caseFileData = {
+          title: acceptedRequest?.userMessage?.issueType || "Untitled",
+          client_name: acceptedRequest?.userMessage?.name,
+          case_type: "General", // or dynamic if available
+          court_name: "Unknown Court", // if not available
+          summary: acceptedRequest?.userMessage?.message || "",
+          parties: {
+            plaintiff: {
+              name: acceptedRequest?.userMessage?.name,
+              contact: acceptedRequest?.userMessage?.phone,
+            },
+            defendant: {
+              name: "Unknown", // or placeholder
+              contact: "",
+            },
+          },
+          related_laws: [],
+        };
+
+        await useAxios("/showOwnCaseFile/createCaseFile", {
+          method: "POST",
+          data: caseFileData,
+>>>>>>> raihan
         });
       }
 
