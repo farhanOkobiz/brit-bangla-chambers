@@ -147,7 +147,7 @@ export default function ClientProfile() {
               <div className="relative">
                 {client.profile_photo ? (
                   <Image
-                    src={`${IMAGE_URL}${client.profile_photo} `}
+                    src={`${IMAGE_URL}${client.profile_photo}`}
                     alt={user.full_name}
                     width={96}
                     height={96}
