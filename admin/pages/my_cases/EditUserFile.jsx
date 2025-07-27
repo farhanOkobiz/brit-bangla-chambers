@@ -28,7 +28,9 @@ export default function EditUserFile() {
     const fetchCase = async () => {
       try {
         setLoading(true);
-        const res = await useAxios(`/caseFile/${id}`);
+        const res = await useAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
+        console.log(res);
+
         const data = res.data?.data;
 
         // Set initial values
