@@ -5,12 +5,15 @@ import {
   FaBars,
   FaTimes,
   FaTachometerAlt,
-  FaUser,
-  FaFolderOpen,
-  FaCogs,
   FaChartBar,
   FaGavel,
   FaSignOutAlt,
+  FaUsers,
+  FaClipboardList,
+  FaConciergeBell,
+  FaTags,
+  FaEnvelope,
+  FaCog,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -20,25 +23,27 @@ import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
-  // { label: "Users", path: "/admizn/users", icon: <FaUser /> },
   {
     label: "User Management",
     path: "/admin/user-management",
-    icon: <FaUser />,
+    icon: <FaUsers />,
   },
   {
     label: "Specialization",
     path: "/admin/specialization",
-    icon: <FaFolderOpen />,
+    icon: <FaClipboardList />,
   },
-  { label: "Service Requests", path: "/admin/messages/service" },
-  { label: "Categories", path: "/admin/categories", icon: <FaFolderOpen /> },
+  {
+    label: "Service Requests",
+    path: "/admin/messages/service",
+    icon: <FaConciergeBell />,
+  },
   {
     label: "Subcategories",
     path: "/admin/sub-categories",
-    icon: <FaFolderOpen />,
+    icon: <FaTags />,
   },
-  { label: "Services", path: "/admin/services", icon: <FaCogs /> },
+  { label: "Services", path: "/admin/services", icon: <FaCog /> },
   {
     label: "Advocates",
     isDropdown: true,
@@ -49,10 +54,12 @@ const menuItems = [
     ],
   },
   { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
-
-  { label: "Contact Messages", path: "/admin/messages/contact" },
-
-  { label: "Settings", path: "/admin/settings", icon: <FaCogs /> },
+  {
+    label: "Contact Messages",
+    path: "/admin/messages/contact",
+    icon: <FaEnvelope />,
+  },
+  { label: "Settings", path: "/admin/settings", icon: <FaCog /> },
 ];
 
 const AdminSidebar = () => {

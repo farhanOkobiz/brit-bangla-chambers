@@ -1,8 +1,6 @@
 import { Form, Input, Select, DatePicker, Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { useAxios } from "../../services/useAxios";
-import { useEffect } from "react";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -14,6 +12,7 @@ const MyCasesForm = ({ onFinish }) => {
   const handleSubmit = (values) => {
     const formattedData = {
       client_id: values.client_id || null,
+      client_name: values.client_name || "",
       title: values.title,
       summary: values.summary,
       case_type: values.case_type,
@@ -53,8 +52,8 @@ const MyCasesForm = ({ onFinish }) => {
 
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <Form.Item name="client_id" label="Client/User ID">
-        <Input placeholder="Enter Client/User ID" />
+      <Form.Item name="client_name" label="Client name">
+        <Input placeholder="Client name" />
       </Form.Item>
 
       <Form.Item name="title" label="Case Title" rules={[{ required: true }]}>

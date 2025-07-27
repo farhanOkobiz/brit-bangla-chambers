@@ -3,17 +3,23 @@ import {
   createCaseFile,
   deleteCaseFile,
   getAllCaseFiles,
-  getCaseFileById,
+  getSingleCaseFile,
+  getSingleCaseFileById,
   updateCaseFile,
 } from "../../controllers/caseFileController.js";
-import { checkAdvocate } from "../../middleware/authMiddleware.js";
+import {
+  checkAdvocate,
+  checkClient,
+  protect,
+} from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", checkAdvocate, createCaseFile); // Create case
-router.get("/", getAllCaseFiles); // Get all cases
-router.get("/:id", getCaseFileById); // Get single case
-router.put("/:id", updateCaseFile); // Update case
-router.delete("/:id", deleteCaseFile); // Delete case
+router.post("/createCaseFile", protect(["advocate", "client"]), createCaseFile); // Create case
+router.get("/allCaseFile", checkAdvocate, getAllCaseFiles); // Get all cases
+router.get("/singleCaseFile", checkClient, getSingleCaseFile); // Get single case
+router.get("/singleCaseFile/:id", getSingleCaseFileById); // Get single case
+router.put("/updateCaseFile/:id", updateCaseFile); // Update case
+router.delete("deleteCaseFile/:id", deleteCaseFile); // Delete case
 
 export default router;

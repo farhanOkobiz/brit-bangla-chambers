@@ -40,6 +40,7 @@ function Navbar() {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/services", label: "Services" },
+    { href: "/help-center", label: "Help center" },
     { href: "/request-for-service", label: "Request for service" },
     { href: "/help-center", label: "Help center" },
   ];
@@ -111,13 +112,12 @@ function Navbar() {
                     />
                   ) : (
                     <>
-                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm font-bold">
-                      {getInitials(data?.data?.userName)}
-                    </div>
+                      <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm font-bold">
+                        {getInitials(data?.data?.userName)}
+                      </div>
                     </>
                   )}
                 </Button>
-            
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem asChild>
@@ -146,9 +146,6 @@ function Navbar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
-            
-           
           ) : (
             <div className="flex items-center space-x-2">
               <Button
@@ -159,7 +156,11 @@ function Navbar() {
               >
                 <Link href="/login">Login</Link>
               </Button>
-              <Button size="sm" asChild className="hover:bg-gray-200 hover:text-primary">
+              <Button
+                size="sm"
+                asChild
+                className="hover:bg-gray-200 hover:text-primary"
+              >
                 <Link href="/signup">Sign Up</Link>
               </Button>
             </div>

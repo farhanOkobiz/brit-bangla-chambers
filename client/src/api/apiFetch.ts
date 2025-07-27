@@ -1,11 +1,14 @@
 // Generic API client for making requests with credentials and JSON handling
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5001/api/v1';
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5001/api/v1";
 
 export async function apiFetch(
   endpoint: string,
   options: RequestInit & { headers?: Record<string, string> } = {}
 ) {
-  const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+  const url = `${BASE_URL}${
+    endpoint.startsWith("/") ? endpoint : "/" + endpoint
+  }`;
 
   const isFormData = options.body instanceof FormData;
 
@@ -48,4 +51,3 @@ export async function apiFetch(
 
   return { status: res.status, ok: res.ok, data };
 }
-

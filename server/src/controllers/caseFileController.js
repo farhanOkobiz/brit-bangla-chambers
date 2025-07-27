@@ -3,6 +3,7 @@ import CaseFile from "../models/caseFileSchema.js";
 // ✅ Create Case File
 export const createCaseFile = async (req, res) => {
   const advocateId = req.user.id;
+
   try {
     const caseFile = await CaseFile.create({
       ...req.body,
@@ -21,7 +22,14 @@ export const createCaseFile = async (req, res) => {
 // ✅ Get All Case Files
 export const getAllCaseFiles = async (req, res) => {
   try {
-    const caseFiles = await CaseFile.find().populate("advocate_id client_id");
+    const id = req?.user?.id;
+    console.log(id);
+
+    const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
+      "advocate_id"
+    );
+    console.log(caseFiles);
+
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
     res.status(500).json({
@@ -32,10 +40,12 @@ export const getAllCaseFiles = async (req, res) => {
   }
 };
 
-// ✅ Get Single Case File by ID
-export const getCaseFileById = async (req, res) => {
+// ✅ Get Single Case File
+export const getSingleCaseFile = async (req, res) => {
   try {
-    const caseFile = await CaseFile.findById(req.params.id).populate(
+    const client_id = req?.user?.id;
+
+    const caseFile = await CaseFile.find({ client_id: client_id }).populate(
       "advocate_id client_id"
     );
     if (!caseFile) {
@@ -43,6 +53,32 @@ export const getCaseFileById = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Case not found" });
     }
+    console.log(caseFile);
+
+    res.status(200).json({ success: true, data: caseFile });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch case",
+      error: error.message,
+    });
+  }
+};
+
+// ✅ Get Single Case File by id
+export const getSingleCaseFileById = async (req, res) => {
+  try {
+    const id = req?.params?.id;
+
+    console.log(id);
+
+    const caseFile = await CaseFile.findById(id).populate("advocate_id");
+    if (!caseFile) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Case not found" });
+    }
+
     res.status(200).json({ success: true, data: caseFile });
   } catch (error) {
     res.status(500).json({

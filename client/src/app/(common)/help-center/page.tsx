@@ -1,7 +1,3 @@
-// app/help-center/page.tsx
-
-import Link from "next/link";
-
 const data = [
   {
     title: "📅 Booking Consultations",

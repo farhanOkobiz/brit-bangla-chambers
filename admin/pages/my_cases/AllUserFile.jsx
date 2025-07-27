@@ -12,7 +12,7 @@ function AllUserFile() {
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
-        const res = await useAxios("/caseFile");
+        const res = await useAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
       } catch (err) {
         console.error("Error fetching case files:", err);

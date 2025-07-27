@@ -30,7 +30,7 @@ router.use("/request-service", requestServiceRoutes);
 router.use("/request-for-advocate", requestForAdvocateRoutes);
 router.use("/client", clientRoutes);
 router.use("/advocate", advocateRoutes);
-router.use("/caseFile", caseFileRoutes);
+router.use("/showOwnCaseFile", caseFileRoutes);
 router.use("/educations", educationRoutes);
 router.use("/cerfications", certicationRoutes); // Ensure this is imported correctly
 router.use("/documents", documentRoutes);

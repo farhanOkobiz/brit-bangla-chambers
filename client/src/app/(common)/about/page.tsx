@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 export default function AboutBritBanglaChamber() {
   return (
     <section className="min-h-screen bg-gray-100 text-gray-800 py-16 px-6 md:px-12">

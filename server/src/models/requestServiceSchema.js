@@ -17,6 +17,11 @@ const requestServiceSchema = new Schema(
       permanentAddress: String,
       issueType: String,
       message: String,
+      attachments: [String],
+      serviceId : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service",
+      },
       createdAt: { type: Date, default: Date.now },
     },
     status: {
