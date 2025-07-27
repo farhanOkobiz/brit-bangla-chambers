@@ -5,6 +5,7 @@ export const createRequestService = async (req, res) => {
   const clientId = req.user._id;
 
   try {
+     console.log("Creating new request:", req.body)
     const newRequest = await RequestService.create({
       ...req.body,
       clientId: clientId,
