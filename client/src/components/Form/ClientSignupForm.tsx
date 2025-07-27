@@ -22,7 +22,6 @@ export default function ClientSignupForm() {
     permanentAddress: "",
     terms: false,
   });
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
@@ -76,24 +75,23 @@ export default function ClientSignupForm() {
           body: JSON.stringify(postData),
         });
 
-        
-          // Check for custom OTP status code
-          if (res.status === 201) {
-            const resOTP = await apiFetch(`/auth/send-otp`, {
-              method: "POST",
-              body: JSON.stringify({ email: postData.email }),
-            });
-            console.log("OTP send response:", resOTP);
-           if (resOTP.status === 200) {
-            return router.push(`/verify-otp?&email=${postData.email}`);      
-           }
+        // Check for custom OTP status code
+        if (res.status === 201) {
+          const resOTP = await apiFetch(`/auth/send-otp`, {
+            method: "POST",
+            body: JSON.stringify({ email: postData.email }),
+          });
+          console.log("OTP send response:", resOTP);
+          if (resOTP.status === 200) {
+            return router.push(`/verify-otp?&email=${postData.email}`);
           }
-          if(res.status === 400) {
-            toast.error(res.data?.message || "User already exists");
-            setLoading(false);
-            return;
-          }
-    
+        }
+        if (res.status === 400) {
+          toast.error(res.data?.message || "User already exists");
+          setLoading(false);
+          return;
+        }
+
         // Registration success: you may want to redirect or show a message
         // For now, just clear the form
         setFormData({
@@ -110,9 +108,9 @@ export default function ClientSignupForm() {
           permanentAddress: "",
           terms: false,
         });
-        setErrors({});    
-      } catch (err: any) {
-      // If using your custom `apiFetch`, you might need to look at `err.data`
+        setErrors({});
+      } catch {
+        // If using your custom `apiFetch`, you might need to look at `err.data`
         toast.error("Something went wrong. Please try again.");
         setLoading(false);
       }
@@ -205,15 +203,15 @@ export default function ClientSignupForm() {
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          /> 
+          />
           <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
           />
-          
-           <Input
+
+          <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
@@ -247,37 +245,36 @@ export default function ClientSignupForm() {
 
         {/* Submit */}
         <button
-  type="submit"
-  disabled={loading}
-  className={`w-full bg-black text-white py-3 rounded-md font-semibold transition cursor-pointer flex items-center justify-center ${
-    loading ? "opacity-60 cursor-not-allowed" : "hover:bg-gray-800"
-  }`}
->
-  {loading ? (
-    <svg
-      className="animate-spin h-5 w-5 mr-2 text-white"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v8z"
-      />
-    </svg>
-  ) : null}
-  {loading ? "Signing up..." : "Sign Up"}
-</button>
-
+          type="submit"
+          disabled={loading}
+          className={`w-full bg-black text-white py-3 rounded-md font-semibold transition cursor-pointer flex items-center justify-center ${
+            loading ? "opacity-60 cursor-not-allowed" : "hover:bg-gray-800"
+          }`}
+        >
+          {loading ? (
+            <svg
+              className="animate-spin h-5 w-5 mr-2 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              />
+            </svg>
+          ) : null}
+          {loading ? "Signing up..." : "Sign Up"}
+        </button>
       </form>
     </div>
   );

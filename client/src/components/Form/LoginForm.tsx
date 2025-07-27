@@ -1,9 +1,9 @@
 "use client";
 
 import { apiFetch } from "@/api/apiFetch";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { authApi, useGetAuthQuery } from "@/redux/api/authApi";
+import { useGetAuthQuery } from "@/redux/api/authApi";
 
 function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -43,7 +43,11 @@ function LoginForm() {
             method: "POST",
             body: JSON.stringify({ email: form.email }),
           });
-          router.push(`/verify-otp?user=${data?.userId}&email=${encodeURIComponent(data?.email)}`);
+          router.push(
+            `/verify-otp?user=${data?.userId}&email=${encodeURIComponent(
+              data?.email
+            )}`
+          );
           return;
         } else {
           setError(data?.message || "Login failed");
@@ -56,16 +60,16 @@ function LoginForm() {
 
       if (user?.role === "client") {
         router.push("/client/dashboard");
-      }  else if (user?.role === "admin" || user?.role === "advocate") {
-    const targetUrl =
-      user.role === "admin"
-        ? `${ADMIN_URL}/admin/dashboard`
-        : `${ADVOCATE_URL}/advocate/dashboard`;
-    window.location.href = targetUrl;
+      } else if (user?.role === "admin" || user?.role === "advocate") {
+        const targetUrl =
+          user.role === "admin"
+            ? `${ADMIN_URL}/admin/dashboard`
+            : `${ADVOCATE_URL}/advocate/dashboard`;
+        window.location.href = targetUrl;
       } else {
         router.push("/");
       }
-    } catch (err) {
+    } catch {
       console.error("Login error:", err);
       setError("Something went wrong. Please try again.");
     } finally {
@@ -105,7 +109,11 @@ function LoginForm() {
         type="submit"
         disabled={loading}
         className={`w-full flex justify-center items-center gap-2 py-3 rounded-md font-bold text-lg shadow-md transition cursor-pointer
-          ${loading ? "bg-gray-600 cursor-not-allowed" : "bg-black hover:bg-gray-800 text-white"}`}
+          ${
+            loading
+              ? "bg-gray-600 cursor-not-allowed"
+              : "bg-black hover:bg-gray-800 text-white"
+          }`}
       >
         {loading ? (
           <>

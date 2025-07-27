@@ -3,6 +3,7 @@ import CaseFile from "../models/caseFileSchema.js";
 // ✅ Create Case File
 export const createCaseFile = async (req, res) => {
   const advocateId = req.user.id;
+
   try {
     const caseFile = await CaseFile.create({
       ...req.body,

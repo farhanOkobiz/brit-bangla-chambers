@@ -42,31 +42,29 @@ export default function VerifyOtpPage() {
         setLoading(false);
         return;
       }
-      
+
       const data = res.data;
       const user = data.user;
 
       if (user?.role === "client") {
         router.push("/client/dashboard");
-      }  else if (user?.role === "admin" || user?.role === "advocate") {
-    const targetUrl =
-      user.role === "admin"
-        ? `${ADMIN_URL}/admin/dashboard`
-        : `${ADVOCATE_URL}/advocate/dashboard`;
-    window.location.href = targetUrl;
-      }
-      else{
+      } else if (user?.role === "admin" || user?.role === "advocate") {
+        const targetUrl =
+          user.role === "admin"
+            ? `${ADMIN_URL}/admin/dashboard`
+            : `${ADVOCATE_URL}/advocate/dashboard`;
+        window.location.href = targetUrl;
+      } else {
         setError("Invalid user role");
       }
-     
+    } catch {
+      setError(
+        "Something went wrong during verification, Try again through login"
+      );
+    } finally {
+      setLoading(false);
     }
-     catch (err: unknown) {
-        setError("Something went wrong during verification, Try again through login");
-      } finally {
-        setLoading(false);
-      }
     setLoading(false);
-    
   };
 
   const handleResend = async () => {
@@ -86,7 +84,7 @@ export default function VerifyOtpPage() {
       } else {
         setResendCooldown(30);
       }
-    } catch (err: unknown) {
+    } catch {
       setError("Something went wrong while resending");
     } finally {
       setResendLoading(false);
