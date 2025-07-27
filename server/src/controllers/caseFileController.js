@@ -27,6 +27,8 @@ export const getAllCaseFiles = async (req, res) => {
     const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
       "advocate_id"
     );
+    console.log(caseFiles);
+
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
     res.status(500).json({
