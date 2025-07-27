@@ -22,7 +22,7 @@ export const createCaseFile = async (req, res) => {
 // ✅ Get All Case Files
 export const getAllCaseFiles = async (req, res) => {
   try {
-    const caseFiles = await CaseFile.find().populate("advocate_id client_id");
+    const caseFiles = await CaseFile.find().populate("advocate_id");
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
     res.status(500).json({

@@ -21,8 +21,8 @@ const CaseFileSchema = new Schema(
 
     advocate_id: { type: Types.ObjectId, ref: "Advocate", required: true },
 
-    client_id: { type: Types.ObjectId, ref: "User" }, // optional
-
+    // client_id: { type: Types.ObjectId, ref: "User" }, // optional
+    client_name: { type: String },
     case_type: {
       type: String,
     },
