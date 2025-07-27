@@ -1,62 +1,81 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { apiFetch } from "@/api/apiFetch" // Declare or import apiFetch here
+import type React from "react";
+import { apiFetch } from "@/api/apiFetch"; // Declare or import apiFetch here
 
-import { useState, useRef } from "react"
-import { User, Mail, MapPin, Save, X, Edit, Camera, Upload } from "lucide-react"
-import { toast } from "react-toastify"
+import { useState, useRef } from "react";
+import {
+  User,
+  Mail,
+  MapPin,
+  Save,
+  X,
+  Edit,
+  Camera,
+  Upload,
+} from "lucide-react";
+import { toast } from "react-toastify";
+import Image from "next/image";
+
+interface Consultation {
+  doctorId: string;
+  date: string;
+  notes: string;
+}
 
 interface UserData {
-  _id: string
-  role: string
-  full_name: string
-  email: string
-  phone: string
-  otp_verified: boolean
-  created_at: string
-  __v: number
+  _id: string;
+  role: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  otp_verified: boolean;
+  created_at: string;
+  __v: number;
 }
 
 interface ClientData {
-  _id: string
-  user_id: UserData
-  nid_number: string
-  date_of_birth: string
-  gender: string
-  profile_photo: string
-  present_address: string
-  permanent_address: string
-  consultation_history: any[]
-  status: string
-  createdAt: string
-  updatedAt: string
-  __v: number
+  _id: string;
+  user_id: UserData;
+  nid_number: string;
+  date_of_birth: string;
+  gender: string;
+  profile_photo: string;
+  present_address: string;
+  permanent_address: string;
+  consultation_history: Consultation[];
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 interface UpdateClientInfoProps {
-  clientData: ClientData
-  onUpdate: (updatedData: ClientData) => void
+  clientData: ClientData;
+  onUpdate: (updatedData: ClientData) => void;
 }
 
 interface UpdateFormData {
-  full_name: string
-  phone: string
-  nidNumber: string
-  dateOfBirth: string
-  gender: string
-  presentAddress: string
-  permanentAddress: string
-  status: string
+  full_name: string;
+  phone: string;
+  nidNumber: string;
+  dateOfBirth: string;
+  gender: string;
+  presentAddress: string;
+  permanentAddress: string;
+  status: string;
 }
 
-export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientInfoProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL
+export default function UpdateClientInfo({
+  clientData,
+  onUpdate,
+}: UpdateClientInfoProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   const [formData, setFormData] = useState<UpdateFormData>({
     full_name: clientData.user_id.full_name,
@@ -67,99 +86,101 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
     presentAddress: clientData.present_address,
     permanentAddress: clientData.permanent_address,
     status: clientData.status,
-  })
+  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        toast.error("Please select a valid image file")
-        return
+        toast.error("Please select a valid image file");
+        return;
       }
 
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5MB")
-        return
+        toast.error("File size must be less than 5MB");
+        return;
       }
 
-      setSelectedFile(file)
+      setSelectedFile(file);
 
       // Create preview URL
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setPreviewUrl(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
+        setPreviewUrl(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleRemovePhoto = () => {
-    setSelectedFile(null)
-    setPreviewUrl(null)
+    setSelectedFile(null);
+    setPreviewUrl(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   const getInitials = (name: string) => {
     return name
       .split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase()
-  }
+      .toUpperCase();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       // Create FormData for file upload
-      const formDataToSend = new FormData()
+      const formDataToSend = new FormData();
 
       // Add all form fields
       Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value)
-      })
+        formDataToSend.append(key, value);
+      });
 
       // Add profile photo if selected
       if (selectedFile) {
-        formDataToSend.append("profilePhoto", selectedFile)
+        formDataToSend.append("profilePhoto", selectedFile);
       }
 
       const response = await apiFetch(`/client/update/${clientData._id}`, {
         method: "PUT",
         body: formDataToSend,
         // Don't set Content-Type header for FormData - let apiFetch handle it
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to update client information")
+        throw new Error("Failed to update client information");
       }
 
       // Update the parent component with new data
-      onUpdate(response.data.client)
-      setIsEditing(false)
-      setSelectedFile(null)
-      setPreviewUrl(null)
-      toast.success("Profile updated successfully!")
-    } catch (error) {
-      console.error("Error updating client info:", error)
-      toast.error("Failed to update profile. Please try again.")
+      onUpdate(response.data.client);
+      setIsEditing(false);
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      toast.success("Profile updated successfully!");
+    } catch {
+      console.error("Error updating client info:", error);
+      toast.error("Failed to update profile. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCancel = () => {
     // Reset form data to original values
@@ -172,11 +193,11 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
       presentAddress: clientData.present_address,
       permanentAddress: clientData.permanent_address,
       status: clientData.status,
-    })
-    setSelectedFile(null)
-    setPreviewUrl(null)
-    setIsEditing(false)
-  }
+    });
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setIsEditing(false);
+  };
 
   if (!isEditing) {
     return (
@@ -187,7 +208,7 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
         <Edit className="h-4 w-4" />
         Edit Profile
       </button>
-    )
+    );
   }
 
   return (
@@ -195,8 +216,13 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Edit Profile Information</h2>
-            <button onClick={handleCancel} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Edit Profile Information
+            </h2>
+            <button
+              onClick={handleCancel}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
               <X className="h-6 w-6 text-gray-500" />
             </button>
           </div>
@@ -214,27 +240,42 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
               {/* Current/Preview Photo */}
               <div className="relative">
                 {previewUrl ? (
-                  <img
+                  <Image
                     src={previewUrl || "/placeholder.svg"}
                     alt="Preview"
                     className="h-24 w-24 rounded-full object-cover border-2 border-gray-200"
+                    width={150}
+                    height={150}
                   />
                 ) : clientData.profile_photo ? (
-                  <img
-                    src={`${IMAGE_URL}${clientData.profile_photo}` || "/placeholder.svg"}
+                  <Image
+                    src={
+                      `${IMAGE_URL}${clientData.profile_photo}` ||
+                      "/placeholder.svg"
+                    }
                     alt={clientData.user_id.full_name}
                     className="h-24 w-24 rounded-full object-cover border-2 border-gray-200"
+                    width={150}
+                    height={150}
                   />
                 ) : (
                   <div className="h-24 w-24 rounded-full bg-blue-100 flex items-center justify-center border-2 border-gray-200">
-                    <span className="text-xl font-semibold text-blue-700">{getInitials(formData.full_name)}</span>
+                    <span className="text-xl font-semibold text-blue-700">
+                      {getInitials(formData.full_name)}
+                    </span>
                   </div>
                 )}
               </div>
 
               {/* Upload Controls */}
               <div className="flex flex-col gap-2">
-                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
 
                 <button
                   type="button"
@@ -256,7 +297,9 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
                   </button>
                 )}
 
-                <p className="text-xs text-gray-500">JPG, PNG or GIF. Max size 5MB.</p>
+                <p className="text-xs text-gray-500">
+                  JPG, PNG or GIF. Max size 5MB.
+                </p>
               </div>
             </div>
           </div>
@@ -266,11 +309,16 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
                 <User className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Personal Information
+                </h3>
               </div>
 
               <div>
-                <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="full_name"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Full Name
                 </label>
                 <input
@@ -285,7 +333,10 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Phone Number
                 </label>
                 <input
@@ -300,7 +351,10 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
               </div>
 
               <div>
-                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="gender"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Gender
                 </label>
                 <select
@@ -319,7 +373,10 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
               </div>
 
               <div>
-                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="dateOfBirth"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Date of Birth
                 </label>
                 <input
@@ -334,7 +391,10 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
               </div>
 
               <div>
-                <label htmlFor="nidNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="nidNumber"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   NID Number
                 </label>
                 <input
@@ -353,12 +413,17 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
                 <Mail className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Contact Information
+                </h3>
               </div>
 
               {/* Email - Read Only */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Email Address
                 </label>
                 <input
@@ -369,11 +434,16 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
                   disabled
                   readOnly
                 />
-                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Email cannot be changed
+                </p>
               </div>
 
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Account Status
                 </label>
                 <select
@@ -392,11 +462,16 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
 
               <div className="flex items-center gap-2 mb-4 mt-8">
                 <MapPin className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Address Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Address Information
+                </h3>
               </div>
 
               <div>
-                <label htmlFor="presentAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="presentAddress"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Present Address
                 </label>
                 <input
@@ -411,7 +486,10 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
               </div>
 
               <div>
-                <label htmlFor="permanentAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="permanentAddress"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Permanent Address
                 </label>
                 <input
@@ -458,5 +536,5 @@ export default function UpdateClientInfo({ clientData, onUpdate }: UpdateClientI
         </form>
       </div>
     </div>
-  )
+  );
 }

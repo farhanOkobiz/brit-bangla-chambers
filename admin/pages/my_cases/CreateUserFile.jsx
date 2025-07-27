@@ -5,7 +5,7 @@ import MyCasesForm from "../../components/form/MyCasesForm";
 const MyCases = () => {
   const handleFormSubmit = async (data) => {
     try {
-      await useAxios("/caseFile", {
+      await useAxios("/showOwnCaseFile/createCaseFile", {
         method: "POST",
         data,
       });

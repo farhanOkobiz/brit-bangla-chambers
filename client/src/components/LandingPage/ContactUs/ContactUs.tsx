@@ -35,7 +35,7 @@ function ContactUs() {
       } else {
         toast.error("Submission failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     }
   };

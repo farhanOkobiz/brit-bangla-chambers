@@ -14,7 +14,7 @@ import {
   BookOpen,
 } from "lucide-react";
 
-function page() {
+function Page() {
   const [caseData, setCaseData] = useState<CaseItem[]>([]);
 
   const getStatusColor = (status: string) => {
@@ -35,7 +35,7 @@ function page() {
       try {
         const res = await apiFetch("/showOwnCaseFile/singleCaseFile");
         setCaseData(res?.data?.data || []);
-      } catch (err) {
+      } catch {
         toast.error("Something went wrong");
       }
     };
@@ -247,4 +247,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

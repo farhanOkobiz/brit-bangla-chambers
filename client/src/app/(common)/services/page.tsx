@@ -4,8 +4,8 @@ import { useDispatch } from "react-redux";
 import { setSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { useRouter } from "next/navigation";
 import { Calendar, Tag, Filter, X, Search } from "lucide-react";
-
-type Root = IServicesDisplay[];
+import { apiFetch } from "../../../api/apiFetch";
+import Image from "next/image";
 
 interface IServicesDisplay {
   _id: string;
@@ -60,7 +60,7 @@ const ServicesDisplay = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        let response = await apiFetch("/service/get-all-service");
+        const response = await apiFetch("/service/get-all-service");
 
         const data: IServicesDisplay[] = response.data || [];
         console.log("Fetched services:", data);
@@ -296,9 +296,11 @@ const ServicesDisplay = () => {
                         >
                           {/* Service Image */}
                           <div className="relative h-32 overflow-hidden">
-                            <img
-                              src={`${service.serviceImage}`}
+                            <Image
+                              src={`${image_url}${service.serviceImage}`}
                               alt={service.title}
+                              width={600}
+                              height={300}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                             />
                             <div className="absolute top-2 right-2">
@@ -378,10 +380,12 @@ const ServicesDisplay = () => {
             <h2 className="text-xl font-semibold mb-4">
               {selectedService.title}
             </h2>
-            <img
+            <Image
               src={selectedService.serviceImage}
               alt={selectedService.title}
               className="w-full h-48 object-cover rounded mb-4"
+              height={48}
+              width={48}
             />
             <p className="text-gray-700 mb-2">
               <strong>Category:</strong>{" "}

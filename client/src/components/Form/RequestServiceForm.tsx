@@ -1,5 +1,4 @@
 import { apiFetch } from "@/api/apiFetch";
-import { useGetAuthQuery } from "@/redux/api/authApi";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";

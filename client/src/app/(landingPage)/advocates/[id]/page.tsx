@@ -103,13 +103,13 @@ const advocates = [
   },
 ];
 
-interface Params {
+interface PageProps {
   params: {
     id: string;
   };
 }
 
-export default function AdvocateProfilePage({ params }: Params) {
+export default function AdvocateProfilePage({ params }: PageProps) {
   const id = Number(params.id);
   const advocate = advocates.find((a) => a.id === id);
 
