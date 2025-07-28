@@ -27,7 +27,6 @@ export const getAllCaseFiles = async (req, res) => {
     const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
       "advocate_id"
     );
-    console.log(caseFiles);
 
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
@@ -52,7 +51,6 @@ export const getSingleCaseFile = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Case not found" });
     }
-    console.log(caseFile);
 
     res.status(200).json({ success: true, data: caseFile });
   } catch (error) {
@@ -68,8 +66,6 @@ export const getSingleCaseFile = async (req, res) => {
 export const getSingleCaseFileById = async (req, res) => {
   try {
     const id = req?.params?.id;
-
-    console.log(id);
 
     const caseFile = await CaseFile.findById(id).populate("advocate_id");
     if (!caseFile) {
@@ -90,8 +86,12 @@ export const getSingleCaseFileById = async (req, res) => {
 
 // ✅ Update Case File
 export const updateCaseFile = async (req, res) => {
+  const id = req.params.id;
+  const data = req.body;
+  console.log(id, data);
+
   try {
-    const updated = await CaseFile.findByIdAndUpdate(req.params.id, req.body, {
+    const updated = await CaseFile.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
     });
