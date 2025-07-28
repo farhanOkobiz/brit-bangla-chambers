@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAxios } from "../../services/useAxios";
-import { 
-  FiTrash2, 
-  FiUser, 
-  FiMail, 
-  FiPhone, 
-  FiMapPin, 
-  FiMessageSquare, 
-  FiPaperclip, 
-  FiClock, 
+import {
+  FiTrash2,
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiMessageSquare,
+  FiPaperclip,
+  FiClock,
   FiFileText,
   FiFilter,
   FiSearch,
   FiMoreVertical,
   FiEye,
   FiSend,
-  FiUserCheck
+  FiUserCheck,
 } from "react-icons/fi";
 
 const getStatusConfig = (status) => {
@@ -26,48 +26,54 @@ const getStatusConfig = (status) => {
       bg: "bg-emerald-50",
       text: "text-emerald-700",
       border: "border-emerald-200",
-      dot: "bg-emerald-400"
+      dot: "bg-emerald-400",
     },
     rejected: {
       color: "red",
       bg: "bg-red-50",
-      text: "text-red-700", 
+      text: "text-red-700",
       border: "border-red-200",
-      dot: "bg-red-400"
+      dot: "bg-red-400",
     },
     pending: {
       color: "amber",
       bg: "bg-amber-50",
       text: "text-amber-700",
-      border: "border-amber-200", 
-      dot: "bg-amber-400"
+      border: "border-amber-200",
+      dot: "bg-amber-400",
     },
     sent_to_advocate: {
       color: "blue",
       bg: "bg-blue-50",
       text: "text-blue-700",
       border: "border-blue-200",
-      dot: "bg-blue-400"
+      dot: "bg-blue-400",
+    },
+  };
+
+  return (
+    configs[status] || {
+      color: "gray",
+      bg: "bg-gray-50",
+      text: "text-gray-700",
+      border: "border-gray-200",
+      dot: "bg-gray-400",
     }
-  };
-  
-  return configs[status] || {
-    color: "gray",
-    bg: "bg-gray-50", 
-    text: "text-gray-700",
-    border: "border-gray-200",
-    dot: "bg-gray-400"
-  };
+  );
 };
 
 const StatusBadge = ({ status }) => {
   const config = getStatusConfig(status);
-  const text = status?.split("_").map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(" ") || "Unknown";
+  const text =
+    status
+      ?.split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ") || "Unknown";
 
   return (
-    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${config.bg} ${config.text} ${config.border} border`}>
+    <div
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${config.bg} ${config.text} ${config.border} border`}
+    >
       <div className={`w-2 h-2 rounded-full ${config.dot}`}></div>
       {text}
     </div>
@@ -81,7 +87,11 @@ const StatsCard = ({ icon: Icon, title, value, color, bgColor }) => (
         <p className="text-sm font-medium text-gray-600">{title}</p>
         <p className={`text-3xl font-bold ${color} mt-1`}>{value}</p>
       </div>
-      <div className={`p-3 rounded-lg ${color.replace('text-', 'bg-').replace('-600', '-100')}`}>
+      <div
+        className={`p-3 rounded-lg ${color
+          .replace("text-", "bg-")
+          .replace("-600", "-100")}`}
+      >
         <Icon className={`w-6 h-6 ${color}`} />
       </div>
     </div>
@@ -118,7 +128,7 @@ function RequestForService() {
     }
 
     try {
-      setDeleting(prev => ({ ...prev, [id]: true }));
+      setDeleting((prev) => ({ ...prev, [id]: true }));
       await useAxios(`/request-service/${id}`, { method: "DELETE" });
       setRequestsMessage((prev) => prev.filter((item) => item._id !== id));
       setFilteredRequests((prev) => prev.filter((item) => item._id !== id));
@@ -127,7 +137,7 @@ function RequestForService() {
       toast.error("Failed to delete request");
       console.error("Delete error:", error);
     } finally {
-      setDeleting(prev => ({ ...prev, [id]: false }));
+      setDeleting((prev) => ({ ...prev, [id]: false }));
     }
   };
 
@@ -158,9 +168,14 @@ function RequestForService() {
 
       if (res.status === 201) {
         toast.success("Message sent to advocate!");
-        const updatedRequests = requestsMessage.map(req => 
-          req._id === item._id 
-            ? { ...req, adminForwarded: true, forwardedTo: advocateId, status: 'sent_to_advocate' }
+        const updatedRequests = requestsMessage.map((req) =>
+          req._id === item._id
+            ? {
+                ...req,
+                adminForwarded: true,
+                forwardedTo: advocateId,
+                status: "sent_to_advocate",
+              }
             : req
         );
         setRequestsMessage(updatedRequests);
@@ -178,16 +193,23 @@ function RequestForService() {
     let filtered = requests;
 
     if (search) {
-      filtered = filtered.filter(request => 
-        request.userMessage.name?.toLowerCase().includes(search.toLowerCase()) ||
-        request.userMessage.email?.toLowerCase().includes(search.toLowerCase()) ||
-        request.userMessage.phone?.includes(search) ||
-        request.userMessage.issueType?.toLowerCase().includes(search.toLowerCase())
+      filtered = filtered.filter(
+        (request) =>
+          request.userMessage.name
+            ?.toLowerCase()
+            .includes(search.toLowerCase()) ||
+          request.userMessage.email
+            ?.toLowerCase()
+            .includes(search.toLowerCase()) ||
+          request.userMessage.phone?.includes(search) ||
+          request.userMessage.issueType
+            ?.toLowerCase()
+            .includes(search.toLowerCase())
       );
     }
 
     if (status !== "all") {
-      filtered = filtered.filter(request => request.status === status);
+      filtered = filtered.filter((request) => request.status === status);
     }
 
     setFilteredRequests(filtered);
@@ -202,7 +224,9 @@ function RequestForService() {
       try {
         const res = await useAxios("auth/users");
         const allUsers = res?.data?.users || [];
-        const onlyAdvocates = allUsers.filter((user) => user.role === "advocate");
+        const onlyAdvocates = allUsers.filter(
+          (user) => user.role === "advocate"
+        );
         setAdvocates(onlyAdvocates);
       } catch (error) {
         console.error("Failed to fetch advocates:", error);
@@ -219,10 +243,10 @@ function RequestForService() {
 
   const stats = {
     total: requestsMessage.length,
-    pending: requestsMessage.filter(r => r.status === 'pending').length,
-    sent: requestsMessage.filter(r => r.status === 'sent_to_advocate').length,
-    accepted: requestsMessage.filter(r => r.status === 'accepted').length,
-    rejected: requestsMessage.filter(r => r.status === 'rejected').length
+    pending: requestsMessage.filter((r) => r.status === "pending").length,
+    sent: requestsMessage.filter((r) => r.status === "sent_to_advocate").length,
+    accepted: requestsMessage.filter((r) => r.status === "accepted").length,
+    rejected: requestsMessage.filter((r) => r.status === "rejected").length,
   };
 
   if (loading) {
@@ -248,9 +272,11 @@ function RequestForService() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Service Requests Dashboard
               </h1>
-              <p className="text-gray-600 mt-2 text-lg">Manage and assign client requests to advocates</p>
+              <p className="text-gray-600 mt-2 text-lg">
+                Manage and assign client requests to advocates
+              </p>
             </div>
-            
+
             {/* Search and Filter */}
             <div className="flex flex-col sm:flex-row gap-4 lg:min-w-96">
               <div className="relative flex-1">
@@ -327,8 +353,15 @@ function RequestForService() {
       <div className="px-6 pb-6">
         <div className="flex items-center justify-between">
           <p className="text-gray-600">
-            Showing <span className="font-semibold text-gray-900">{filteredRequests.length}</span> of{' '}
-            <span className="font-semibold text-gray-900">{requestsMessage.length}</span> requests
+            Showing{" "}
+            <span className="font-semibold text-gray-900">
+              {filteredRequests.length}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold text-gray-900">
+              {requestsMessage.length}
+            </span>{" "}
+            requests
           </p>
           {filteredRequests.length !== requestsMessage.length && (
             <button
@@ -353,13 +386,14 @@ function RequestForService() {
                 <FiFileText className="w-12 h-12 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                {searchTerm || statusFilter !== "all" ? "No matching requests" : "No requests yet"}
+                {searchTerm || statusFilter !== "all"
+                  ? "No matching requests"
+                  : "No requests yet"}
               </h3>
               <p className="text-gray-600 text-lg leading-relaxed">
-                {searchTerm || statusFilter !== "all" 
+                {searchTerm || statusFilter !== "all"
                   ? "Try adjusting your search or filter criteria to find what you're looking for."
-                  : "When clients submit service requests, they will appear here for you to review and assign to advocates."
-                }
+                  : "When clients submit service requests, they will appear here for you to review and assign to advocates."}
               </p>
             </div>
           </div>
@@ -369,15 +403,17 @@ function RequestForService() {
               const { userMessage } = item;
               const service = userMessage.serviceId;
               const isDeleting = deleting[item._id];
-              const assignedAdvocate = advocates.find(a => a._id === item.forwardedTo);
+              const assignedAdvocate = advocates.find(
+                (a) => a._id === item.forwardedTo
+              );
 
               return (
                 <div
                   key={item._id}
                   className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
-                    isDeleting ? 'opacity-50 pointer-events-none' : ''
+                    isDeleting ? "opacity-50 pointer-events-none" : ""
                   }`}
-                  style={{ minHeight: 'unset' }}
+                  style={{ minHeight: "unset" }}
                 >
                   {/* Card Header */}
                   <div className="bg-gradient-to-r from-slate-50 to-blue-50 p-3 border-b border-gray-100">
@@ -386,13 +422,16 @@ function RequestForService() {
                         <StatusBadge status={item.status} />
                         <div className="mt-3 flex items-center text-sm text-gray-500">
                           <FiClock className="w-4 h-4 mr-1" />
-                          {new Date(item.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                          {new Date(item.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -424,7 +463,8 @@ function RequestForService() {
                             alt={service.title}
                             className="w-12 h-12 object-cover rounded-xl border-2 border-white shadow-md"
                             onError={(e) => {
-                              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTIiIGZpbGw9IiNGMUY1RjkiLz4KPHBhdGggZD0iTTMyIDQ4QzQwLjgzNjYgNDggNDggNDAuODM2NiA0OCAzMkM0OCAyMy4xNjM0IDQwLjgzNjYgMTYgMzIgMTZDMjMuMTYzNCAxNiAxNiAyMy4xNjM0IDE2IDMyQzE2IDQwLjgzNjYgMjMuMTYzNCA0OCAzMiA0OFoiIGZpbGw9IiNFMkU4RjAiLz4KPHBhdGggZD0iTTI4IDI4QzI4IDI1Ljc5MDkgMjkuNzkwOSAyNCAzMiAyNEMzNC4yMDkxIDI0IDM2IDI1Ljc5MDkgMzYgMjhDMzYgMzAuMjA5MSAzNC4yMDkxIDMyIDMyIDMyQzI5Ljc5MDkgMzIgMjggMzAuMjA5MSAyOCAyOFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTI4IDM2QzI4IDM0Ljg5NTQgMjguODk1NCAzNCAzMCAzNEgzNEMzNS4xMDQ2IDM0IDM2IDM0Ljg5NTQgMzYgMzZWMzhDMzYgMzkuMTA0NiAzNS4xMDQ2IDQwIDM0IDQwSDMwQzI4Ljg5NTQgNDAgMjggMzkuMTA0NiAyOCAzOFYzNloiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                              e.target.src =
+                                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTIiIGZpbGw9IiNGMUY1RjkiLz4KPHBhdGggZD0iTTMyIDQ4QzQwLjgzNjYgNDggNDggNDAuODM2NiA0OCAzMkM0OCAyMy4xNjM0IDQwLjgzNjYgMTYgMzIgMTZDMjMuMTYzNCAxNiAxNiAyMy4xNjM0IDE2IDMyQzE2IDQwLjgzNjYgMjMuMTYzNCA0OCAzMiA0OFoiIGZpbGw9IiNFMkU4RjAiLz4KPHBhdGggZD0iTTI4IDI4QzI4IDI1Ljc5MDkgMjkuNzkwOSAyNCAzMiAyNEMzNC4yMDkxIDI0IDM2IDI1Ljc5MDkgMzYgMjhDMzYgMzAuMjA5MSAzNC4yMDkxIDMyIDMyIDMyQzI5Ljc5MDkgMzIgMjggMzAuMjA5MSAyOCAyOFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTI4IDM2QzI4IDM0Ljg5NTQgMjguODk1NCAzNCAzMCAzNEgzNEMzNS4xMDQ2IDM0IDM2IDM0Ljg5NTQgMzYgMzZWMzhDMzYgMzkuMTA0NiAzNS4xMDQ2IDQwIDM0IDQwSDMwQzI4Ljg5NTQgNDAgMjggMzkuMTA0NiAyOCAzOFYzNloiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+";
                             }}
                           />
                           <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
@@ -462,8 +502,12 @@ function RequestForService() {
                           <FiUser className="w-4 h-4 text-blue-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Client Name</p>
-                          <p className="font-semibold text-gray-900 truncate">{userMessage.name || "N/A"}</p>
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Client Name
+                          </p>
+                          <p className="font-semibold text-gray-900 truncate">
+                            {userMessage.name || "N/A"}
+                          </p>
                         </div>
                       </div>
 
@@ -473,8 +517,12 @@ function RequestForService() {
                             <FiMail className="w-4 h-4 text-green-600" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Email</p>
-                            <p className="text-sm text-gray-900 truncate">{userMessage.email || "N/A"}</p>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                              Email
+                            </p>
+                            <p className="text-sm text-gray-900 truncate">
+                              {userMessage.email || "N/A"}
+                            </p>
                           </div>
                         </div>
 
@@ -483,8 +531,12 @@ function RequestForService() {
                             <FiPhone className="w-4 h-4 text-purple-600" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Phone</p>
-                            <p className="text-sm text-gray-900">{userMessage.phone || "N/A"}</p>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                              Phone
+                            </p>
+                            <p className="text-sm text-gray-900">
+                              {userMessage.phone || "N/A"}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -498,7 +550,9 @@ function RequestForService() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <p className="text-xs font-medium text-orange-600 uppercase tracking-wide">Specilization</p>
+                            <p className="text-xs font-medium text-orange-600 uppercase tracking-wide">
+                              Specilization
+                            </p>
                             <span className="bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full text-xs font-medium">
                               {userMessage.issueType || "Not specified"}
                             </span>
@@ -517,16 +571,24 @@ function RequestForService() {
                           <FiPaperclip className="w-4 h-4 text-indigo-600" />
                         </div>
                         <p className="font-medium text-indigo-900">
-                          Attachments ({userMessage.attachments && userMessage.attachments.length > 0 ? userMessage.attachments.length : 'null'})
+                          Attachments (
+                          {userMessage.attachments &&
+                          userMessage.attachments.length > 0
+                            ? userMessage.attachments.length
+                            : "null"}
+                          )
                         </p>
                       </div>
                       <div className="grid gap-2">
-                        {userMessage.attachments && userMessage.attachments.length > 0 ? (
+                        {userMessage.attachments &&
+                        userMessage.attachments.length > 0 ? (
                           userMessage.attachments.map((file, idx) => (
                             <a
                               download
                               key={idx}
-                              href={`${BASE_URL}${file.startsWith('/') ? file : '/' + file}`}
+                              href={`${BASE_URL}${
+                                file.startsWith("/") ? file : "/" + file
+                              }`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-2 p-2 bg-white rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-200"
@@ -538,7 +600,9 @@ function RequestForService() {
                             </a>
                           ))
                         ) : (
-                          <span className="text-sm text-indigo-900 font-medium">No attachments (null)</span>
+                          <span className="text-sm text-indigo-900 font-medium">
+                            No attachments (null)
+                          </span>
                         )}
                       </div>
                     </div>
@@ -555,7 +619,9 @@ function RequestForService() {
                           <select
                             className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
                             value={selectedAdvocates[item._id] || ""}
-                            onChange={(e) => handleSelectChange(item._id, e.target.value)}
+                            onChange={(e) =>
+                              handleSelectChange(item._id, e.target.value)
+                            }
                           >
                             <option value="">Choose an advocate...</option>
                             {advocates.map((adv) => (
@@ -584,7 +650,10 @@ function RequestForService() {
                         </div>
                         {assignedAdvocate && (
                           <p className="text-sm text-gray-600 mt-3 font-medium">
-                            Assigned to: <span className="text-blue-600">{assignedAdvocate.full_name}</span>
+                            Assigned to:{" "}
+                            <span className="text-blue-600">
+                              {assignedAdvocate.full_name}
+                            </span>
                           </p>
                         )}
                       </div>
