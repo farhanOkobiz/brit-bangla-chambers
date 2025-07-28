@@ -32,7 +32,7 @@ router.use("/client", clientRoutes);
 router.use("/advocate", advocateRoutes);
 router.use("/showOwnCaseFile", caseFileRoutes);
 router.use("/educations", educationRoutes);
-router.use("/cerfications", certicationRoutes); // Ensure this is imported correctly
+router.use("/certifications", certicationRoutes); // Ensure this is imported correctly
 router.use("/documents", documentRoutes);
 router.use("/file-request", fileRequestRoutes); // Ensure this is imported correctly
 

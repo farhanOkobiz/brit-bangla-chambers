@@ -38,11 +38,6 @@ const RequestForAdvocate = () => {
       toast.success("Message accepted");
 
       if (response?.ok) {
-<<<<<<< HEAD
-        await useAxios("/showOwnCaseFile/createCaseFile", {
-          method: "POST",
-          data: request,
-=======
         const acceptedRequest = request.find((r) => r._id === id);
 
         const caseFileData = {
@@ -69,7 +64,6 @@ const RequestForAdvocate = () => {
         await useAxios("/showOwnCaseFile/createCaseFile", {
           method: "POST",
           data: caseFileData,
->>>>>>> raihan
         });
       }
 
