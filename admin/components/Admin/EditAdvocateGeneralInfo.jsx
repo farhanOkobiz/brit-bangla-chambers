@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAxios } from "../../services/useAxios";
 
-export default function EditAdvocateGeneralInfo() {
-  const { id } = useParams();
+export default function EditAdvocateGeneralInfo( {id} ) {
+
   const navigate = useNavigate();
   const [form, setForm] = useState({
     designation: "",
