@@ -14,6 +14,11 @@ const requestForAdvocateSchema = new Schema(
       message: { type: String },
       createdAt: { type: Date, default: Date.now },
     },
+    client_id: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     advocateId: {
       type: Schema.Types.ObjectId,
       ref: "Advocate",

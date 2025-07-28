@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { logout } from "../auth/api";
-import  {useNavigate}  from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 import {
@@ -28,15 +28,14 @@ const menuItems = [
     label: "My Case",
     isDropdown: true,
     subItems: [
-      { label: "Accepted Cases", path: "/advocate/dashboard/accepted-cases" },
       {
         label: "All user file",
         path: "/advocate/dashboard/all-user-file",
       },
-      {
-        label: "Create user file",
-        path: "/advocate/dashboard/create-user-file",
-      },
+      // {
+      //   label: "Create user file",
+      //   path: "/advocate/dashboard/create-user-file",
+      // },
     ],
   },
 
@@ -69,21 +68,19 @@ const AdvocateSidebar = () => {
     setOpenDropdown(null);
   };
   const handleLogOut = () => {
-    try{
+    try {
       const response = logout();
-    if (response) {
-      setAuthed(false);
-      setRole(null);
-      setUserName(null);
-      navigate("/login");
-    }
-    }
-    catch (error) {
+      if (response) {
+        setAuthed(false);
+        setRole(null);
+        setUserName(null);
+        navigate("/login");
+      }
+    } catch (error) {
       console.error("Logout failed:", error);
       // Optionally, you can show an error message to the user
     }
-    
-  }
+  };
 
   return (
     <>
@@ -326,7 +323,10 @@ const AdvocateSidebar = () => {
                   advocate@example.com
                 </p>
               </div>
-              <button onClick={()=> handleLogOut()} className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+              <button
+                onClick={() => handleLogOut()}
+                className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+              >
                 <FaSignOutAlt className="h-4 w-4" />
               </button>
             </div>

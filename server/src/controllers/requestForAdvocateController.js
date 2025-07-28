@@ -3,7 +3,7 @@ import RequestService from "../models/requestServiceSchema.js";
 
 export const createAdvocateMessage = async (req, res) => {
   try {
-    const { userMessage, userMessageId, advocateId } = req.body;
+    const { userMessage, userMessageId, client_id, advocateId } = req.body;
 
     if (!userMessage || !userMessageId || !advocateId) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -11,6 +11,7 @@ export const createAdvocateMessage = async (req, res) => {
 
     const newMessage = new RequestForAdvocate({
       userMessage,
+      client_id,
       advocateId,
       userMessageId,
       status: "pending",
