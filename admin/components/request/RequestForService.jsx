@@ -163,6 +163,7 @@ function RequestForService() {
           userMessage: item.userMessage,
           userMessageId: item._id,
           advocateId,
+          client_id: item?.clientId,
         },
       });
 
@@ -610,7 +611,7 @@ function RequestForService() {
 
                   {/* Actions */}
                   <div className="bg-gray-50 p-3 border-t border-gray-100">
-                    {!item.adminForwarded ? (
+                    {!(item.adminForwarded && item.status !== "rejected") ? (
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-3">

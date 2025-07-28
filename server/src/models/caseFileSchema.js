@@ -17,11 +17,11 @@ const CaseFileSchema = new Schema(
       },
     },
 
-    title: { type: String, required: true }, // eg: "Land Dispute between X and Y"
+    title: { type: String, required: true },
 
-    advocate_id: { type: Types.ObjectId, ref: "Advocate", required: true },
+    advocate_id: { type: Types.ObjectId, required: true },
 
-    // client_id: { type: Types.ObjectId, ref: "User" }, // optional
+    client_id: { type: Types.ObjectId, ref: "User" }, // optional
     client_name: { type: String },
     case_type: {
       type: String,
@@ -48,11 +48,6 @@ const CaseFileSchema = new Schema(
         uploaded_at: { type: Date, default: Date.now },
       },
     ],
-
-    hearing_dates: {
-      type: [Date],
-      default: [],
-    },
 
     judgment: {
       decision_date: Date,

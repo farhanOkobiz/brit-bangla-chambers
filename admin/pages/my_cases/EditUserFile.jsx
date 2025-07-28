@@ -73,23 +73,26 @@ export default function EditUserFile() {
       const payload = {
         ...values,
         parties: {
-          plaintiff_name: values.plaintiff_name,
-          plaintiff_contact: values.plaintiff_contact,
-          defendant_name: values.defendant_name,
-          defendant_contact: values.defendant_contact,
+          plaintiff: {
+            name: values.plaintiff_name,
+            contact: values.plaintiff_contact,
+          },
+          defendant: {
+            name: values.defendant_name,
+            contact: values.defendant_contact,
+          },
         },
         judgment: {
-          verdict_date: values.verdict_date?.toDate(), // ✅ Fixed
-          verdict_summary: values.verdict_summary,
+          decision_date: values.verdict_date?.toDate(),
+          decision_summary: values.verdict_summary,
         },
-        hearing_dates: values.hearing_dates
-          ? values.hearing_dates.map((d) => d.toDate())
-          : [],
-
-        documents: fileList.map((file) => file.name),
+        documents: fileList.map((file) => ({
+          filename: file.name,
+          file_url: "",
+        })),
       };
 
-      await useAxios(`/caseFile/${id}`, {
+      await useAxios(`/showOwnCaseFile/updateCaseFile/${id}`, {
         method: "PUT",
         data: payload,
       });
@@ -120,7 +123,11 @@ export default function EditUserFile() {
             onFinish={handleSubmit}
             className="bg-white p-6 "
           >
-            <Form.Item name="client_id" label="Client/User ID">
+            <Form.Item
+              className=" hidden"
+              name="client_id"
+              label="Client/User ID"
+            >
               <Input />
             </Form.Item>
 
@@ -175,14 +182,6 @@ export default function EditUserFile() {
                 <Option value="in_progress">In Progress</Option>
                 <Option value="closed">Closed</Option>
               </Select>
-            </Form.Item>
-
-            <Form.Item name="hearing_dates" label="Hearing Dates">
-              <DatePicker.RangePicker format="YYYY-MM-DD" />
-            </Form.Item>
-
-            <Form.Item name="verdict_date" label="Verdict Date">
-              <DatePicker format="YYYY-MM-DD" />
             </Form.Item>
 
             <Form.Item name="verdict_summary" label="Verdict Summary">

@@ -48,6 +48,8 @@ const RequestForAdvocate = () => {
         const caseFileData = {
           title: acceptedRequest?.userMessage?.issueType || "Untitled",
           client_name: acceptedRequest?.userMessage?.name,
+          client_id: acceptedRequest.clientId,
+          advocate_id: acceptedRequest.forwardedTo,
           case_type: "General", // or dynamic if available
           court_name: "Unknown Court", // if not available
           summary: acceptedRequest?.userMessage?.message || "",

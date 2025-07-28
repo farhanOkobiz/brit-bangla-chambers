@@ -19,8 +19,7 @@ import EditBlog from "../pages/blog/EditBlog";
 import AdvocateManagement from "../components/AdvocateManagement";
 import UserManagement from "../components/Users/UserManagement";
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
-import MyCases from "../pages/my_cases/MyCases";
-import CreateUserFile from "../pages/my_cases/CreateUserFile";
+// import CreateUserFile from "../pages/my_cases/CreateUserFile";
 import AllUserFile from "../pages/my_cases/AllUserFile";
 import EditUserFile from "../pages/my_cases/EditUserFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
@@ -46,12 +45,11 @@ export default function App() {
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/request" element={<RequestForAdvocate />} />
-          <Route path="dashboard/accepted-cases" element={<MyCases />} />
           <Route path="dashboard/all-user-file" element={<AllUserFile />} />
-          <Route
+          {/* <Route
             path="dashboard/create-user-file"
             element={<CreateUserFile />}
-          />
+          /> */}
           <Route
             path="dashboard/edit-user-file/:id"
             element={<EditUserFile />}
