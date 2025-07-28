@@ -27,6 +27,8 @@ import EditUserFile from "../pages/my_cases/EditUserFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
 import RequestForService from "../components/request/RequestForService";
 import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
+import AdvocateFileRequestForm from "../components/Advocate/AdvocateFileRequestForm";
+
 
 export default function App() {
   return (
@@ -49,6 +51,10 @@ export default function App() {
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/request" element={<RequestForAdvocate />} />
           <Route path="dashboard/all-user-file" element={<AllUserFile />} />
+          <Route
+            path="dashboard/request-file/:id"
+            element={<AdvocateFileRequestForm />}
+          />
           {/* <Route
             path="dashboard/create-user-file"
             element={<CreateUserFile />}
@@ -75,7 +81,10 @@ export default function App() {
           <Route path="advocates" element={<AdvocateForm />} />
           <Route path="advocates/showcase" element={<AdvocateShowcase />} />
           <Route path="advocates/:id" element={<ShowIndividualAdvocate />} />
-          <Route path="advocates/:id/edit" element={<EditAdvocateGeneralInfo />} />
+          <Route
+            path="advocates/:id/edit"
+            element={<EditAdvocateGeneralInfo />}
+          />
           <Route path="advocates/management" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestForService />} />

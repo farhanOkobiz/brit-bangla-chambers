@@ -12,6 +12,8 @@ import {
   FaSearch,
   FaFilter,
   FaEye,
+  FaHandPaper,
+  FaRegFileAlt,
 } from "react-icons/fa";
 
 function AllUserFile() {
@@ -26,6 +28,7 @@ function AllUserFile() {
       try {
         const res = await useAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
+        console.log("caseFile:", caseFiles);
       } catch (err) {
         console.error("Error fetching case files:", err);
         setError("Failed to load case files.");
@@ -33,7 +36,7 @@ function AllUserFile() {
         setLoading(false);
       }
     };
-
+    
     fetchCaseFiles();
   }, []);
 
@@ -65,7 +68,7 @@ function AllUserFile() {
       filterStatus === "all" || file.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
-
+console.log("filteredCases:", filteredCases);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,7 +179,13 @@ function AllUserFile() {
             >
               {/* Card Header */}
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white relative">
-                <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="absolute top-4 right-4 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Link
+                  to={`/advocate/dashboard/request-file/${file._id}`}
+                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200">
+                    <FaRegFileAlt className="text-sm" />
+                  </Link>
+
                   <button
                     onClick={() => console.log("View case:", file._id)}
                     className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200"
