@@ -14,7 +14,9 @@ import ContactMessage from "../components/request/ContactMessage";
 // import Users from "../pages/Admin/Users";
 import Users from "../pages/Admin/Users";
 import ServiceForm from "../components/ServiceForm";
-import AdvocateForm from "../components/AdvocateForm";
+import AdvocateForm from "../components/Admin/AdvocateForm";
+import AdvocateShowcase from "../components/Admin/AdvocateShowcase";
+import ShowIndividualAdvocate from "../components/Admin/ShowIndividualAdvocate";
 import EditBlog from "../pages/blog/EditBlog";
 import AdvocateManagement from "../components/AdvocateManagement";
 import UserManagement from "../components/Users/UserManagement";
@@ -25,6 +27,7 @@ import AllUserFile from "../pages/my_cases/AllUserFile";
 import EditUserFile from "../pages/my_cases/EditUserFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
 import RequestForService from "../components/request/RequestForService";
+import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
 
 export default function App() {
   return (
@@ -72,6 +75,9 @@ export default function App() {
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="services" element={<ServiceForm />} />
           <Route path="advocates" element={<AdvocateForm />} />
+          <Route path="advocates/showcase" element={<AdvocateShowcase />} />
+          <Route path="advocates/:id" element={<ShowIndividualAdvocate />} />
+          <Route path="advocates/:id/edit" element={<EditAdvocateGeneralInfo />} />
           <Route path="advocates/management" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestForService />} />
