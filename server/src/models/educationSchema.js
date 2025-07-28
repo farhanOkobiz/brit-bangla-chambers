@@ -7,12 +7,7 @@ const educationSchema = new mongoose.Schema(
     institution: { type: String, required: true },
     passing_year: { type: Number, required: true },
     certificate_url: { type: String }, // Optional
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      refPath: "user_type",
-    },
-    user_type: { type: String, required: true, enum: ["Advocate", "Client"] },
+    advocate_id: { type: mongoose.Schema.Types.ObjectId, ref: "Advocate", required: true },
   },
   { timestamps: true }
 );
