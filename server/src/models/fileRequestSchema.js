@@ -29,8 +29,10 @@ const FileRequestSchema = new Schema(
     file_url: [
       {
         type: String, // e.g. "/uploads/file1.pdf"
+        default: [],
       },
     ],
+    
   },
   { timestamps: true }
 );

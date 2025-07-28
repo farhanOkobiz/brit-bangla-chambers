@@ -34,7 +34,7 @@ const deleteFile = (filePath) => {
 // controllers/fileRequestController.js
 
 export const createFileRequest = async (req, res) => {
-    console.log("Creating file request with data:", req.body);
+    console.log("hit create file request:", req.body);
   try {
     const { client_id, advocate_id, title, description } = req.body;
     const files = req.files;
@@ -68,6 +68,7 @@ export const createFileRequest = async (req, res) => {
 
 
 export const updateFileRequest = async (req, res) => {
+  console.log("hit update file request:", req.body);
   try {
     const { id } = req.params;
     const { client_id, advocate_id, title, description } = req.body;
@@ -112,6 +113,87 @@ export const updateFileRequest = async (req, res) => {
     if (req.files?.length) {
       req.files.forEach((file) => deleteFile(getUploadPath(file.filename)));
     }
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// For client: upload file(s) to existing request
+export const uploadFilesToRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const files = req.files;
+
+    if (!files?.length) {
+      return res.status(400).json({ error: "No files uploaded." });
+    }
+
+    const existing = await FileRequest.findById(id);
+    if (!existing) {
+      return res.status(404).json({ error: "File request not found." });
+    }
+
+    // Optionally: delete old files first
+    if (existing.file_url?.length) {
+      existing.file_url.forEach((url) => {
+        const filename = getFilenameFromUrl(url);
+        if (filename) {
+          deleteFile(getUploadPath(filename));
+        }
+      });
+    }
+
+    const newFileUrls = files.map(file => `/uploads/${file.filename}`);
+
+    const updated = await FileRequest.findByIdAndUpdate(
+      id,
+      { file_url: newFileUrls },
+      { new: true }
+    );
+
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error("Client file upload error:", error);
+    req.files?.forEach(file => deleteFile(getUploadPath(file.filename)));
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+export const getAllFileRequests = async (req, res) => {
+  try {
+    const { client_id, advocate_id } = req.query;
+
+    const filter = {};
+    if (client_id) filter.client_id = client_id;
+    if (advocate_id) filter.advocate_id = advocate_id;
+
+    const requests = await FileRequest.find(filter)
+      .populate("client_id", "full_name email")
+      .populate("advocate_id", "full_name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(requests);
+  } catch (error) {
+    console.error("Error fetching file requests:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getFileRequestById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const request = await FileRequest.findById(id)
+      .populate("client_id", "full_name email")
+      .populate("advocate_id", "full_name email");
+
+    if (!request) {
+      return res.status(404).json({ error: "File request not found." });
+    }
+
+    res.status(200).json(request);
+  } catch (error) {
+    console.error("Error fetching file request by ID:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
