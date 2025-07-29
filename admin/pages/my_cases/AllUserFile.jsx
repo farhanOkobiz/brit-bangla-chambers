@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useAxios } from "../../services/useAxios";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import {
   FaEdit,
   FaTrash,
@@ -36,13 +37,46 @@ function AllUserFile() {
         setLoading(false);
       }
     };
-    
+
     fetchCaseFiles();
   }, []);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this case file?")) {
-      console.log("Deleting case:", id);
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This case file will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      // Optimistic update
+      const previousCaseFiles = [...caseFiles];
+
+      setCaseFiles(caseFiles.filter((file) => file._id !== id));
+
+      try {
+        await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+          method: "DELETE",
+        });
+
+        toast.success("Case file deleted successfully!");
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your case file has been removed.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        setCaseFiles(previousCaseFiles);
+        toast.error("Failed to delete the case file.");
+      }
     }
   };
 
@@ -68,7 +102,7 @@ function AllUserFile() {
       filterStatus === "all" || file.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
-console.log("filteredCases:", filteredCases);
+  console.log("filteredCases:", filteredCases);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,7 +118,7 @@ console.log("filteredCases:", filteredCases);
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             <div className="relative flex-1">
               <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -141,7 +175,7 @@ console.log("filteredCases:", filteredCases);
         )}
 
         {/* Stats Footer */}
-        <div className="mt-12 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div className="mt-12 bg-white rounded-2xl shadow-md p-6 border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
             <div className="space-y-2">
               <div className="text-3xl font-bold text-blue-600">
@@ -175,14 +209,15 @@ console.log("filteredCases:", filteredCases);
           {filteredCases.map((file) => (
             <div
               key={file._id}
-              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
+              className="group bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
             >
               {/* Card Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white relative">
+              <div className="p-6 relative">
                 <div className="absolute top-4 right-4 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Link
-                  to={`/advocate/dashboard/request-file/${file._id}`}
-                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200">
+                    to={`/advocate/dashboard/request-file/${file._id}`}
+                    className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200"
+                  >
                     <FaRegFileAlt className="text-sm" />
                   </Link>
 
@@ -202,7 +237,7 @@ console.log("filteredCases:", filteredCases);
                   </Link>
                   <button
                     onClick={() => handleDelete(file._id)}
-                    className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors duration-200"
+                    className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors duration-200 cursor-pointer"
                     title="Delete Case"
                   >
                     <FaTrash className="text-sm" />
@@ -212,9 +247,9 @@ console.log("filteredCases:", filteredCases);
                 <h3 className="text-xl font-bold mb-2 pr-24 leading-tight">
                   {file.title || "Untitled Case"}
                 </h3>
-                <div className="flex items-center gap-4 text-blue-100">
+                <div className="flex items-center gap-4">
                   <span className="text-sm font-medium">
-                    #{file.case_number}
+                    {file.case_number}
                   </span>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
@@ -304,6 +339,28 @@ console.log("filteredCases:", filteredCases);
                     <p className="text-gray-600 line-clamp-3 leading-relaxed">
                       {file.summary}
                     </p>
+                  </div>
+                )}
+
+                {/* Next Hearing Date */}
+                {file.next_hearing_date && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <FaCalendarAlt className="text-blue-600" />
+                    <span>Next Hearing:</span>
+                    <span className="font-medium">
+                      {new Date(file.next_hearing_date).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+
+                {/* Verdict Date */}
+                {file.verdict_date && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <FaGavel className="text-green-600" />
+                    <span>Verdict Date:</span>
+                    <span className="font-medium">
+                      {new Date(file.verdict_date).toLocaleDateString()}
+                    </span>
                   </div>
                 )}
 

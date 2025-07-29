@@ -14,7 +14,11 @@ import caseFileRoutes from "./api/caseFileRoutes.js";
 import educationRoutes from "./api/educationRoutes.js";
 import certicationRoutes from "./api/certificationRoutes.js"; // Ensure this is imported correctly
 import documentRoutes from "./api/documentRoutes.js";
+<<<<<<< HEAD
 import fileRequestRoutes from "./api/fileRequestRoutes.js"; // Ensure this is imported correctly
+=======
+import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
+>>>>>>> raihan
 
 const router = Router();
 
@@ -34,6 +38,10 @@ router.use("/showOwnCaseFile", caseFileRoutes);
 router.use("/educations", educationRoutes);
 router.use("/certifications", certicationRoutes); // Ensure this is imported correctly
 router.use("/documents", documentRoutes);
+<<<<<<< HEAD
 router.use("/file-request", fileRequestRoutes); // Ensure this is imported correctly
+=======
+router.use("/client-dashboard", clientDashboardRoutes);
+>>>>>>> raihan
 
 export default router;

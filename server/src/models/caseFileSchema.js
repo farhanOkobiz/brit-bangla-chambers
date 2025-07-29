@@ -41,6 +41,10 @@ const CaseFileSchema = new Schema(
       defendant: { name: String, contact: String },
     },
 
+    next_hearing_date: { type: Date },
+
+    verdict_date: { type: Date },
+
     documents: [
       {
         filename: String,

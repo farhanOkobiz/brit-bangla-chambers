@@ -5,6 +5,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
 
+type FormData = {
+  name: string;
+  email: string;
+  phone: string;
+  nid: string;
+  presentAddress: string;
+  permanentAddress: string;
+  issueType: string;
+  message: string;
+};
+
+type Payload = {
+  userMessage: FormData;
+  serviceId?: number;
+};
+
 interface item {
   _id: number;
   name: string;
@@ -14,7 +30,8 @@ function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedService = useSelector((state: any) => state.selectedService);
+  const selectedService = useSelector((state) => state.selectedService);
+
   // Hydrate Redux from localStorage if empty
   React.useEffect(() => {
     console.log("Selected service:", selectedService);
@@ -24,7 +41,10 @@ function RequestServiceForm() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          dispatch({ type: "selectedService/setSelectedService", payload: parsed });
+          dispatch({
+            type: "selectedService/setSelectedService",
+            payload: parsed,
+          });
         } catch {}
       }
     }
@@ -43,7 +63,7 @@ function RequestServiceForm() {
     return "";
   };
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormData>({
     name: "",
     email: "",
     phone: "",
@@ -66,7 +86,7 @@ function RequestServiceForm() {
     e.preventDefault();
 
     try {
-      const payload: any = {
+      const payload: Payload = {
         userMessage: form,
       };
       // Use Redux or localStorage for serviceId

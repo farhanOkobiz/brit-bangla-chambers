@@ -8,7 +8,6 @@ import serviceSchema from "../models/serviceSchema.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadPath = path.join(__dirname, "..", "uploads");
- 
 
 // POST /request-service
 export const createRequestService = async (req, res) => {
@@ -18,8 +17,10 @@ export const createRequestService = async (req, res) => {
     // Handle attachments (PDFs)
     let attachments = [];
     if (req.files && req.files.length > 0) {
-      attachments = req.files.map(file => `/uploads/${file.filename}`);
-      newAttachmentPaths = req.files.map(file => path.join(uploadPath, file.filename));
+      attachments = req.files.map((file) => `/uploads/${file.filename}`);
+      newAttachmentPaths = req.files.map((file) =>
+        path.join(uploadPath, file.filename)
+      );
     } else if (req.body.attachments && Array.isArray(req.body.attachments)) {
       attachments = req.body.attachments;
     }
@@ -40,7 +41,7 @@ export const createRequestService = async (req, res) => {
   } catch (error) {
     // Cleanup uploaded files if error occurred
     if (newAttachmentPaths && newAttachmentPaths.length > 0) {
-      newAttachmentPaths.forEach(filePath => {
+      newAttachmentPaths.forEach((filePath) => {
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       });
     }
@@ -48,16 +49,15 @@ export const createRequestService = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Failed to create request", error });
   }
-}
+};
 
 // GET /request-service
 export const getAllRequestServices = async (_req, res) => {
   try {
     console.log("Fetching all request services...");
-    const requests = await RequestService
-            .find()
-            .populate("userMessage.serviceId")
-            .sort({ createdAt: -1 });
+    const requests = await RequestService.find()
+      .populate("userMessage.serviceId")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: requests });
   } catch (error) {
