@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import useAxios from "../services/useAxios";
+import UseAxios from "../services/UseAxios";
 import {
   FaUser,
   FaPhone,
@@ -33,7 +33,7 @@ const UserManagement = () => {
 
       // Make sure to provide a valid URL
       const endpoint = userType === "client" ? "/client/all" : "/advocate/all";
-      const response = await useAxios(endpoint, {
+      const response = await UseAxios(endpoint, {
         method: "GET",
       });
 
@@ -57,7 +57,7 @@ const UserManagement = () => {
           ? `/client/update/${userId}`
           : `/advocate/update/${userId}`;
 
-      const res = await useAxios(endpoint, {
+      const res = await UseAxios(endpoint, {
         method: "PUT",
         data: { status: newStatus },
       });
@@ -96,7 +96,7 @@ const UserManagement = () => {
           ? `/client/profile/${userId}`
           : `/advocate/profile/${userId}`;
 
-      const res = await useAxios(endpoint, { method: "DELETE" });
+      const res = await UseAxios(endpoint, { method: "DELETE" });
 
       if (res.ok) {
         alert(
@@ -128,7 +128,7 @@ const UserManagement = () => {
           ? `/client/update/${selectedUser._id}`
           : `/advocate/update/${selectedUser._id}`;
 
-      const res = await useAxios(endpoint, {
+      const res = await UseAxios(endpoint, {
         method: "PUT",
         data: formData,
       });

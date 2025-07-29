@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 export default function EditAdvocateGeneralInfo({ id }) {
 
@@ -47,7 +47,7 @@ export default function EditAdvocateGeneralInfo({ id }) {
   useEffect(() => {
 
     async function fetchAdvocate() {
-      const res = await useAxios(`/advocate/profile/advocate/${id}`);
+      const res = await UseAxios(`/advocate/profile/advocate/${id}`);
       if (res.ok) {
         const adv = res.data.advocate || res.data;
         setAdvocate(adv);
@@ -175,13 +175,13 @@ export default function EditAdvocateGeneralInfo({ id }) {
       });
       formData.append("profilePhoto", profilePhoto);
 
-      res = await useAxios(`/advocate/update/${id}`, {
+      res = await UseAxios(`/advocate/update/${id}`, {
         method: "PUT",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       });
     } else {
-      res = await useAxios(`/advocate/update/${id}`, {
+      res = await UseAxios(`/advocate/update/${id}`, {
         method: "PUT",
         data: form,
       });

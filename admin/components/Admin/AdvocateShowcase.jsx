@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 export default function AdvocateShowcase() {
   const [advocates, setAdvocates] = useState([]);
@@ -11,7 +11,7 @@ export default function AdvocateShowcase() {
 
   useEffect(() => {
     async function fetchAdvocates() {
-      const res = await useAxios("/advocate/all");
+      const res = await UseAxios("/advocate/all");
       if (res.ok) {
         setAdvocates(res.data);
       } else {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAxios } from "../services/useAxios";
+import { UseAxios } from "../services/UseAxios";
 import { useAuth } from "../auth/AuthContext";
 import { login } from "../auth/api";
 import { useEffect } from "react";
@@ -27,7 +27,7 @@ const Login = () => {
     setError(null);
 
     try {
-      const res = await useAxios("/auth/login", {
+      const res = await UseAxios("/auth/login", {
         method: "POST",
         data: { email, password },
       });

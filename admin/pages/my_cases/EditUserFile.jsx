@@ -3,7 +3,7 @@ import { Form, Input, Button, Select, Upload, message, Spin } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import { DatePicker } from "antd";
 
 const { Option } = Select;
@@ -18,7 +18,7 @@ export default function EditUserFile() {
   useEffect(() => {
     const fetchCase = async () => {
       try {
-        const res = await useAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
+        const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
 
         const data = res.data?.data;
         // Set initial values
@@ -76,7 +76,7 @@ export default function EditUserFile() {
         })),
       };
 
-      await useAxios(`/showOwnCaseFile/updateCaseFile/${id}`, {
+      await UseAxios(`/showOwnCaseFile/updateCaseFile/${id}`, {
         method: "PUT",
         data: payload,
       });

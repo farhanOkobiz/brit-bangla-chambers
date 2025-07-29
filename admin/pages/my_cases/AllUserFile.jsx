@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
@@ -27,7 +27,7 @@ function AllUserFile() {
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
-        const res = await useAxios("/showOwnCaseFile/allCaseFile");
+        const res = await UseAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
         console.log("caseFile:", caseFiles);
       } catch (err) {
@@ -60,7 +60,7 @@ function AllUserFile() {
       setCaseFiles(caseFiles.filter((file) => file._id !== id));
 
       try {
-        await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+        await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
           method: "DELETE",
         });
 

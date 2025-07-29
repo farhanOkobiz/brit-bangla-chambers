@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 const AdvocateDocumentUpdate = ({ id }) => {
   const [documents, setDocuments] = useState([]);
@@ -15,12 +15,13 @@ const AdvocateDocumentUpdate = ({ id }) => {
       setLoading(true);
       setError("");
       try {
-        const res = await useAxios(
+        const res = await UseAxios(
           `/documents/${advocateId}`,
           { method: "GET" }
         );
         setDocuments(res.data.documents || []);
       } catch (err) {
+        console.error("Error fetching documents:", err);
         setError("Failed to load documents");
       }
       setLoading(false);
@@ -60,14 +61,17 @@ const AdvocateDocumentUpdate = ({ id }) => {
       const formData = new FormData();
       formData.append("documents", JSON.stringify(documents));
       const documentIndexes = [];
-      const fileEntries = Object.entries(files).filter(([idx, file]) => !!file);
+      const fileEntries = Object.entries(files).filter(([idx, file]) => {
+        console.log("idx:", idx, "file:", file);
+        return !!file;
+        });
       fileEntries.forEach(([idx, file]) => {
         formData.append("files", file);
         documentIndexes.push(Number(idx));
       });
       formData.append("documentIndexes", JSON.stringify(documentIndexes));
 
-      const res = await useAxios(
+      const res = await UseAxios(
         `/documents/${advocateId}`,
         {
           method: "PUT",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 const AdvocateProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -10,7 +10,7 @@ const AdvocateProfile = () => {
     const fetchProfile = async () => {
       setLoading(true);
       setError(null);
-      const res = await useAxios("/advocate/profile");
+      const res = await UseAxios("/advocate/profile");
       console.log(res);
       if (res.ok) {
         setProfile(res.data);

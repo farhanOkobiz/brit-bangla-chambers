@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 export default function AdvocateEducationUpdate({ id }) {
   const [educations, setEducations] = useState([]);
@@ -19,12 +19,12 @@ export default function AdvocateEducationUpdate({ id }) {
       setLoading(true);
       setError("");
       try {
-        const res = await useAxios(
+        const res = await UseAxios(
           `/educations/${advocateId}`,
           { method: "GET" }
         );
         setEducations(res.data.educations || []);
-      } catch (err) {
+      } catch {
         setError("Failed to load education records");
       }
       setLoading(false);
@@ -68,13 +68,16 @@ export default function AdvocateEducationUpdate({ id }) {
       formData.append("education", JSON.stringify(educations));
       // Only send files that exist, and their indexes, to match backend logic
       const educationIndexes = [];
-      const fileEntries = Object.entries(files).filter(([idx, file]) => !!file);
+      const fileEntries = Object.entries(files).filter(([idx, file]) =>{
+        console.log("idx:", idx, "file:", file);
+        return !!file;
+      });
       fileEntries.forEach(([idx, file]) => {
         formData.append("certificates", file);
         educationIndexes.push(Number(idx));
       });
       formData.append("educationIndexes", JSON.stringify(educationIndexes));
-      const res = await useAxios(
+      const res = await UseAxios(
         `/educations/${advocateId}`,
         {
           method: "POST",

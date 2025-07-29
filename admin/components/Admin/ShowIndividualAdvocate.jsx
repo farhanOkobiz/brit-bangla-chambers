@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 export default function ShowIndividualAdvocate() {
   const { id } = useParams();
@@ -11,7 +11,7 @@ export default function ShowIndividualAdvocate() {
 
   useEffect(() => {
     async function fetchAdvocate() {
-      const res = await useAxios(`/advocate/profile/advocate/${id}`);
+      const res = await UseAxios(`/advocate/profile/advocate/${id}`);
       console.log(res);
       if (res.ok) {
         console.log(res.data);
@@ -50,7 +50,7 @@ export default function ShowIndividualAdvocate() {
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this advocate?")) return;
-    const res = await useAxios(`/advocate/profile/${id}`, { method: "DELETE" });
+    const res = await UseAxios(`/advocate/profile/${id}`, { method: "DELETE" });
     if (res.ok) {
       alert("Advocate deleted successfully.");
       window.location.href = "/admin/advocates";

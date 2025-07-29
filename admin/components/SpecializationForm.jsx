@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAxios } from "../services/useAxios"; // Fixed: Changed from default import to named import
+import { UseAxios } from "../services/UseAxios"; // Fixed: Changed from default import to named import
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
@@ -38,7 +38,7 @@ const SpecializationForm = () => {
   const fetchSpecialization = async () => {
     try {
       setLoadingSpecialization(true);
-      const res = await useAxios("/specialization/get-all-Specialization", {
+      const res = await UseAxios("/specialization/get-all-Specialization", {
         method: "GET",
       });
 
@@ -70,7 +70,7 @@ const SpecializationForm = () => {
         : "/specialization/create-specialization";
       const method = editingSpecialization ? "PUT" : "POST";
 
-      const res = await useAxios(url, {
+      const res = await UseAxios(url, {
         method,
         data: formData,
       });
@@ -113,7 +113,7 @@ const SpecializationForm = () => {
     }
 
     try {
-      const res = await useAxios(
+      const res = await UseAxios(
         `/specialization/delete-Specialization/${SpecializationId}`,
         {
           method: "DELETE",

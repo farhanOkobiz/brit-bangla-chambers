@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 export default function CertificationUpdate({ id }) {
   const [certifications, setCertifications] = useState([]);
@@ -19,12 +19,12 @@ export default function CertificationUpdate({ id }) {
       setLoading(true);
       setError("");
       try {
-        const res = await useAxios(
+        const res = await UseAxios(
           `/certifications/${advocateId}`,
           { method: "GET" }
         );
         setCertifications(res.data.certifications || []);
-      } catch (err) {
+      } catch {
         setError("Failed to load certifications");
       }
       setLoading(false);
@@ -78,7 +78,7 @@ export default function CertificationUpdate({ id }) {
       } else if (fileIndexes.length > 1) {
         fileIndexes.forEach((i) => formData.append("certificateIndexes", i));
       }
-      const res = await useAxios(
+      const res = await UseAxios(
         `/certifications/${advocateId}`,
         {
           method: "PATCH",

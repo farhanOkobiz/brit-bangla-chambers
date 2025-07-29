@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import Swal from "sweetalert2";
 
 function Blogs() {
@@ -13,7 +13,7 @@ function Blogs() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const { data, ok } = await useAxios(`/blog/get-all-blog`);
+        const { data, ok } = await UseAxios(`/blog/get-all-blog`);
 
         if (!ok) throw new Error("Failed to fetch blogs");
 
@@ -42,7 +42,7 @@ function Blogs() {
     if (!confirm.isConfirmed) return;
 
     try {
-      const res = await useAxios(`/blog/delete-blog/${id}`, {
+      const res = await UseAxios(`/blog/delete-blog/${id}`, {
         method: "DELETE",
       });
 

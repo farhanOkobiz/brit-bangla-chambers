@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import Swal from "sweetalert2";
 import {
   CheckCircle,
@@ -17,7 +17,7 @@ const RequestForAdvocate = () => {
 
   const requestFor = async () => {
     try {
-      const response = await useAxios("/request-for-advocate/advocate");
+      const response = await UseAxios("/request-for-advocate/advocate");
       const allMessages = response?.data?.messages || [];
 
       // Filter only messages where advocateId matches the logged-in advocate
@@ -30,7 +30,7 @@ const RequestForAdvocate = () => {
 
   const handleAccept = async (id) => {
     try {
-      const response = await useAxios(`/request-service/accepted/${id}`, {
+      const response = await UseAxios(`/request-service/accepted/${id}`, {
         method: "PATCH",
         data: { status: true },
       });
@@ -61,7 +61,7 @@ const RequestForAdvocate = () => {
           related_laws: [],
         };
 
-        await useAxios("/showOwnCaseFile/createCaseFile", {
+        await UseAxios("/showOwnCaseFile/createCaseFile", {
           method: "POST",
           data: caseFileData,
         });
@@ -75,7 +75,7 @@ const RequestForAdvocate = () => {
 
   const handleReject = async (id) => {
     try {
-      await useAxios(`/request-service/rejected/${id}`, {
+      await UseAxios(`/request-service/rejected/${id}`, {
         method: "PATCH",
       });
       toast.success("Message rejected");
@@ -98,7 +98,7 @@ const RequestForAdvocate = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const response = await useAxios(`/request-for-advocate/${id}`, {
+        const response = await UseAxios(`/request-for-advocate/${id}`, {
           method: "DELETE",
         });
 

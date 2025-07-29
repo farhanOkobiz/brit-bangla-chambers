@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate, useParams, useRouteError } from "react-router-dom";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import { toast } from "react-toastify";
 
 function EditBlog() {
@@ -22,7 +22,7 @@ function EditBlog() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await useAxios(`blog/get-single-blog/${id}`);
+        const res = await UseAxios(`blog/get-single-blog/${id}`);
         const blog = res.data?.data;
 
         setFormData({
@@ -82,7 +82,7 @@ function EditBlog() {
       );
       formDataToSend.append("image", imageFile);
 
-      const res = await useAxios(`/blog/edit-blog/${id}`, {
+      const res = await UseAxios(`/blog/edit-blog/${id}`, {
         method: "PUT",
         data: formDataToSend,
         headers: {
