@@ -11,6 +11,14 @@ import { useGetAuthQuery } from "@/redux/api/authApi";
 import { Bell } from "lucide-react";
 import Swal from "sweetalert2";
 
+interface Note {
+  _id: string;
+  title: string;
+  message: string;
+  case_number: string;
+  createdAt: Date;
+}
+
 interface HearingVerdictDate {
   next_hearing_date?: string | null;
   verdict_date?: string | null;
@@ -52,10 +60,8 @@ export default function ClientDashboard() {
 
         Swal.fire("Deleted!", "Your notification has been deleted.", "success");
 
-        closeModal(); // modal বন্ধ করার ফাংশন কল করো এখানে
-
-        // optional: এখানে যদি notifications refetch করতে হয় সেটা করো
-      } catch (error) {
+        closeModal();
+      } catch {
         Swal.fire("Error!", "Failed to delete notification.", "error");
       }
     }
@@ -68,7 +74,7 @@ export default function ClientDashboard() {
           "/client-dashboard/some-info-form-case"
         );
         setData(response?.data ?? null);
-      } catch (error) {
+      } catch {
         toast.error("Failed to load dashboard data");
       }
     };
@@ -181,7 +187,7 @@ export default function ClientDashboard() {
             <div className="p-8">
               {notifications?.data?.length > 0 ? (
                 <ul className="max-h-96 overflow-y-auto space-y-4 pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50">
-                  {notifications.data.map((note, index) => (
+                  {notifications.data.map((note: Note, index: number) => (
                     <li
                       key={note._id}
                       className="group bg-gradient-to-br from-white via-gray-50/50 to-white rounded-2xl p-6 shadow-lg hover:shadow-md transition-all duration-500 border border-gray-100/50 hover:border-purple-200 transform relative overflow-hidden"
@@ -269,7 +275,7 @@ export default function ClientDashboard() {
                     No notifications found
                   </p>
                   <p className="text-gray-400 text-sm mt-2">
-                    You're all caught up! 🎉
+                    You are all caught up! 🎉
                   </p>
                 </div>
               )}

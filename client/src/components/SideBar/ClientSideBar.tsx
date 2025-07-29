@@ -13,12 +13,12 @@ import {
   LogOut,
   Menu,
   X,
-  Bell,
   CreditCard,
   HelpCircle,
   MessageCircle,
 } from "lucide-react";
 import { logout } from "@/api/logout";
+import { toast } from "react-toastify";
 
 interface SidebarItem {
   name: string;
@@ -57,8 +57,8 @@ export default function ClientSidebar() {
     try {
       await logout();
       router.push("/login");
-    } catch (error) {
-      console.error("Logout failed", error);
+    } catch {
+      toast.error("Logout failed");
     }
   };
 

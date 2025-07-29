@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useGetSpecializationQuery } from "@/redux/api/specializationApi";
 import { useEffect, useState } from "react";
