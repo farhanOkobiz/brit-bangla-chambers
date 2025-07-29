@@ -7,6 +7,8 @@ import {
   uploadFilesToRequest,
   getAllFileRequests,
   getFileRequestById,
+  getFileRequestByCaseId,
+  deleteSingleFileFromRequest,
 } from "../../controllers/fileRequestController.js";
 
 const router = Router();
@@ -18,7 +20,8 @@ router.post("/", upload.array("files"), createFileRequest);
 router.get("/", getAllFileRequests);
 
 // ✅ Get a single request by ID
-router.get("/:id", getFileRequestById);
+router.get("/:_id", getFileRequestById);
+router.get("/case/:_id", getFileRequestByCaseId);
 
 // ✅ Advocate updates the request (title/description/files)
 router.put("/:id", upload.array("files"), updateFileRequest);
@@ -28,5 +31,6 @@ router.put("/:id/upload", upload.array("files"), uploadFilesToRequest);
 
 // ✅ Delete a request
 router.delete("/:id", deleteFileRequest);
+router.put("/:_id/file", deleteSingleFileFromRequest);
 
 export default router;
