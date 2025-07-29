@@ -43,12 +43,6 @@ const sidebarItems: SidebarItem[] = [
     badge: "3",
   },
   { name: "Consultations", href: "/client/consultations", icon: MessageCircle },
-  {
-    name: "Notifications",
-    href: "/client/notifications",
-    icon: Bell,
-    badge: "5",
-  },
   { name: "Billing", href: "/client/billing", icon: CreditCard },
   { name: "Help & Support", href: "/client/support", icon: HelpCircle },
   { name: "Settings", href: "/client/settings", icon: Settings },

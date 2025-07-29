@@ -15,6 +15,7 @@ import educationRoutes from "./api/educationRoutes.js";
 import certicationRoutes from "./api/certificationRoutes.js"; // Ensure this is imported correctly
 import documentRoutes from "./api/documentRoutes.js";
 import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
+import notificationsRoutes from "./api/notificationsRoutes.js";
 
 const router = Router();
 
@@ -35,5 +36,6 @@ router.use("/educations", educationRoutes);
 router.use("/cerfications", certicationRoutes); // Ensure this is imported correctly
 router.use("/documents", documentRoutes);
 router.use("/client-dashboard", clientDashboardRoutes);
+router.use("/notifications", notificationsRoutes);
 
 export default router;

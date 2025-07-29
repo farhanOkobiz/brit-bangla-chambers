@@ -12,10 +12,9 @@ import {
   FaGavel,
   FaSearch,
   FaFilter,
-  FaEye,
 } from "react-icons/fa";
 
-function AllUserFile() {
+function AllCaseFile() {
   const [caseFiles, setCaseFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -347,34 +346,6 @@ function AllUserFile() {
                   </div>
                 )}
 
-                {/* Documents */}
-                {file.documents?.length > 0 && (
-                  <div className="text-sm">
-                    <h4 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      <FaFileAlt className="text-blue-500" />
-                      Documents ({file.documents.length})
-                    </h4>
-                    <div className="space-y-1">
-                      {file.documents.slice(0, 3).map((doc, idx) => (
-                        <a
-                          key={idx}
-                          href={doc.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block text-blue-600 hover:text-blue-800 hover:underline truncate"
-                        >
-                          📄 {doc.filename || `Document ${idx + 1}`}
-                        </a>
-                      ))}
-                      {file.documents.length > 3 && (
-                        <span className="text-gray-500 text-xs">
-                          +{file.documents.length - 3} more documents
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
                 {/* Judgment */}
                 {file.judgment?.decision_summary && (
                   <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
@@ -384,20 +355,12 @@ function AllUserFile() {
                     <p className="text-green-700">
                       {file.judgment.decision_summary}
                     </p>
-                  </div>
-                )}
-
-                {/* Tags */}
-                {file.tags?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {file.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs px-3 py-1 rounded-full font-medium"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                    <p>
+                      Decision Date:
+                      {new Date(
+                        file?.judgment?.decision_date
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
                 )}
               </div>
@@ -409,4 +372,4 @@ function AllUserFile() {
   );
 }
 
-export default AllUserFile;
+export default AllCaseFile;
