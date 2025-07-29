@@ -14,9 +14,8 @@ import {
   Menu,
   X,
   Bell,
-  CreditCard,
   HelpCircle,
-  MessageCircle,
+
 } from "lucide-react";
 import { logout } from "@/api/logout";
 
