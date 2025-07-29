@@ -28,9 +28,23 @@ const deleteFile = (filePath) => {
   }
 };
 
-// === MAIN CONTROLLER ===
+// === MAIN CONTROLLERS ===
+export const getCertificationsByAdvocate = async (req, res) => {
+  try {
+    const { advocateId } = req.params;
+    const advocate = await Advocate.findById(advocateId);
+    if (!advocate) {
+      return res.status(404).json({ error: "Advocate not found" });
+    }
+    const certifications = await Certification.find({ _id: { $in: advocate.certification_ids } });
+    res.status(200).json({ certifications });
+  } catch (error) {
+    console.error("Error fetching certifications:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 export const updateOrCreateCertifications = async (req, res) => {
-  console.log("hit certification controller");
   try {
     const { advocateId } = req.params;
     const { certifications } = req.body;
@@ -47,13 +61,28 @@ export const updateOrCreateCertifications = async (req, res) => {
     }
 
     const savedIds = [];
+    // Parse certificateIndexes from req.body (may be string or array)
+    let certificateIndexes = req.body.certificateIndexes;
+    if (typeof certificateIndexes === "string") {
+      certificateIndexes = [Number(certificateIndexes)];
+    } else if (Array.isArray(certificateIndexes)) {
+      certificateIndexes = certificateIndexes.map(Number);
+    } else {
+      certificateIndexes = [];
+    }
 
     for (let i = 0; i < certificationArray.length; i++) {
       const cert = certificationArray[i];
-      const file = req.files?.[i]; // Match by index
+      // Find file for this cert by index
+      let file = null;
+      if (certificateIndexes.length && req.files && req.files.length) {
+        const fileIdx = certificateIndexes.indexOf(i);
+        if (fileIdx !== -1 && req.files[fileIdx]) {
+          file = req.files[fileIdx];
+        }
+      }
 
       const { _id, title, issuer, year, certificate_type, description } = cert;
-
       const certificate_url = file ? `/uploads/${file.filename}` : null;
 
       if (_id) {

@@ -30,13 +30,40 @@ const deleteFile = (filePath) => {
   }
 };
 
+export const getEducationsByAdvocate = async (req, res) => {
+  try {
+    const { advocateId } = req.params;
+    const advocate = await Advocate.findById(advocateId);
+    if (!advocate) {
+      return res.status(404).json({ error: "Advocate not found" });
+    }
+    const educations = await Education.find({ advocate_id: advocate._id });
+    res.status(200).json({ educations });
+  } catch (error) {
+    console.error("Error fetching educations:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 // === MAIN CONTROLLER ===
 export const updateOrCreateEducations = async (req, res) => {
   try {
     const { advocateId } = req.params;
-    const { education } = req.body;
-
+    const { education, educationIndexes } = req.body;
     const educationArray = JSON.parse(education || "[]");
+    // Parse educationIndexes from req.body (may be string or array)
+    let educationIndexesArray = [];
+    if (typeof educationIndexes === "string") {
+      try {
+        educationIndexesArray = JSON.parse(educationIndexes);
+      } catch (e) {
+        educationIndexesArray = [Number(educationIndexes)];
+      }
+    } else if (Array.isArray(educationIndexes)) {
+      educationIndexesArray = educationIndexes.map(Number);
+    } else {
+      educationIndexesArray = [];
+    }
 
     if (!Array.isArray(educationArray)) {
       return res.status(400).json({ error: "Invalid education data" });
@@ -51,10 +78,16 @@ export const updateOrCreateEducations = async (req, res) => {
 
     for (let i = 0; i < educationArray.length; i++) {
       const edu = educationArray[i];
-      const file = req.files?.[i]; // Match by index
+      // Find file for this education by index
+      let file = null;
+      if (educationIndexesArray.length && req.files && req.files.length) {
+        const fileIdx = educationIndexesArray.indexOf(i);
+        if (fileIdx !== -1 && req.files[fileIdx]) {
+          file = req.files[fileIdx];
+        }
+      }
 
       const { _id, degree_title, institution, passing_year } = edu;
-
       const certificate_url = file ? `/uploads/${file.filename}` : null;
 
       if (_id) {
@@ -83,8 +116,7 @@ export const updateOrCreateEducations = async (req, res) => {
           institution,
           passing_year,
           certificate_url,
-          user_id: advocate._id,
-          user_type: "Advocate",
+          advocate_id: advocate._id,
         });
         savedIds.push(newEdu._id.toString());
       }

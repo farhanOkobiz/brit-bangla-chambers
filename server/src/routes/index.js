@@ -15,6 +15,7 @@ import educationRoutes from "./api/educationRoutes.js";
 import certicationRoutes from "./api/certificationRoutes.js"; // Ensure this is imported correctly
 import documentRoutes from "./api/documentRoutes.js";
 import fileRequestRoutes from "./api/fileRequestRoutes.js"; // Ensure this is imported correctly
+import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
 
 const router = Router();
 
@@ -32,8 +33,9 @@ router.use("/client", clientRoutes);
 router.use("/advocate", advocateRoutes);
 router.use("/showOwnCaseFile", caseFileRoutes);
 router.use("/educations", educationRoutes);
-router.use("/cerfications", certicationRoutes); // Ensure this is imported correctly
+router.use("/certifications", certicationRoutes); // Ensure this is imported correctly
 router.use("/documents", documentRoutes);
 router.use("/file-request", fileRequestRoutes); // Ensure this is imported correctly
+router.use("/client-dashboard", clientDashboardRoutes);
 
 export default router;

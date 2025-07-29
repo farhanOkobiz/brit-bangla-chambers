@@ -21,10 +21,13 @@ import {
 import Image from "next/image";
 import Logo from "@/assets/logo/logo.jpeg";
 import { apiFetch } from "@/api/apiFetch";
+import { usePathname, useRouter } from "next/navigation";
 
 function Navbar() {
   const { data, isLoading, error } = useGetAuthQuery(undefined);
   const [hydrated, setHydrated] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     setHydrated(true);
@@ -42,7 +45,6 @@ function Navbar() {
     { href: "/services", label: "Services" },
     { href: "/help-center", label: "Help center" },
     { href: "/request-for-service", label: "Request for service" },
-    { href: "/help-center", label: "Help center" },
   ];
 
   const handleLogout = async () => {
@@ -62,6 +64,13 @@ function Navbar() {
       .join("")
       .toUpperCase();
   };
+
+  useEffect(() => {
+    // ✅ Only redirect on specific route
+    if (pathname === "/request-for-service" && !data?.data?.ok) {
+      router.push("/login");
+    }
+  }, [pathname, data, router]);
 
   return (
     <nav className=" sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">

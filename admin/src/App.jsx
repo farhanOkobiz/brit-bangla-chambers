@@ -29,6 +29,7 @@ import RequestForService from "../components/request/RequestForService";
 import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
 import AdvocateFileRequestForm from "../components/Advocate/AdvocateFileRequestForm";
 
+import AdvocateUpdate from "../components/Admin/AdvocateUpdate"
 
 export default function App() {
   return (
@@ -81,10 +82,7 @@ export default function App() {
           <Route path="advocates" element={<AdvocateForm />} />
           <Route path="advocates/showcase" element={<AdvocateShowcase />} />
           <Route path="advocates/:id" element={<ShowIndividualAdvocate />} />
-          <Route
-            path="advocates/:id/edit"
-            element={<EditAdvocateGeneralInfo />}
-          />
+          <Route path="advocates/:id/edit" element={<AdvocateUpdate />} />
           <Route path="advocates/management" element={<AdvocateManagement />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestForService />} />
