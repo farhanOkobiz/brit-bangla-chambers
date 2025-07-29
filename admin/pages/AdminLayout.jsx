@@ -1,10 +1,10 @@
-import AdminSidebar from '../components/SideBar';
+import AdminSidebar from "../components/AdminSidebar";
 
 const AdminLayout = ({ children }) => {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />
-      <main className="flex-1 p-4 ml-0 md:ml-64">{children}</main>
+      <main className="flex-1 lg:ml-64 min-h-screen">{children}</main>
     </div>
   );
 };

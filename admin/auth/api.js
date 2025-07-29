@@ -4,7 +4,7 @@ import { useAxios } from '../services/useAxios';
 export async function checkAuth() {
   const res = await useAxios('/auth/check');
   if (res.ok && res.data) {
-    return { ok: true, role: res.data.role }; 
+    return { ok: true, role: res.data.role , userName: res.data.userName || null }; 
   }
   return { ok: false, role: null };
 }
@@ -23,4 +23,16 @@ export async function logout() {
     method: 'POST',
   });
   return res.ok;
+}
+
+//category functions
+export async function createCategory(name, image, description, link) {
+  const res = await useAxios(
+    "http://localhost:5000/api/v1/category/create-specialization",
+    {
+      method: "POST",
+      body: { name, image, description, link },
+    }
+  );
+  return res;
 }

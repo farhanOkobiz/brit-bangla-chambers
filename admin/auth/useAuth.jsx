@@ -1,12 +1,13 @@
 import { useAuth } from './AuthContext';
 
-export default function Navbar() {
-  const { authed, setAuthed, role, setRole } = useAuth();
+export default function Auth() {
+  const { authed, setAuthed, role, setRole , userName, setUserName } = useAuth();
 
   const handleLogout = () => {
     // Reset auth state
     setAuthed(false);
     setRole(null); // Clear role on logout
+    
   };
 
   return (

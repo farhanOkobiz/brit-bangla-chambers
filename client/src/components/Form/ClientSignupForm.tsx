@@ -2,26 +2,29 @@
 
 import { apiFetch } from "@/api/apiFetch";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function ClientSignupForm() {
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
-    role: "client",
     full_name: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
-    // nidNumber: "",
-    // dateOfBirth: "",
-    // gender: "",
-    // profilePhoto: "",
-    // presentAddress: "",
-    // permanentAddress: "",
+    nidNumber: "",
+    dateOfBirth: "",
+    gender: "",
+    profilePhoto: "",
+    presentAddress: "",
+    permanentAddress: "",
     terms: false,
   });
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -57,16 +60,62 @@ export default function ClientSignupForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // TODO: send to backend
-      const res = await apiFetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-      });
+      // Only send fields required by backend (exclude confirmPassword and terms)
+      const postData = { ...formData } as Partial<typeof formData>;
+      delete postData.confirmPassword;
+      delete postData.terms;
+      try {
+        const res = await apiFetch(`/auth/register`, {
+          method: "POST",
+          body: JSON.stringify(postData),
+        });
+
+        // Check for custom OTP status code
+        if (res.status === 201) {
+          const resOTP = await apiFetch(`/auth/send-otp`, {
+            method: "POST",
+            body: JSON.stringify({ email: postData.email }),
+          });
+          console.log("OTP send response:", resOTP);
+          if (resOTP.status === 200) {
+            return router.push(`/verify-otp?&email=${postData.email}`);
+          }
+        }
+        if (res.status === 400) {
+          toast.error(res.data?.message || "User already exists");
+          setLoading(false);
+          return;
+        }
+
+        // Registration success: you may want to redirect or show a message
+        // For now, just clear the form
+        setFormData({
+          full_name: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          nidNumber: "",
+          dateOfBirth: "",
+          gender: "",
+          profilePhoto: "",
+          presentAddress: "",
+          permanentAddress: "",
+          terms: false,
+        });
+        setErrors({});
+      } catch {
+        // If using your custom `apiFetch`, you might need to look at `err.data`
+        toast.error("Something went wrong. Please try again.");
+        setLoading(false);
+      }
     }
+    setLoading(false);
   };
 
   return (
@@ -103,13 +152,13 @@ export default function ClientSignupForm() {
             placeholder="+8801234567890"
             error={errors.phone}
           />
-          {/* <Input
+          <Input
             label="Date of Birth"
             name="dateOfBirth"
             type="date"
             value={formData.dateOfBirth}
             onChange={handleChange}
-          /> */}
+          />
 
           <Input
             label="Password"
@@ -130,7 +179,7 @@ export default function ClientSignupForm() {
             error={errors.confirmPassword}
           />
 
-          {/* <Select
+          <Select
             label="Gender"
             name="gender"
             value={formData.gender}
@@ -141,7 +190,7 @@ export default function ClientSignupForm() {
               { value: "female", label: "Female" },
               { value: "other", label: "Other" },
             ]}
-          /> */}
+          />
 
           {/* <Input
             label="Profile Photo URL"
@@ -149,27 +198,28 @@ export default function ClientSignupForm() {
             value={formData.profilePhoto}
             onChange={handleChange}
           /> */}
-          {/* <Input
+          <Input
             label="NID Number"
             name="nidNumber"
             value={formData.nidNumber}
             onChange={handleChange}
-          /> */}
-          {/* <Input
+          />
+          <Input
             label="Present Address"
             name="presentAddress"
             value={formData.presentAddress}
             onChange={handleChange}
-          /> */}
-          {/* <Input
+          />
+
+          <Input
             label="Permanent Address"
             name="permanentAddress"
             value={formData.permanentAddress}
             onChange={handleChange}
-          /> */}
+          />
         </div>
 
-        {/* Terms */}
+        {/* Terms and Conditions */}
         <div className="flex items-center">
           <input
             type="checkbox"
@@ -196,9 +246,34 @@ export default function ClientSignupForm() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition cursor-pointer"
+          disabled={loading}
+          className={`w-full bg-black text-white py-3 rounded-md font-semibold transition cursor-pointer flex items-center justify-center ${
+            loading ? "opacity-60 cursor-not-allowed" : "hover:bg-gray-800"
+          }`}
         >
-          Sign Up
+          {loading ? (
+            <svg
+              className="animate-spin h-5 w-5 mr-2 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              />
+            </svg>
+          ) : null}
+          {loading ? "Signing up..." : "Sign Up"}
         </button>
       </form>
     </div>

@@ -1,14 +1,15 @@
+// middleware/upload.js
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-// Define __filename and __dirname manually
+// Manually define __dirname in ES Module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, "..", "uploads");
+// Uploads directory in project root
+const uploadDir = path.join(__dirname, "..", "..", "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -25,28 +26,22 @@ const storage = multer.diskStorage({
   },
 });
 
-// File type filter
-const imageFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|webp|gif/;
-  const mimeType = allowedTypes.test(file.mimetype);
-  const extName = allowedTypes.test(
-    path.extname(file.originalname).toLowerCase()
-  );
-
-  if (mimeType && extName) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed!"));
-  }
+// General file filter for images + PDFs
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|webp|gif|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|csv/;
+  const isValidType =
+    allowedTypes.test(file.mimetype) &&
+    allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  isValidType
+    ? cb(null, true)
+    : cb(new Error("Only image or PDF files are allowed!"));
 };
 
-// Multer upload instance
+// Export multer middleware
 const upload = multer({
   storage,
-  fileFilter: imageFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-  },
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
 });
 
 export default upload;

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
   role: {
     type: String,
-    enum: ['client', 'advocate', 'super_admin'],
+    enum: ['client', 'advocate', 'admin'],
     default: 'client',
     required: true
   },
@@ -26,10 +26,6 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   otp_verified: {
-    type: Boolean,
-    default: false
-  },
-  admin_verified: {
     type: Boolean,
     default: false
   },

@@ -1,19 +1,20 @@
 import { Router } from "express";
 import {
-  createCategory,
-  getAllCategories,
-  getCategoryById,
-  updateCategory,
-  deleteCategory,
-} from "../../controllers/CategoryController.js";
+  createSpecialization,
+  getAllSpecializations,
+  getSpecializationById,
+  updateSpecialization,
+  deleteSpecialization,
+} from "../../controllers/SpecializationController.js";
 import upload from "../../middleware/multerMiddleware.js";
+import { checkAdmin } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/create-category", upload.single("image"), createCategory);
-router.get("/get-all-categories", getAllCategories);
-router.get("/get-category/:id", getCategoryById);
-router.put("/update-category/:id", upload.single("image"), updateCategory);
-router.delete("/delete-category/:id", deleteCategory);
+router.post("/create-specialization", checkAdmin, upload.single("image"), createSpecialization);
+router.get("/get-all-specialization",checkAdmin, getAllSpecializations);
+router.get("/get-specialization/:id",checkAdmin, getSpecializationById);
+router.put("/update-specialization/:id",checkAdmin, upload.single("image"), updateSpecialization);
+router.delete("/delete-specialization/:id",checkAdmin, deleteSpecialization);
 
 export default router;

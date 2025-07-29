@@ -1,17 +1,15 @@
+// models/educationSchema.js
 import mongoose from "mongoose";
 
-const { Schema, model, Types } = mongoose;
-
-const EducationSchema = new Schema(
+const educationSchema = new mongoose.Schema(
   {
-    advocate_id: { type: Types.ObjectId, ref: "Advocate", required: true },
-    degree: { type: String, required: true },
-    institute: { type: String, required: true },
-    year: { type: Number, required: true },
+    degree_title: { type: String, required: true },
+    institution: { type: String, required: true },
+    passing_year: { type: Number, required: true },
+    certificate_url: { type: String }, // Optional
+    advocate_id: { type: mongoose.Schema.Types.ObjectId, ref: "Advocate", required: true },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-export default model("Education", EducationSchema);
+export default mongoose.model("Education", educationSchema);
