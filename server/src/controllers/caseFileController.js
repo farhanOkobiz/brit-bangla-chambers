@@ -1,4 +1,5 @@
 import CaseFile from "../models/caseFileSchema.js";
+import { Notification } from "../models/notificationSchema.js";
 
 // ✅ Create Case File
 export const createCaseFile = async (req, res) => {
@@ -100,6 +101,15 @@ export const updateCaseFile = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Case not found" });
     }
+
+    // 🔔
+    await Notification.create({
+      userId: updated.client_id,
+      title: "Your case has been updated",
+      message: `Your case "${updated.title}" has been updated with new information.`,
+      relatedCaseId: updated._id,
+      case_number: updated.case_number,
+    });
 
     res.status(200).json({ success: true, data: updated });
   } catch (error) {
