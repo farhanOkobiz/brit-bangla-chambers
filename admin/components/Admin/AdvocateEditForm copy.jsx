@@ -1,0 +1,19 @@
+import React from "react";
+import FormModal from "../common/FormModal";
+
+const AdvocateEditForm = ({ advocate, onCancel, onUpdated, fields, isLoading, handleSubmit }) => (
+  <FormModal
+    title="Edit Advocate"
+    fields={fields}
+    onSubmit={handleSubmit}
+    isLoading={isLoading}
+    editingItem={advocate}
+    onCancel={onCancel}
+    showForm={!!advocate}
+    onToggleForm={onCancel}
+    buttonText="Update Advocate"
+    modalClassName="min-h-[1000px]"
+  />
+);
+
+export default AdvocateEditForm;
