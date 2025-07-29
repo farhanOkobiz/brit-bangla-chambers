@@ -53,7 +53,7 @@ const menuItems = [
       { label: "Advocate Approvals", path: "/admin/advocates/management" },
     ],
   },
-  { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
+  // { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
   {
     label: "Contact Messages",
     path: "/admin/messages/contact",

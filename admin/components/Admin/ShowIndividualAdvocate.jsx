@@ -209,7 +209,8 @@ export default function ShowIndividualAdvocate() {
                       <p className="text-sm text-gray-600 mb-3">{doc.document_type}</p>
                       {doc.file_url && (
                         <a 
-                          href={doc.file_url} 
+                          download={doc.file_url}
+                          href={`${BASE_URL}${doc.file_url}`} 
                           target="_blank" 
                           rel="noopener noreferrer" 
                           className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"

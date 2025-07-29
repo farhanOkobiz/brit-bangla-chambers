@@ -96,12 +96,12 @@ const quickActions = [
     color: "purple",
     path: "/admin/services",
   },
-  {
-    title: "Analytics",
-    icon: <FaChartLine />,
-    color: "orange",
-    path: "/admin/analytics",
-  },
+  // {
+  //   title: "Analytics",
+  //   icon: <FaChartLine />,
+  //   color: "orange",
+  //   path: "/admin/analytics",
+  // },
 ];
 
 function AdminDashboard() {
