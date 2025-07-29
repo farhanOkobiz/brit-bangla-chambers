@@ -26,6 +26,7 @@ export default function ClientDashboard() {
         );
         setData(response?.data ?? null);
       } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
         toast.error("Failed to load dashboard data");
       }
     };

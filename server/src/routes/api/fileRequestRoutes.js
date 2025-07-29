@@ -31,6 +31,6 @@ router.put("/:id/upload", upload.array("files"), uploadFilesToRequest);
 
 // ✅ Delete a request
 router.delete("/:id", deleteFileRequest);
-router.put("/:_id/file", deleteSingleFileFromRequest);
+router.delete("/:_id/file", deleteSingleFileFromRequest);
 
 export default router;
