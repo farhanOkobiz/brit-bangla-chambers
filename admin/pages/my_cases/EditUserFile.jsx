@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  DatePicker,
-  Upload,
-  message,
-  Spin,
-} from "antd";
+import { Form, Input, Button, Select, Upload, message, Spin } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { useAxios } from "../../services/useAxios";
+import { DatePicker } from "antd";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -22,17 +14,13 @@ export default function EditUserFile() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCase = async () => {
       try {
-        setLoading(true);
         const res = await useAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
-        console.log(res);
 
         const data = res.data?.data;
-
         // Set initial values
         form.setFieldsValue({
           client_id: data.client_id,
@@ -40,17 +28,15 @@ export default function EditUserFile() {
           summary: data.summary,
           case_type: data.case_type,
           court_name: data.court_name,
-          plaintiff_name: data?.parties?.plaintiff_name || "",
-          plaintiff_contact: data?.parties?.plaintiff_contact || "",
-          defendant_name: data?.parties?.defendant_name || "",
-          defendant_contact: data?.parties?.defendant_contact || "",
+          plaintiff_name: data?.parties?.plaintiff?.name || "",
+          plaintiff_contact: data?.parties?.plaintiff?.contact || "",
+          defendant_name: data?.parties?.defendant?.name || "",
+          defendant_contact: data?.parties?.defendant?.contact || "",
           status: data.status,
-          verdict_date: data.judgment?.verdict_date
-            ? dayjs(data.judgment.verdict_date)
-            : null,
-          verdict_summary: data.judgment?.verdict_summary || "",
-          hearing_dates: data.hearing_dates
-            ? [dayjs(data.hearing_dates[0]), dayjs(data.hearing_dates[1])]
+          verdict_summary: data?.judgment?.decision_summary || "",
+          verdict_date: data?.verdict_date ? dayjs(data.verdict_date) : null,
+          next_hearing_date: data?.next_hearing_date
+            ? dayjs(data.next_hearing_date)
             : null,
         });
 
@@ -58,8 +44,6 @@ export default function EditUserFile() {
         // setFileList(data.documents || []);
       } catch (err) {
         message.error("Failed to load case file.");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -68,8 +52,6 @@ export default function EditUserFile() {
 
   const handleSubmit = async (values) => {
     try {
-      setLoading(true);
-
       const payload = {
         ...values,
         parties: {
@@ -86,6 +68,8 @@ export default function EditUserFile() {
           decision_date: values.verdict_date?.toDate(),
           decision_summary: values.verdict_summary,
         },
+        verdict_date: values.verdict_date?.toDate() || null,
+        next_hearing_date: values.next_hearing_date?.toDate() || null,
         documents: fileList.map((file) => ({
           filename: file.name,
           file_url: "",
@@ -102,110 +86,179 @@ export default function EditUserFile() {
     } catch (err) {
       console.error(err);
       message.error("Failed to update case.");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">Edit Case File</h2>
+    <div className="bg-white rounded-2xl shadow-md border border-gray-100 mt-10">
+      <div className="bg-[#f0f4f8] text-gray-800 px-6 py-4 border-b rounded-t-2xl">
+        <h2 className="text-xl font-bold">Update Case</h2>
+      </div>
+      <div className="p-6 space-y-6">
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="space-y-4"
+        >
+          <Form.Item name="client_id" className="hidden">
+            <Input />
+          </Form.Item>
 
-      <div className="p-6 shadow-2xl rounded-lg">
-        {loading ? (
-          <div className="text-center">
-            <Spin size="large" />
-          </div>
-        ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            className="bg-white p-6 "
+          <Form.Item
+            name="title"
+            label={
+              <span className="font-medium text-gray-700">Case Title</span>
+            }
+            rules={[{ required: true }]}
           >
+            <Input className="rounded-lg" />
+          </Form.Item>
+
+          <Form.Item
+            name="summary"
+            label={
+              <span className="font-medium text-gray-700">Case Summary</span>
+            }
+            rules={[{ required: true }]}
+          >
+            <TextArea rows={4} className="rounded-lg" />
+          </Form.Item>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
-              className=" hidden"
-              name="client_id"
-              label="Client/User ID"
+              name="case_type"
+              label={
+                <span className="font-medium text-gray-700">Case Type</span>
+              }
             >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              name="title"
-              label="Case Title"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              name="summary"
-              label="Case Summary"
-              rules={[{ required: true }]}
-            >
-              <TextArea rows={4} />
-            </Form.Item>
-
-            <Form.Item name="case_type" label="Case Type">
-              <Input />
-            </Form.Item>
-
-            <Form.Item name="court_name" label="Court Name">
-              <Input />
-            </Form.Item>
-
-            {/* Parties Info */}
-            <Form.Item name="plaintiff_name" label="Plaintiff Name">
-              <Input />
-            </Form.Item>
-
-            <Form.Item name="plaintiff_contact" label="Plaintiff Contact">
-              <Input />
-            </Form.Item>
-
-            <Form.Item name="defendant_name" label="Defendant Name">
-              <Input />
-            </Form.Item>
-
-            <Form.Item name="defendant_contact" label="Defendant Contact">
-              <Input />
+              <Input className="rounded-lg" />
             </Form.Item>
 
             <Form.Item
-              name="status"
-              label="Status"
-              rules={[{ required: true }]}
+              name="court_name"
+              label={
+                <span className="font-medium text-gray-700">Court Name</span>
+              }
             >
-              <Select>
-                <Option value="pending">Pending</Option>
-                <Option value="in_progress">In Progress</Option>
-                <Option value="closed">Closed</Option>
-              </Select>
+              <Input className="rounded-lg" />
+            </Form.Item>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item
+              name="plaintiff_name"
+              label={
+                <span className="font-medium text-gray-700">
+                  Plaintiff Name
+                </span>
+              }
+            >
+              <Input className="rounded-lg" />
             </Form.Item>
 
-            <Form.Item name="verdict_summary" label="Verdict Summary">
-              <TextArea rows={3} />
+            <Form.Item
+              name="plaintiff_contact"
+              label={
+                <span className="font-medium text-gray-700">
+                  Plaintiff Contact
+                </span>
+              }
+            >
+              <Input className="rounded-lg" />
             </Form.Item>
 
-            <Form.Item name="documents" label="Documents">
-              <Upload
-                beforeUpload={() => false}
-                multiple
-                fileList={fileList}
-                onChange={({ fileList }) => setFileList(fileList)}
-              >
-                <Button icon={<UploadOutlined />}>Upload Files</Button>
-              </Upload>
+            <Form.Item
+              name="defendant_name"
+              label={
+                <span className="font-medium text-gray-700">
+                  Defendant Name
+                </span>
+              }
+            >
+              <Input className="rounded-lg" />
             </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block loading={loading}>
-                Update Case
-              </Button>
+            <Form.Item
+              name="defendant_contact"
+              label={
+                <span className="font-medium text-gray-700">
+                  Defendant Contact
+                </span>
+              }
+            >
+              <Input className="rounded-lg" />
             </Form.Item>
-          </Form>
-        )}
+          </div>
+
+          <Form.Item
+            name="status"
+            label={<span className="font-medium text-gray-700">Status</span>}
+            rules={[{ required: true }]}
+          >
+            <Select className="rounded-lg">
+              <Option value="pending">Pending</Option>
+              <Option value="in_progress">In Progress</Option>
+              <Option value="closed">Closed</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="verdict_summary"
+            label={
+              <span className="font-medium text-gray-700">Verdict Summary</span>
+            }
+          >
+            <TextArea rows={3} className="rounded-lg" />
+          </Form.Item>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item
+              name="next_hearing_date"
+              label={
+                <span className="font-medium text-gray-700">
+                  Next Hearing Date
+                </span>
+              }
+            >
+              <DatePicker style={{ width: "100%" }} className="rounded-lg" />
+            </Form.Item>
+
+            <Form.Item
+              name="verdict_date"
+              label={
+                <span className="font-medium text-gray-700">Verdict Date</span>
+              }
+            >
+              <DatePicker style={{ width: "100%" }} className="rounded-lg" />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            name="documents"
+            label={<span className="font-medium text-gray-700">Documents</span>}
+          >
+            <Upload
+              beforeUpload={() => false}
+              multiple
+              fileList={fileList}
+              onChange={({ fileList }) => setFileList(fileList)}
+            >
+              <Button icon={<UploadOutlined />}>Upload Files</Button>
+            </Upload>
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              className="rounded-lg"
+            >
+              Update Case
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );

@@ -60,6 +60,7 @@ export default function ClientProfile() {
   const [loading, setLoading] = useState(true);
   const IMAGE_URL =
     process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:5001";
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {

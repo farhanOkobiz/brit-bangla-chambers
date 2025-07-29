@@ -15,7 +15,7 @@ import {
 const RequestForAdvocate = () => {
   const [request, setRequest] = useState([]);
 
-  const advocateMessages = async () => {
+  const requestFor = async () => {
     try {
       const response = await useAxios("/request-for-advocate/advocate");
       const allMessages = response?.data?.messages || [];
@@ -69,19 +69,19 @@ const RequestForAdvocate = () => {
 
       advocateMessages();
     } catch {
-      toast.error("Failed to accept message");
+      // toast.error("Failed to accept message");
     }
   };
 
   const handleReject = async (id) => {
     try {
-      const response = await useAxios(`/request-service/rejected/${id}`, {
+      await useAxios(`/request-service/rejected/${id}`, {
         method: "PATCH",
       });
       toast.success("Message rejected");
       advocateMessages();
     } catch {
-      toast.error("Failed to reject message");
+      // toast.error("Failed to reject message");
     }
   };
 
@@ -103,7 +103,7 @@ const RequestForAdvocate = () => {
         });
 
         if (response.ok) {
-          setMessages((prev) => prev.filter((msg) => msg._id !== id));
+          setRequest((prev) => prev.filter((msg) => msg._id !== id));
           await Swal.fire("Deleted!", "Message has been deleted.", "success");
         } else {
           await Swal.fire("Error", "Failed to delete message", "error");
@@ -114,14 +114,16 @@ const RequestForAdvocate = () => {
     }
   };
 
+  console.log(request);
+
   useEffect(() => {
-    advocateMessages();
+    requestFor();
   }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 mt-6 lg:mt-0">
       <h2 className="text-4xl font-extrabold text-center text-[#5e3030] mb-12">
-        Request for Advocate
+        All Requested
       </h2>
 
       {request.length === 0 ? (
@@ -130,6 +132,7 @@ const RequestForAdvocate = () => {
         <div className="grid gap-8 md:grid-cols-2">
           {request.map((msg) => {
             const m = msg.userMessage;
+
             return (
               <div
                 key={msg._id}

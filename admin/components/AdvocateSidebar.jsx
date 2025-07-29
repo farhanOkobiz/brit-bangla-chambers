@@ -4,52 +4,87 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 import {
+  FaUserCircle,
+  FaTachometerAlt,
+  FaClipboardList,
+  FaFolderOpen,
+  FaCalendarCheck,
+  FaUsers,
+  FaBlogger,
+  FaCogs,
   FaBars,
   FaTimes,
-  FaGavel,
-  FaCommentDots,
-  FaCalendarAlt,
-  FaUsers,
-  FaBlog,
-  FaCogs,
   FaSignOutAlt,
-  FaCarSide,
 } from "react-icons/fa";
 
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 const menuItems = [
-  { label: "Advocate Profile", path: "/advocate/profile" },
-  { label: "Dashboard", path: "/advocate/dashboard" },
-  { label: "Request", path: "/advocate/dashboard/request" },
-  ,
+  {
+    label: "Advocate Profile",
+    path: "/advocate/profile",
+    icon: <FaUserCircle />,
+  },
+  {
+    label: "Dashboard",
+    path: "/advocate/dashboard",
+    icon: <FaTachometerAlt />,
+  },
+  {
+    label: "Request",
+    path: "/advocate/dashboard/request",
+    icon: <FaClipboardList />,
+  },
   {
     label: "My Case",
     isDropdown: true,
+    icon: <FaFolderOpen />,
     subItems: [
       {
         label: "All user file",
         path: "/advocate/dashboard/all-user-file",
+        icon: <FaFolderOpen />,
       },
       // {
       //   label: "Create user file",
       //   path: "/advocate/dashboard/create-user-file",
+      //   icon: <FaFolderOpen />,
       // },
     ],
   },
-
-  { label: "Appointments", path: "/advocate/appointments" },
-  { label: "Clients", path: "/advocate/clients" },
+  {
+    label: "Appointments",
+    path: "/advocate/appointments",
+    icon: <FaCalendarCheck />,
+  },
+  {
+    label: "Clients",
+    path: "/advocate/clients",
+    icon: <FaUsers />,
+  },
   {
     label: "Blogs",
     isDropdown: true,
+    icon: <FaBlogger />,
     subItems: [
-      { label: "All Blogs", path: "/advocate/dashboard/blogs" },
-      { label: "Create Blog", path: "/advocate/dashboard/create-blog" },
+      {
+        label: "All Blogs",
+        path: "/advocate/dashboard/blogs",
+        icon: <FaBlogger />,
+      },
+      {
+        label: "Create Blog",
+        path: "/advocate/dashboard/create-blog",
+        icon: <FaBlogger />,
+      },
     ],
   },
-  { label: "Settings", path: "/advocate/settings", icon: <FaCogs /> },
+  {
+    label: "Settings",
+    path: "/advocate/settings",
+    icon: <FaCogs />,
+  },
 ];
 
 const AdvocateSidebar = () => {
@@ -230,9 +265,11 @@ const AdvocateSidebar = () => {
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block fixed z-30 top-0 left-0 h-full w-64 bg-white border-r border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-          <h1 className="text-xl font-bold text-gray-800">Advocate Panel</h1>
-          <p className="text-xs text-gray-500">Management System</p>
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-100 via-purple-100 to-purple-200 shadow-sm">
+          <h1 className="text-2xl font-semibold text-gray-800 tracking-tight mb-1">
+            Advocate Panel
+          </h1>
+          <p className="text-sm text-gray-600">Management System</p>
         </div>
 
         <nav className="px-4 py-6 overflow-y-auto h-full pb-32">

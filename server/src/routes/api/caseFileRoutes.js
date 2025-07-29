@@ -20,6 +20,6 @@ router.get("/allCaseFile", checkAdvocate, getAllCaseFiles); // Get all cases
 router.get("/singleCaseFile", checkClient, getSingleCaseFile); // Get single case
 router.get("/singleCaseFile/:id", getSingleCaseFileById); // Get single case
 router.put("/updateCaseFile/:id", updateCaseFile); // Update case
-router.delete("deleteCaseFile/:id", deleteCaseFile); // Delete case
+router.delete("/deleteCaseFile/:id", deleteCaseFile); // Delete case
 
 export default router;

@@ -18,7 +18,7 @@ const requestServiceSchema = new Schema(
       issueType: String,
       message: String,
       attachments: [String],
-      serviceId : {
+      serviceId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Service",
       },
@@ -43,5 +43,20 @@ const requestServiceSchema = new Schema(
     timestamps: true,
   }
 );
+
+requestServiceSchema.post("findOneAndDelete", async function (doc) {
+  if (doc?.userMessageId) {
+    const count = await RequestService.countDocuments({
+      userMessageId: doc.userMessageId,
+    });
+
+    if (count === 0) {
+      await RequestForAdvocate.findByIdAndDelete(doc.userMessageId);
+      console.log(
+        "No more services left, so related RequestForAdvocate deleted"
+      );
+    }
+  }
+});
 
 export default model("RequestService", requestServiceSchema);

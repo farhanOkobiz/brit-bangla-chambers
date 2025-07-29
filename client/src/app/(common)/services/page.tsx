@@ -41,7 +41,9 @@ interface CreatedBy {
 
 const ServicesDisplay = () => {
   const [services, setServices] = useState<IServicesDisplay[]>([]);
-  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>([]);
+  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>(
+    []
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -49,8 +51,8 @@ const ServicesDisplay = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const { apiFetch } = require("../../../api/apiFetch");
-  const [selectedService, setSelectedServiceModal] = useState<IServicesDisplay | null>(null);
+  const [selectedService, setSelectedServiceModal] =
+    useState<IServicesDisplay | null>(null);
   const [showModal, setShowModal] = useState(false);
   const image_url = process.env.NEXT_PUBLIC_IMAGE_URL;
   const dispatch = useDispatch();
@@ -79,9 +81,8 @@ const ServicesDisplay = () => {
         ].filter((s): s is string => !!s);
         setCategories(uniqueCategories);
         setSubcategories(uniqueSubcategories);
-      } catch (err) {
+      } catch {
         setError("Failed to fetch services");
-        console.error("Error fetching services:", err);
       } finally {
         setLoading(false);
       }
@@ -338,16 +339,21 @@ const ServicesDisplay = () => {
                                 </button>
                                 <button
                                   onClick={() => {
-                                    dispatch(setSelectedService({
-                                      id: service._id,
-                                      name: service.title,
-                                      serviceImage: service.serviceImage,
-                                    }));
-                                    localStorage.setItem("selectedService", JSON.stringify({
-                                      id: service._id,
-                                      name: service.title,
-                                      serviceImage: service.serviceImage,
-                                    }));
+                                    dispatch(
+                                      setSelectedService({
+                                        id: service._id,
+                                        name: service.title,
+                                        serviceImage: service.serviceImage,
+                                      })
+                                    );
+                                    localStorage.setItem(
+                                      "selectedService",
+                                      JSON.stringify({
+                                        id: service._id,
+                                        name: service.title,
+                                        serviceImage: service.serviceImage,
+                                      })
+                                    );
                                     router.push("/request-for-service");
                                   }}
                                   className="bg-green-50 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-100 transition-colors cursor-pointer"
