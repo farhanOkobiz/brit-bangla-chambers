@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAxios } from "../../services/useAxios";
-import DataList from "../common/DataList";
-import FormModal from "../common/FormModal";
-import AdvocateShowcase from "./AdvocateShowcase";
-import AdvocateEditForm from "./AdvocateEditForm";
+import { useAxios } from "../services/useAxios";
+import DataList from "../components/common/DataList";
+import FormModal from "../components/common/FormModal";
+import AdvocateShowcase from "../components/Admin/AdvocateShowcase";
+import AdvocateEditForm from "../components/Admin/AdvocateEditForm";
 
 const AdvocateForm = () => {
   const [isLoading, setIsLoading] = useState(false);

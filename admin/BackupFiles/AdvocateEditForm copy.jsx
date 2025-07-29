@@ -1,5 +1,5 @@
 import React from "react";
-import FormModal from "../common/FormModal";
+import FormModal from "../components/common/FormModal";
 
 const AdvocateEditForm = ({ advocate, onCancel, onUpdated, fields, isLoading, handleSubmit }) => (
   <FormModal
