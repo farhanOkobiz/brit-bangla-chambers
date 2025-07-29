@@ -209,7 +209,7 @@ function AllUserFile() {
           {filteredCases.map((file) => (
             <div
               key={file._id}
-              className="group bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
+              className="group bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 mt-4"
             >
               {/* Card Header */}
               <div className="p-6 relative">
