@@ -45,14 +45,6 @@ const CaseFileSchema = new Schema(
 
     verdict_date: { type: Date },
 
-    documents: [
-      {
-        filename: String,
-        file_url: String,
-        uploaded_at: { type: Date, default: Date.now },
-      },
-    ],
-
     judgment: {
       decision_date: Date,
       decision_summary: String,

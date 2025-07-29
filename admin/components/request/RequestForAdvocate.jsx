@@ -1,16 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { UseAxios } from "../../services/UseAxios";
-import Swal from "sweetalert2";
-import {
-  CheckCircle,
-  XCircle,
-  Trash2,
-  Clock,
-  Mail,
-  Phone,
-  User,
-} from "lucide-react";
+import { UseAxios } from "../../services/useAxios.js";
+import { CheckCircle, XCircle, Clock, Mail, Phone, User } from "lucide-react";
 
 const RequestForAdvocate = () => {
   const [request, setRequest] = useState([]);
@@ -81,40 +72,9 @@ const RequestForAdvocate = () => {
       toast.success("Message rejected");
       advocateMessages();
     } catch {
-      // toast.error("Failed to reject message");
+      toast.error("Failed to reject message");
     }
   };
-
-  const handleDelete = async (id) => {
-    const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "This will permanently delete the message.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
-
-    if (confirm.isConfirmed) {
-      try {
-        const response = await UseAxios(`/request-for-advocate/${id}`, {
-          method: "DELETE",
-        });
-
-        if (response.ok) {
-          setRequest((prev) => prev.filter((msg) => msg._id !== id));
-          await Swal.fire("Deleted!", "Message has been deleted.", "success");
-        } else {
-          await Swal.fire("Error", "Failed to delete message", "error");
-        }
-      } catch {
-        await Swal.fire("Error", "Something went wrong!", "error");
-      }
-    }
-  };
-
-  console.log(request);
 
   useEffect(() => {
     requestFor();
@@ -176,7 +136,6 @@ const RequestForAdvocate = () => {
                     </span>
                   )}
                 </div>
-
                 <div className="space-y-1 text-sm text-gray-700">
                   <p>
                     <Mail className="inline w-4 h-4 mr-1 text-gray-500" />{" "}
@@ -202,7 +161,6 @@ const RequestForAdvocate = () => {
                     <strong>Message:</strong> {m?.message}
                   </p>
                 </div>
-
                 <div className="flex justify-between items-center mt-6 text-xs text-gray-400">
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
@@ -211,13 +169,6 @@ const RequestForAdvocate = () => {
                       timeStyle: "short",
                     })}
                   </div>
-
-                  <button
-                    onClick={() => handleDelete(msg._id)}
-                    className="text-red-600 hover:text-red-800 transition cursor-pointer"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
                 </div>
               </div>
             );

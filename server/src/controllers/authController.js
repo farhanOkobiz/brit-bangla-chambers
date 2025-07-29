@@ -225,7 +225,9 @@ export const checkAuth = async (req, res) => {
       ok: true,
       role: decoded.role,
       userName: user?.full_name || "",
+      userId: decoded.id,
     });
+    console.log(user);
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }

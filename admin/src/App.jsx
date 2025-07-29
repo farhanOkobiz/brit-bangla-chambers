@@ -21,15 +21,11 @@ import EditBlog from "../pages/blog/EditBlog";
 import AdvocateManagement from "../components/AdvocateManagement";
 import UserManagement from "../components/Users/UserManagement";
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
-// import CreateUserFile from "../pages/my_cases/CreateUserFile";
-import AllUserFile from "../pages/my_cases/AllUserFile";
-import EditUserFile from "../pages/my_cases/EditUserFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
 import RequestForService from "../components/request/RequestForService";
-import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
 import AdvocateFileRequestForm from "../components/Advocate/AdvocateFileRequestForm";
 
-import AdvocateUpdate from "../components/Admin/AdvocateUpdate"
+import AdvocateUpdate from "../components/Admin/AdvocateUpdate";
 
 export default function App() {
   return (
@@ -62,7 +58,7 @@ export default function App() {
           /> */}
           <Route
             path="dashboard/edit-user-file/:id"
-            element={<EditUserFile />}
+            element={<EditCaseFile />}
           />
         </Route>
 
