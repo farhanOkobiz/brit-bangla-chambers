@@ -28,6 +28,8 @@ function Navbar() {
   const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || "brit-bangla-chambers.com/admin/dashboard";
+  const ADVOCATE_URL = process.env.NEXT_PUBLIC_ADVOCATE_URL || "brit-bangla-chambers.com/advocate/dashboard";
 
   useEffect(() => {
     setHydrated(true);
@@ -50,7 +52,7 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       await apiFetch("/auth/logout", { method: "POST" });
-      window.location.href = "/login";
+      window.location.href = "/";
     } catch (err) {
       console.error("Logout failed", err);
     }
@@ -129,24 +131,41 @@ function Navbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link href="/client/dashboard">
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/client/profile">
-                    <UserCircle className="w-4 h-4 mr-2" />
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
+                {data?.data?.role == "client" && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/client/dashboard">
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/client/profile">
+                        <UserCircle className="w-4 h-4 mr-2" />
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {data?.data?.role === "advocate" && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <a href={`${ADVOCATE_URL}/advocate/dashboard`}>
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Advocate Dashboard
+                        </a>
+                    </DropdownMenuItem>
+                          
+                  </>
+                )}
+                
+                
                 {data?.data?.role === "admin" && (
                   <DropdownMenuItem asChild>
-                    <Link href="/admin">
+                    <a href={`${ADMIN_URL}/admin/dashboard`}>
                       <Shield className="w-4 h-4 mr-2" />
                       Admin Panel
-                    </Link>
+                    </a>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={handleLogout}>
