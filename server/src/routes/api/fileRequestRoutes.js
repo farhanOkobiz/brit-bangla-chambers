@@ -6,7 +6,7 @@ import {
   deleteFileRequest,
   uploadFilesToRequest,
   getAllFileRequests,
-  getFileRequestById,
+  getFileRequestByClintId,
   getFileRequestByCaseId,
   deleteSingleFileFromRequest,
 } from "../../controllers/fileRequestController.js";
@@ -21,7 +21,7 @@ router.get("/case/:_id", getFileRequestByCaseId);
 
 // Then parameterized routes
 router.get("/", getAllFileRequests);
-router.get("/:_id", getFileRequestById);
+router.get("/clientId",checkClient, getFileRequestByClintId);
 router.put("/:id", upload.array("files"), updateFileRequest);
 router.delete("/:id", deleteFileRequest);
 router.delete("/:_id/file", deleteSingleFileFromRequest);

@@ -7,14 +7,14 @@ function AdvocateUpdate() {
   const { id } = useParams();
 
   return (
-    <div className="flex flex-row gap-8 p-4">
+    <div className="flex flex-row p-4 w-full gap-0">
       {/* Left section */}
       <div className="flex-1">
         <EditAdvocateGeneralInfo id={id} />
       </div>
 
       {/* Right section */}
-      <div className="flex-1">
+      <div className="flex-1 w-full">
         <AdvocateUpdateAdditionalInfo id={id} />
       </div>
     </div>

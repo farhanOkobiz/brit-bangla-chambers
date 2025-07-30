@@ -189,11 +189,11 @@ export const getAllFileRequests = async (req, res) => {
   }
 };
 
-export const getFileRequestById = async (req, res) => {
+export const getFileRequestByClintId = async (req, res) => {
   try {
-    const { _id } = req.params;
+    const { _id } = req.user;
 
-    const request = await FileRequest.findById(_id)
+    const request = await FileRequest.findOne({client_id:_id})
       .populate("client_id", "full_name email")
       .populate("advocate_id", "full_name email");
 

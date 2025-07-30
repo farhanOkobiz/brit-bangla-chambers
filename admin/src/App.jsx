@@ -22,14 +22,16 @@ import AdvocateManagement from "../components/AdvocateManagement";
 import UserManagement from "../components/Users/UserManagement";
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
 // import CreateUserFile from "../pages/my_cases/CreateUserFile";
-import AllUserFile from "../pages/my_cases/AllUserFile";
-import EditUserFile from "../pages/my_cases/EditUserFile";
+import AllCaseFile from "../pages/my_cases/AllCaseFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
 import RequestForService from "../components/request/RequestForService";
-import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
+// import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
 import AdvocateFileRequestForm from "../components/Advocate/AdvocateFileRequestForm";
 
-import AdvocateUpdate from "../components/Admin/AdvocateUpdate"
+import AdvocateUpdate from "../components/Admin/AdvocateUpdate";
+import CreateAdvocate from "../components/Admin/CreateAdvocate";
+import EditCaseFile from "../pages/my_cases/EditCaseFile";
+import DetailsFile from "../pages/my_cases/DetailsFile";
 
 export default function App() {
   return (
@@ -51,18 +53,18 @@ export default function App() {
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/request" element={<RequestForAdvocate />} />
-          <Route path="dashboard/all-user-file" element={<AllUserFile />} />
+          <Route path="dashboard/all-case-file" element={<AllCaseFile />} />
+          <Route
+            path="dashboard/detail-case-file/:id"
+            element={<DetailsFile />}
+          />
+          <Route
+            path="dashboard/edit-case-file/:id"
+            element={<EditCaseFile />}
+          />
           <Route
             path="dashboard/request-file/:id"
             element={<AdvocateFileRequestForm />}
-          />
-          {/* <Route
-            path="dashboard/create-user-file"
-            element={<CreateUserFile />}
-          /> */}
-          <Route
-            path="dashboard/edit-user-file/:id"
-            element={<EditUserFile />}
           />
         </Route>
 
@@ -91,6 +93,7 @@ export default function App() {
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
+          <Route path="/admin/advocates/create" element={<CreateAdvocate />} />
 
           {/* Add more child routes here as needed */}
         </Route>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAxios } from "../../services/useAxios";
-import DataList from "../common/DataList";
-import FormModal from "../common/FormModal";
-import AdvocateShowcase from "./AdvocateShowcase";
-import AdvocateEditForm from "./AdvocateEditForm";
+import { UseAxios } from "../services/UseAxios";
+import DataList from "../components/common/DataList";
+import FormModal from "../components/common/FormModal";
+import AdvocateShowcase from "../components/Admin/AdvocateShowcase";
+import AdvocateEditForm from "../components/Admin/AdvocateEditForm";
 
 const AdvocateForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -88,7 +88,7 @@ const AdvocateForm = () => {
   const fetchAdvocates = async () => {
     try {
       setLoadingAdvocates(true);
-      const res = await useAxios("/advocate/all", { method: "GET" });
+      const res = await UseAxios("/advocate/all", { method: "GET" });
       
       if (res.ok) {
         setAdvocates(res.data || []);
@@ -199,7 +199,7 @@ const AdvocateForm = () => {
       const url = editingAdvocate ? `/advocate/update/${editingAdvocate._id}` : "/advocate/create";
       const method = editingAdvocate ? "PUT" : "POST";
 
-      const res = await useAxios(url, { method, data: transformedData });
+      const res = await UseAxios(url, { method, data: transformedData });
 
       if (res.ok) {
         alert(`Advocate ${editingAdvocate ? 'updated' : 'created'} successfully!`);
@@ -257,7 +257,7 @@ const AdvocateForm = () => {
     if (!window.confirm("Are you sure you want to delete this advocate?")) return;
 
     try {
-      const res = await useAxios(`/advocate/profile/${advocateId}`, { method: "DELETE" });
+      const res = await UseAxios(`/advocate/profile/${advocateId}`, { method: "DELETE" });
       if (res.ok) {
         alert("Advocate deleted successfully!");
         await fetchAdvocates();

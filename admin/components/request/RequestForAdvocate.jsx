@@ -1,23 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useAxios } from "../../services/useAxios";
-import Swal from "sweetalert2";
-import {
-  CheckCircle,
-  XCircle,
-  Trash2,
-  Clock,
-  Mail,
-  Phone,
-  User,
-} from "lucide-react";
+import { UseAxios } from "../../services/UseAxios.js";
+import { CheckCircle, XCircle, Clock, Mail, Phone, User } from "lucide-react";
 
 const RequestForAdvocate = () => {
   const [request, setRequest] = useState([]);
 
   const requestFor = async () => {
     try {
-      const response = await useAxios("/request-for-advocate/advocate");
+      const response = await UseAxios("/request-for-advocate/advocate");
       const allMessages = response?.data?.messages || [];
 
       // Filter only messages where advocateId matches the logged-in advocate
@@ -30,7 +21,7 @@ const RequestForAdvocate = () => {
 
   const handleAccept = async (id) => {
     try {
-      const response = await useAxios(`/request-service/accepted/${id}`, {
+      const response = await UseAxios(`/request-service/accepted/${id}`, {
         method: "PATCH",
         data: { status: true },
       });
@@ -61,7 +52,7 @@ const RequestForAdvocate = () => {
           related_laws: [],
         };
 
-        await useAxios("/showOwnCaseFile/createCaseFile", {
+        await UseAxios("/showOwnCaseFile/createCaseFile", {
           method: "POST",
           data: caseFileData,
         });
@@ -75,7 +66,7 @@ const RequestForAdvocate = () => {
 
   const handleReject = async (id) => {
     try {
-      await useAxios(`/request-service/rejected/${id}`, {
+      await UseAxios(`/request-service/rejected/${id}`, {
         method: "PATCH",
       });
       toast.success("Message rejected");
@@ -84,37 +75,6 @@ const RequestForAdvocate = () => {
       // toast.error("Failed to reject message");
     }
   };
-
-  const handleDelete = async (id) => {
-    const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "This will permanently delete the message.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
-
-    if (confirm.isConfirmed) {
-      try {
-        const response = await useAxios(`/request-for-advocate/${id}`, {
-          method: "DELETE",
-        });
-
-        if (response.ok) {
-          setRequest((prev) => prev.filter((msg) => msg._id !== id));
-          await Swal.fire("Deleted!", "Message has been deleted.", "success");
-        } else {
-          await Swal.fire("Error", "Failed to delete message", "error");
-        }
-      } catch {
-        await Swal.fire("Error", "Something went wrong!", "error");
-      }
-    }
-  };
-
-  console.log(request);
 
   useEffect(() => {
     requestFor();
@@ -176,7 +136,6 @@ const RequestForAdvocate = () => {
                     </span>
                   )}
                 </div>
-
                 <div className="space-y-1 text-sm text-gray-700">
                   <p>
                     <Mail className="inline w-4 h-4 mr-1 text-gray-500" />{" "}
@@ -202,7 +161,6 @@ const RequestForAdvocate = () => {
                     <strong>Message:</strong> {m?.message}
                   </p>
                 </div>
-
                 <div className="flex justify-between items-center mt-6 text-xs text-gray-400">
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
@@ -211,13 +169,6 @@ const RequestForAdvocate = () => {
                       timeStyle: "short",
                     })}
                   </div>
-
-                  <button
-                    onClick={() => handleDelete(msg._id)}
-                    className="text-red-600 hover:text-red-800 transition cursor-pointer"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
                 </div>
               </div>
             );

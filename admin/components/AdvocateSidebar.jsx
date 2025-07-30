@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { logout } from "../auth/api";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { UseAuth } from "../auth/AuthContext";
 
 import {
   FaUserCircle,
@@ -42,15 +42,10 @@ const menuItems = [
     icon: <FaFolderOpen />,
     subItems: [
       {
-        label: "All user file",
-        path: "/advocate/dashboard/all-user-file",
+        label: "All Case file",
+        path: "/advocate/dashboard/all-case-file",
         icon: <FaFolderOpen />,
       },
-      // {
-      //   label: "Create user file",
-      //   path: "/advocate/dashboard/create-user-file",
-      //   icon: <FaFolderOpen />,
-      // },
     ],
   },
   {
@@ -92,7 +87,7 @@ const AdvocateSidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { setAuthed, setRole, setUserName } = useAuth();
+  const { setAuthed, setRole, setUserName } = UseAuth();
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);

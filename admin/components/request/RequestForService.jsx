@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import {
   FiTrash2,
   FiUser,
@@ -111,7 +111,7 @@ function RequestForService() {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const res = await useAxios("/request-service");
+      const res = await UseAxios("/request-service");
       setRequestsMessage(res.data.data);
       setFilteredRequests(res.data.data);
     } catch (error) {
@@ -129,7 +129,7 @@ function RequestForService() {
 
     try {
       setDeleting((prev) => ({ ...prev, [id]: true }));
-      await useAxios(`/request-service/${id}`, { method: "DELETE" });
+      await UseAxios(`/request-service/${id}`, { method: "DELETE" });
       setRequestsMessage((prev) => prev.filter((item) => item._id !== id));
       setFilteredRequests((prev) => prev.filter((item) => item._id !== id));
       toast.success("Request deleted successfully");
@@ -157,7 +157,7 @@ function RequestForService() {
     }
 
     try {
-      const res = await useAxios(`/request-for-advocate`, {
+      const res = await UseAxios(`/request-for-advocate`, {
         method: "POST",
         data: {
           userMessage: item.userMessage,
@@ -223,7 +223,7 @@ function RequestForService() {
   useEffect(() => {
     async function getAllAdvocates() {
       try {
-        const res = await useAxios("auth/users");
+        const res = await UseAxios("auth/users");
         const allUsers = res?.data?.users || [];
         const onlyAdvocates = allUsers.filter(
           (user) => user.role === "advocate"

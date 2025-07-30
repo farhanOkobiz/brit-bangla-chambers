@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import Swal from "sweetalert2";
 
 function ContactMessage() {
@@ -7,7 +7,7 @@ function ContactMessage() {
 
   useEffect(() => {
     const messageFun = async () => {
-      const res = await useAxios("/contact/all-contact-message");
+      const res = await UseAxios("/contact/all-contact-message");
       setMessages(res.data);
     };
     messageFun();
@@ -26,7 +26,7 @@ function ContactMessage() {
       });
 
       if (result.isConfirmed) {
-        const res = await useAxios(`/contact/delete-contact/${id}`, {
+        const res = await UseAxios(`/contact/delete-contact/${id}`, {
           method: "DELETE",
         });
 

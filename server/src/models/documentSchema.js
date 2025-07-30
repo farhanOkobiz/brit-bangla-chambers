@@ -4,15 +4,10 @@ const { Schema, model, Types } = mongoose;
 
 const DocumentSchema = new Schema(
   {
-    user_type: {
-      type: String,
-      enum: ['Advocate', 'Client'],
-      required: true,
-    },
     user_id: {
       type: Types.ObjectId,
       required: true,
-      refPath: 'user_type', // Dynamic reference
+      ref: 'Advocate',
     },
     file_url: { type: String, required: true },
     file_name: { type: String }, // Optional: actual name or title of document
