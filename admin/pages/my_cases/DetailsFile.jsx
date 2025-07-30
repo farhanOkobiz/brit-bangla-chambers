@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import {
   FaCalendarAlt,
   FaEdit,
@@ -32,7 +32,7 @@ function DetailsFile() {
   useEffect(() => {
     const fetchCase = async () => {
       try {
-        const res = await useAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
+        const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
         const data = res.data?.data;
         setFile(data);
       } catch {
