@@ -36,10 +36,10 @@ const deleteFile = (filePath) => {
 export const createFileRequest = async (req, res) => {
   console.log("hit create file request:", req.body);
   try {
-    const { client_id, advocate_id, case_id, title, description } = req.body;
+    const { client_id, advocate_id, case_id, title, description, case_number } = req.body;
     const files = req.files;
 
-    if (!client_id || !advocate_id) {
+    if (!client_id || !advocate_id || !case_number) {
       if (files?.length) {
         files.forEach((file) => deleteFile(getUploadPath(file.filename)));
       }
@@ -57,6 +57,7 @@ export const createFileRequest = async (req, res) => {
       advocate_id,
       title,
       case_id,
+      case_number,
       description,
       file_url: file_urls,
     });
@@ -124,14 +125,20 @@ export const updateFileRequest = async (req, res) => {
 // For client: upload file(s) to existing request
 export const uploadFilesToRequest = async (req, res) => {
   try {
+    console.log("hit upload files to request:", req.user);
     const { id } = req.params;
     const files = req.files;
+
+    const { _id } = req.user;
+
+    const mathcId = await FileRequest.findOne({client_id: _id})
+    console.log("matchId.client:", mathcId);
 
     if (!files?.length) {
       return res.status(400).json({ error: "No files uploaded." });
     }
 
-    const existing = await FileRequest.findById(id);
+    const existing = await FileRequest.findOne({client_id: _id});
     if (!existing) {
       return res.status(404).json({ error: "File request not found." });
     }
@@ -148,8 +155,8 @@ export const uploadFilesToRequest = async (req, res) => {
 
     const newFileUrls = files.map((file) => `/uploads/${file.filename}`);
 
-    const updated = await FileRequest.findByIdAndUpdate(
-      id,
+    const updated = await FileRequest.findOneAndUpdate(
+      {client_id: _id},
       { file_url: newFileUrls },
       { new: true }
     );

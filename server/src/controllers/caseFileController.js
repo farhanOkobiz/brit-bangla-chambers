@@ -39,6 +39,21 @@ export const getAllCaseFiles = async (req, res) => {
   }
 };
 
+// ✅ Get All Case Files
+export const getAllCaseFilesForAdmin = async (req, res) => {
+  try {
+    const caseFiles = await CaseFile.find().populate("advocate_id");
+
+    res.status(200).json({ success: true, data: caseFiles });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch cases",
+      error: error.message,
+    });
+  }
+};
+
 // ✅ Get Single Case File
 export const getSingleCaseFile = async (req, res) => {
   try {

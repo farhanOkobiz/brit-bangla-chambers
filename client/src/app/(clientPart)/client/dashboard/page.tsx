@@ -3,6 +3,8 @@ import { apiFetch } from "@/api/apiFetch";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import FileRequestForm from "@/components/FileRquestForm/FileRequestForm";
+import { useRouter } from "next/navigation";
 import {
   useDeleteNotificationMutation,
   useGetNotificationsQuery,
@@ -34,6 +36,7 @@ export default function ClientDashboard() {
   const { data: user } = useGetAuthQuery(undefined);
   const userId = user?.data?.userId;
   const [data, setData] = useState<ApiResponse | null>(null);
+  const router = useRouter();
   const { data: notifications } = useGetNotificationsQuery(userId, {
     skip: !user?.data?.userId,
   });
@@ -73,14 +76,19 @@ export default function ClientDashboard() {
         const response = await apiFetch(
           "/client-dashboard/some-info-form-case"
         );
+        console.log("Dashboard data:", response.data);
         setData(response?.data ?? null);
-      } catch {
-        toast.error("Failed to load dashboard data");
+      } catch (error) {
+        console.error("Failed to load dashboard data:", error);
+        toast.error("Failed to load dashboard data: ");
       }
     };
 
     fetchData();
   }, []);
+  const handleClickEvent = () => {
+    router.push("/client/file-request");
+  };
 
   return (
     <>

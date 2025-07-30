@@ -1,17 +1,21 @@
-import { UseAxios } from '../services/UseAxios';
+import { UseAxios } from "../services/UseAxios";
 
 // Check if user is authenticated
 export async function checkAuth() {
-  const res = await UseAxios('/auth/check');
+  const res = await UseAxios("/auth/check");
   if (res.ok && res.data) {
-    return { ok: true, role: res.data.role , userName: res.data.userName || null }; 
+    return {
+      ok: true,
+      role: res.data.role,
+      userName: res.data.userName || null,
+    };
   }
   return { ok: false, role: null };
 }
 // Login function
 export async function login(email, password) {
-  const res = await UseAxios('/auth/login', {
-    method: 'POST',
+  const res = await UseAxios("/auth/login", {
+    method: "POST",
     body: { email, password },
   });
   return res;
@@ -19,8 +23,8 @@ export async function login(email, password) {
 
 // Logout function (optional)
 export async function logout() {
-  const res = await UseAxios('/auth/logout', {
-    method: 'POST',
+  const res = await UseAxios("/auth/logout", {
+    method: "POST",
   });
   return res.ok;
 }
