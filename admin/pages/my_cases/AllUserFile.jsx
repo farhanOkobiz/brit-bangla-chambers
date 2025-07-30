@@ -74,6 +74,7 @@ function AllUserFile() {
         });
       } catch (error) {
         console.error("Error deleting case file:", error);
+      
         toast.error("Failed to delete the case file.");
       }
     }

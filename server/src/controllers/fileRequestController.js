@@ -36,7 +36,8 @@ const deleteFile = (filePath) => {
 export const createFileRequest = async (req, res) => {
   console.log("hit create file request:", req.body);
   try {
-    const { client_id, advocate_id, case_id, title, description, case_number } = req.body;
+    const { client_id, advocate_id, case_id, title, description, case_number } =
+      req.body;
     const files = req.files;
 
     if (!client_id || !advocate_id || !case_number) {
@@ -125,43 +126,24 @@ export const updateFileRequest = async (req, res) => {
 // For client: upload file(s) to existing request
 export const uploadFilesToRequest = async (req, res) => {
   try {
-    console.log("hit upload files to request:", req.user);
-    const { id } = req.params;
+    const { id } = req.params; // file request id from URL
     const files = req.files;
-
-    const { _id } = req.user;
-
-    const mathcId = await FileRequest.findOne({client_id: _id})
-    console.log("matchId.client:", mathcId);
 
     if (!files?.length) {
       return res.status(400).json({ error: "No files uploaded." });
     }
 
-    const existing = await FileRequest.findOne({client_id: _id});
+    const existing = await FileRequest.findById(id);
     if (!existing) {
       return res.status(404).json({ error: "File request not found." });
     }
 
-    // Optionally: delete old files first
-    if (existing.file_url?.length) {
-      existing.file_url.forEach((url) => {
-        const filename = getFilenameFromUrl(url);
-        if (filename) {
-          deleteFile(getUploadPath(filename));
-        }
-      });
-    }
-
+    // Append new files to the array (do not overwrite)
     const newFileUrls = files.map((file) => `/uploads/${file.filename}`);
+    existing.file_url = [...existing.file_url, ...newFileUrls];
+    await existing.save();
 
-    const updated = await FileRequest.findOneAndUpdate(
-      {client_id: _id},
-      { file_url: newFileUrls },
-      { new: true }
-    );
-
-    res.status(200).json(updated);
+    res.status(200).json(existing);
   } catch (error) {
     console.error("Client file upload error:", error);
     req.files?.forEach((file) => deleteFile(getUploadPath(file.filename)));
@@ -189,14 +171,13 @@ export const getAllFileRequests = async (req, res) => {
   }
 };
 
-export const getFileRequestById = async (req, res) => {
+export const getFileRequestByClintId = async (req, res) => {
   try {
-    const { _id } = req.params;
+    const { _id } = req.user;
 
-    const request = await FileRequest.findById(_id)
-      .populate("client_id", "full_name email")
-      .populate("advocate_id", "full_name email");
+    const request = await FileRequest.find({ client_id: _id });
 
+    console.log("request:", request);
     if (!request) {
       return res.status(404).json({ error: "File request not found." });
     }
@@ -259,7 +240,7 @@ export const deleteSingleFileFromRequest = async (req, res) => {
   try {
     const { _id } = req.params;
     const { file_url } = req.body; // ⬅️ GET from query
-    console.log("hit delete single file from request:",_id, file_url);
+    console.log("hit delete single file from request:", _id, file_url);
 
     if (!_id || !file_url) {
       return res
@@ -290,13 +271,11 @@ export const deleteSingleFileFromRequest = async (req, res) => {
     const filePath = getUploadPath(fullPath);
     deleteFile(fullPath);
 
-    res
-      .status(200)
-      .json({
-        message: "File deleted successfully.",
-        success: true,
-        fileRequest,
-      });
+    res.status(200).json({
+      message: "File deleted successfully.",
+      success: true,
+      fileRequest,
+    });
   } catch (err) {
     console.error("Error deleting file:", err);
     res.status(500).json({ message: "Server error while deleting file." });
