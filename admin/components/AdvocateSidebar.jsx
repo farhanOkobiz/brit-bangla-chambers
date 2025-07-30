@@ -42,15 +42,10 @@ const menuItems = [
     icon: <FaFolderOpen />,
     subItems: [
       {
-        label: "All user file",
-        path: "/advocate/dashboard/all-user-file",
+        label: "All Case file",
+        path: "/advocate/dashboard/all-case-file",
         icon: <FaFolderOpen />,
       },
-      // {
-      //   label: "Create user file",
-      //   path: "/advocate/dashboard/create-user-file",
-      //   icon: <FaFolderOpen />,
-      // },
     ],
   },
   {
