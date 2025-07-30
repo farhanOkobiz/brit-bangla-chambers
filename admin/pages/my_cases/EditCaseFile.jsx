@@ -8,7 +8,7 @@ import { DatePicker } from "antd";
 const { Option } = Select;
 const { TextArea } = Input;
 
-export default function EditUserFile() {
+export default function EditCaseFile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();

@@ -72,7 +72,7 @@ const RequestForAdvocate = () => {
       toast.success("Message rejected");
       advocateMessages();
     } catch {
-      toast.error("Failed to reject message");
+      // toast.error("Failed to reject message");
     }
   };
 
