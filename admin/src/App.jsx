@@ -23,13 +23,12 @@ import UserManagement from "../components/Users/UserManagement";
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
 // import CreateUserFile from "../pages/my_cases/CreateUserFile";
 import AllCaseFile from "../pages/my_cases/AllCaseFile";
-import EditUserFile from "../pages/my_cases/EditUserFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
 import RequestForService from "../components/request/RequestForService";
 // import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
 import AdvocateFileRequestForm from "../components/Advocate/AdvocateFileRequestForm";
 
-import AdvocateUpdate from "../components/Admin/AdvocateUpdate"
+import AdvocateUpdate from "../components/Admin/AdvocateUpdate";
 import CreateAdvocate from "../components/Admin/CreateAdvocate";
 import EditCaseFile from "../pages/my_cases/EditCaseFile";
 import DetailsFile from "../pages/my_cases/DetailsFile";

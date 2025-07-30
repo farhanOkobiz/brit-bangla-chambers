@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { UseAxios } from "../../services/UseAxios";
 import {
   FaCalendarAlt,
   FaEdit,
-  FaEye,
   FaGavel,
   FaRegFileAlt,
   FaTrash,
   FaUser,
 } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 function DetailsFile() {
   const { id } = useParams();
   const [file, setFile] = useState("");
+  const navigate = useNavigate();
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -26,6 +27,41 @@ function DetailsFile() {
         return "bg-blue-100 text-blue-800 border-blue-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This case file will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      // Optimistic update
+      try {
+        await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+          method: "DELETE",
+        });
+
+        toast.success("Case file deleted successfully!");
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your case file has been removed.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        navigate("/advocate/dashboard/all-case-file");
+      } catch (error) {
+        toast.error("Failed to delete the case file.");
+      }
     }
   };
 
