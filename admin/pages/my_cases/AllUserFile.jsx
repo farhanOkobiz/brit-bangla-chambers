@@ -216,9 +216,10 @@ function AllUserFile() {
                 <div className="absolute top-4 right-4 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Link
                     to={`/advocate/dashboard/request-file/${file._id}`}
-                    className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#3BB77E] rounded-lg shadow-md hover:bg-[#319b69] transition duration-200"
                   >
-                    <FaRegFileAlt className="text-sm" />
+                    
+                    Request Files
                   </Link>
 
                   <button

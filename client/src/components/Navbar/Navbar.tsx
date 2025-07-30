@@ -28,6 +28,7 @@ function Navbar() {
   const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  console.log("Current Pathname:", data);
 
   useEffect(() => {
     setHydrated(true);

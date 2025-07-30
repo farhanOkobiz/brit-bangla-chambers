@@ -3,6 +3,8 @@ import { apiFetch } from "@/api/apiFetch";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import FileRequestForm from "@/components/FileRquestForm/FileRequestForm";
+import { useRouter } from "next/navigation";
 
 interface HearingVerdictDate {
   next_hearing_date?: string | null;
@@ -17,6 +19,7 @@ interface ApiResponse {
 
 export default function ClientDashboard() {
   const [data, setData] = useState<ApiResponse | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,14 +27,19 @@ export default function ClientDashboard() {
         const response = await apiFetch(
           "/client-dashboard/some-info-form-case"
         );
+        console.log("Dashboard data:", response.data);
         setData(response?.data ?? null);
       } catch (error) {
-        toast.error("Failed to load dashboard data");
+        console.error("Failed to load dashboard data:", error);
+        toast.error("Failed to load dashboard data: ");
       }
     };
 
     fetchData();
   }, []);
+  const handleClickEvent = () => {
+    router.push("/client/file-request");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -57,6 +65,10 @@ export default function ClientDashboard() {
           {data?.totalCases || 0}
         </p>
       </div>
+      {/* File Request Form */}
+
+      <button onClick={()=>{handleClickEvent()}}>Advocate Request</button>
+
 
       {/* Content */}
       <main className="max-w-7xl mx-auto p-6">

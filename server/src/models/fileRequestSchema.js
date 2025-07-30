@@ -15,8 +15,11 @@ const FileRequestSchema = new Schema(
       required: true,
     },
     case_id: {
-      type: Schema.Types.ObjectId,
-      ref: "CaseFile",
+      type: String,
+      required: true,
+    },
+    case_number: {
+      type: String,
       required: true,
     },
     title: {
