@@ -3,130 +3,179 @@
 import { apiFetch } from "@/api/apiFetch";
 import { useEffect, useState } from "react";
 
-const FileRequestForm = () => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [requestData, setRequestData] = useState<{
-    title?: string;
-    description?: string;
-  }>({});
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+interface FileRequest {
+  _id: string;
+  title?: string;
+  description?: string;
+}
 
-  // Handle PDF selection
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const pdfs = files.filter((file) => file.type === "application/pdf");
-    setSelectedFiles(pdfs);
-    setError("");
-    setSuccess("");
+const FileRequestForm = () => {
+  const [fileRequests, setFileRequests] = useState<FileRequest[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>(
+    {}
+  );
+  const [uploading, setUploading] = useState<Record<string, boolean>>({});
+  const [messages, setMessages] = useState<
+    Record<string, { error?: string; success?: string }>
+  >({});
+
+  const fetchRequests = async () => {
+    try {
+      const response = await apiFetch(`/file-request/clientId`, {
+        method: "GET",
+      });
+      if (!response.ok) throw new Error("Failed to fetch requests.");
+      setFileRequests(response.data || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  // Upload selected files
-  const handleUpload = async () => {
-    if (!selectedFiles.length) return;
+  useEffect(() => {
+    fetchRequests();
+  }, []);
 
-    setUploading(true);
-    setError("");
-    setSuccess("");
+  const handleFileChange = (
+    id: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = Array.from(e.target.files || []).filter(
+      (file) => file.type === "application/pdf"
+    );
+    setSelectedFiles((prev) => ({ ...prev, [id]: files }));
+    setMessages((prev) => ({ ...prev, [id]: {} }));
+  };
+
+  const handleUpload = async (id: string) => {
+    const files = selectedFiles[id];
+    if (!files || !files.length) return;
+
+    setUploading((prev) => ({ ...prev, [id]: true }));
+    setMessages((prev) => ({ ...prev, [id]: {} }));
 
     const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("files", file));
+    files.forEach((file) => formData.append("files", file));
 
     try {
-      const response = await apiFetch(`/file-request/upload`, {
+      const response = await apiFetch(`/file-request/${id}/upload`, {
         method: "PUT",
         body: formData,
       });
 
       if (!response.ok) throw new Error("Upload failed");
 
-      setSuccess("Files uploaded successfully!");
-      setSelectedFiles([]);
+      setMessages((prev) => ({
+        ...prev,
+        [id]: { success: "Files uploaded successfully!" },
+      }));
+      setSelectedFiles((prev) => ({ ...prev, [id]: [] }));
     } catch (err) {
       console.error(err);
-      setError("Something went wrong while uploading.");
+      setMessages((prev) => ({
+        ...prev,
+        [id]: { error: "Something went wrong while uploading." },
+      }));
     } finally {
-      setUploading(false);
+      setUploading((prev) => ({ ...prev, [id]: false }));
     }
   };
 
-  // Fetch request info (title & description)
-  const fetchRequestData = async () => {
+  const handleDelete = async (id: string) => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this request?"
+    );
+    if (!confirmDelete) return;
+
     try {
-      const response = await apiFetch(`/file-request/clientId`, {
-        method: "GET",
+      const response = await apiFetch(`/file-request/${id}`, {
+        method: "DELETE",
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch file request data.");
-      }
+      if (!response.ok) throw new Error("Failed to delete");
 
-      setRequestData(response.data || {});
+      setFileRequests((prev) => prev.filter((req) => req._id !== id));
     } catch (err) {
-      console.error(err);
-      setError("Could not fetch file request info.");
+      console.error("Delete error:", err);
+      alert("Something went wrong while deleting the request.");
     }
   };
 
-  useEffect(() => {
-    fetchRequestData();
-  }, []);
-
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Request Title
-        </h2>
-        <p className="text-gray-600">
-          {requestData.title || "No title available"}
-        </p>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-6 max-w-7xl mx-auto">
+      {fileRequests.map((req) => (
+        <div
+          key={req._id}
+          className="bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col justify-between space-y-5"
+        >
+          {/* Title & Description */}
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-1">
+              {req.title || "Untitled Request"}
+            </h2>
+            <p className="text-gray-600 text-sm">
+              {req.description || "No description provided."}
+            </p>
+          </div>
 
-      <div>
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Description
-        </h2>
-        <p className="text-gray-600 whitespace-pre-line">
-          {requestData.description || "No description provided."}
-        </p>
-      </div>
+          {/* File Input */}
+          <div className="mt-2">
+            <label className="block font-medium text-gray-800 mb-2">
+              Upload PDF files
+            </label>
+            <input
+              type="file"
+              accept="application/pdf"
+              multiple
+              onChange={(e) => handleFileChange(req._id, e)}
+              className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-medium file:bg-[#3BB77E] file:text-white hover:file:bg-[#319b69] transition"
+            />
+          </div>
 
-      <div>
-        <label className="block text-gray-800 font-medium mb-2">
-          Select PDF files
-        </label>
-        <input
-          type="file"
-          accept="application/pdf"
-          multiple
-          onChange={handleFileChange}
-          className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#3BB77E] file:text-white hover:file:bg-[#319b69] transition"
-        />
-      </div>
+          {/* Selected Files Preview */}
+          {selectedFiles[req._id]?.length > 0 && (
+            <div className="bg-gray-50 p-3 rounded-md border text-sm text-gray-700 space-y-1">
+              <h3 className="font-medium mb-1">Selected Files:</h3>
+              <ul className="list-disc list-inside space-y-1">
+                {selectedFiles[req._id].map((file, idx) => (
+                  <li key={idx}>📄 {file.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-      {selectedFiles.length > 0 && (
-        <div className="bg-gray-50 p-3 rounded-md border text-sm text-gray-700 space-y-1">
-          <h3 className="font-medium mb-1">Selected Files:</h3>
-          <ul className="list-disc list-inside space-y-1">
-            {selectedFiles.map((file, idx) => (
-              <li key={idx}>📄 {file.name}</li>
-            ))}
-          </ul>
+          {/* Success & Error Messages */}
+          {messages[req._id]?.error && (
+            <div className="bg-red-100 text-red-700 text-sm px-4 py-2 rounded-md">
+              {messages[req._id].error}
+            </div>
+          )}
+          {messages[req._id]?.success && (
+            <div className="bg-green-100 text-green-700 text-sm px-4 py-2 rounded-md">
+              {messages[req._id].success}
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-2 mt-2">
+            <button
+              onClick={() => handleUpload(req._id)}
+              disabled={
+                uploading[req._id] || !(selectedFiles[req._id]?.length > 0)
+              }
+              className="w-full py-2 px-4 bg-[#3BB77E] text-white font-semibold rounded-lg hover:bg-[#319b69] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploading[req._id] ? "Uploading..." : "Upload Files"}
+            </button>
+
+            <button
+              onClick={() => handleDelete(req._id)}
+              className="w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition"
+            >
+              Delete Request
+            </button>
+          </div>
         </div>
-      )}
-
-      {error && <p className="text-red-600 text-sm">{error}</p>}
-      {success && <p className="text-green-600 text-sm">{success}</p>}
-
-      <button
-        onClick={handleUpload}
-        disabled={uploading || selectedFiles.length === 0}
-        className="w-full py-2 px-4 bg-[#3BB77E] text-white font-semibold rounded-md hover:bg-[#319b69] transition disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {uploading ? "Uploading..." : "Upload Files"}
-      </button>
+      ))}
     </div>
   );
 };

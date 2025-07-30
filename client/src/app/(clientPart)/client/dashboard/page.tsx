@@ -11,6 +11,7 @@ import { useGetAuthQuery } from "@/redux/api/authApi";
 import { Bell } from "lucide-react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { fileURLToPath } from "url";
 
 interface Note {
   _id: string;
@@ -35,6 +36,7 @@ export default function ClientDashboard() {
   const { data: user } = useGetAuthQuery(undefined);
   const userId = user?.data?.userId;
   const [data, setData] = useState<ApiResponse | null>(null);
+  const [file, setFile] = useState<ApiResponse | null>(null);
   const router = useRouter();
   const { data: notifications } = useGetNotificationsQuery(userId, {
     skip: !user?.data?.userId,
@@ -69,6 +71,22 @@ export default function ClientDashboard() {
     }
   };
 
+  const handleFileRequest = () => {
+    router.push("/client/file-request");
+  };
+
+    const fetchRequests = async () => {
+      try {
+        const response = await apiFetch(`/file-request/clientId`, {
+          method: "GET",
+        });
+        if (!response.ok) throw new Error("Failed to fetch requests.");
+        setFile(response.data.length || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -84,10 +102,8 @@ export default function ClientDashboard() {
     };
 
     fetchData();
+    fetchRequests();
   }, []);
-  const handleClickEvent = () => {
-    router.push("/client/file-request");
-  };
 
   return (
     <>
@@ -109,6 +125,16 @@ export default function ClientDashboard() {
                 <p className="text-4xl font-bold text-blue-600">
                   {data?.totalCases || 0}
                 </p>
+              </div>
+              <div className=" flex justify-between items-center gap-4 bg-white shadow-md rounded-md p-6 max-w-sm mx-auto my-6 text-center">
+                <button
+                  className="text-2xl font-semibold text-gray-800"
+                  onClick={() => {
+                    handleFileRequest();
+                  }}
+                >
+                  File Request <span className="text-red-600">{file}</span>
+                </button>
               </div>
               <div className="">
                 <button

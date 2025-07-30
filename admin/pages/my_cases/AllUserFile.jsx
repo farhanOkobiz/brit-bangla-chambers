@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
@@ -27,7 +27,7 @@ function AllUserFile() {
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
-        const res = await useAxios("/showOwnCaseFile/allCaseFile");
+        const res = await UseAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
         console.log("caseFile:", caseFiles);
       } catch (err) {
@@ -60,7 +60,7 @@ function AllUserFile() {
       setCaseFiles(caseFiles.filter((file) => file._id !== id));
 
       try {
-        await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+        await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
           method: "DELETE",
         });
 
@@ -74,6 +74,7 @@ function AllUserFile() {
           showConfirmButton: false,
         });
       } catch (error) {
+        console.error("Error deleting case file:", error);
         setCaseFiles(previousCaseFiles);
         toast.error("Failed to delete the case file.");
       }
@@ -218,7 +219,6 @@ function AllUserFile() {
                     to={`/advocate/dashboard/request-file/${file._id}`}
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#3BB77E] rounded-lg shadow-md hover:bg-[#319b69] transition duration-200"
                   >
-                    
                     Request Files
                   </Link>
 

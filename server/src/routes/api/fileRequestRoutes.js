@@ -16,12 +16,17 @@ const router = Router();
 
 // Specific routes FIRST
 router.post("/", upload.array("files"), createFileRequest);
-router.put("/upload", checkClient, upload.array("files"), uploadFilesToRequest);
+router.put(
+  "/:id/upload",
+  checkClient,
+  upload.array("files"),
+  uploadFilesToRequest
+);
 router.get("/case/:_id", getFileRequestByCaseId);
 
 // Then parameterized routes
 router.get("/", getAllFileRequests);
-router.get("/clientId",checkClient, getFileRequestByClintId);
+router.get("/clientId", checkClient, getFileRequestByClintId);
 router.put("/:id", upload.array("files"), updateFileRequest);
 router.delete("/:id", deleteFileRequest);
 router.delete("/:_id/file", deleteSingleFileFromRequest);
