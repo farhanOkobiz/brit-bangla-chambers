@@ -1,10 +1,6 @@
 // src/pages/AdvocateFileRequestForm.jsx
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
-import { UseAxios } from "../../services/UseAxios";
->>>>>>> development
+import { UseAxios } from "../../services/useAxios";
 import { useParams } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 
@@ -103,34 +99,11 @@ const AdvocateFileRequestForm = () => {
   const handleDeleteFile = async (fileUrl) => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
 
-<<<<<<< HEAD
     try {
-      const res = await useAxios(`/file-request/${requestId}/file`, {
+      const res = await UseAxios(`/file-request/${requestId}/file`, {
         method: "delete",
         data: { file_url: fileUrl }, // ✅ This is the correct way
       });
-=======
-   try {
-     const res = await UseAxios(`/file-request/${requestId}/file`, {
-       method: "delete",
-       data: { file_url: fileUrl }, // ✅ This is the correct way
-     });
-
-     if (res?.data?.fileRequest) {
-       setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
-       setSuccessMsg("File deleted successfully.");
-     }
-     if(res.ok){
-      fetchFileRequests(caseId);
-     } else {
-       setError("Failed to delete file.");
-     }
-   } catch (err) {
-     console.error(err);
-     setError("Failed to delete file.");
-   }
- };
->>>>>>> development
 
       if (res?.data?.fileRequest) {
         setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
@@ -146,6 +119,16 @@ const AdvocateFileRequestForm = () => {
       setError("Failed to delete file.");
     }
   };
+
+  if (res?.data?.fileRequest) {
+    setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
+    setSuccessMsg("File deleted successfully.");
+  }
+  if (res.ok) {
+    fetchFileRequests(caseId);
+  } else {
+    setError("Failed to delete file.");
+  }
 
   useEffect(() => {
     if (id) fetchCaseDetails();
