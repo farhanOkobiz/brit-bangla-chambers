@@ -45,7 +45,7 @@ function DetailsFile() {
     if (result.isConfirmed) {
       // Optimistic update
       try {
-        await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+        await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
           method: "DELETE",
         });
 
