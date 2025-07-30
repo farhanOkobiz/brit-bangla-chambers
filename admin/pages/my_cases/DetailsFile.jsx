@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAxios } from "../../services/useAxios";
 import {
@@ -11,10 +11,12 @@ import {
   FaTrash,
   FaUser,
 } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 function DetailsFile() {
   const { id } = useParams();
   const [file, setFile] = useState("");
+  const navigate = useNavigate();
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -43,10 +45,6 @@ function DetailsFile() {
 
     if (result.isConfirmed) {
       // Optimistic update
-      const previousCaseFiles = [...caseFiles];
-
-      setCaseFiles(caseFiles.filter((file) => file._id !== id));
-
       try {
         await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
           method: "DELETE",
@@ -61,8 +59,8 @@ function DetailsFile() {
           timer: 1500,
           showConfirmButton: false,
         });
+        navigate("/advocate/dashboard/all-case-file");
       } catch (error) {
-        setCaseFiles(previousCaseFiles);
         toast.error("Failed to delete the case file.");
       }
     }
