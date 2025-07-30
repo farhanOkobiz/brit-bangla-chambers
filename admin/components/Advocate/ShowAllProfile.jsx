@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 const ShowProfile = ({ advocateId }) => {
   const [advocate, setAdvocate] = useState(null);
@@ -10,7 +10,7 @@ const ShowProfile = ({ advocateId }) => {
     const fetchAdvocate = async () => {
       setLoading(true);
       setError(null);
-      const res = await useAxios(`/advocate/${advocateId}`);
+      const res = await UseAxios(`/advocate/${advocateId}`);
       if (res.ok) {
         setAdvocate(res.data.advocate || res.data);
       } else {

@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useAxios } from "../services/UseAxios";
+=======
+import { UseAxios } from "../services/UseAxios";
+>>>>>>> development
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
 const SubcategoryForm = () => {
-  const useAxiosHook = useAxios; // Ensure useAxios is called at the top level
+  const UseAxiosHook = UseAxios; // Ensure UseAxios is called at the top level
   const [isLoading, setIsLoading] = useState(false);
   const [subcategories, setSubcategories] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -39,7 +43,7 @@ const SubcategoryForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await useAxiosHook("/specialization/get-all-categories", {
+      const res = await UseAxiosHook("/specialization/get-all-categories", {
         method: "GET",
       });
 
@@ -54,7 +58,7 @@ const SubcategoryForm = () => {
   const fetchSubcategories = async () => {
     try {
       setLoadingSubcategories(true);
-      const res = await useAxiosHook("/sub-category/get-all-sub-categories", {
+      const res = await UseAxiosHook("/sub-category/get-all-sub-categories", {
         method: "GET",
       });
 
@@ -84,7 +88,7 @@ const SubcategoryForm = () => {
         : "/sub-category/create-sub-category";
       const method = editingSubcategory ? "PUT" : "POST";
 
-      const res = await useAxiosHook(url, {
+      const res = await UseAxiosHook(url, {
         method,
         data: formData,
       });
@@ -120,7 +124,7 @@ const SubcategoryForm = () => {
     }
 
     try {
-      const res = await useAxiosHook(
+      const res = await UseAxiosHook(
         `/sub-category/delete-sub-category/${subcategoryId}`,
         {
           method: "DELETE",

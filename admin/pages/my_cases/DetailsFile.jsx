@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAxios } from "../../services/UseAxios";
+import { UseAxios } from "../../services/UseAxios";
 import {
   FaCalendarAlt,
   FaEdit,
@@ -45,7 +45,7 @@ function DetailsFile() {
     if (result.isConfirmed) {
       // Optimistic update
       try {
-        await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+        await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
           method: "DELETE",
         });
 
@@ -60,6 +60,7 @@ function DetailsFile() {
         });
         navigate("/advocate/dashboard/all-case-file");
       } catch (error) {
+        console.error("Error deleting case file:", error);
         toast.error("Failed to delete the case file.");
       }
     }
@@ -68,7 +69,7 @@ function DetailsFile() {
   useEffect(() => {
     const fetchCase = async () => {
       try {
-        const res = await useAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
+        const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
         const data = res.data?.data;
         setFile(data);
       } catch {

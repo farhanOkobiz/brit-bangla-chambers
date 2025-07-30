@@ -17,9 +17,8 @@ import {
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { useAuth } from "../auth/AuthContext";
+import { UseAuth } from "../auth/AuthContext";
 import { logout } from "../auth/api";
-import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
@@ -52,9 +51,10 @@ const menuItems = [
     subItems: [
       { label: "Manage Advocates", path: "/admin/advocates" },
       { label: "Advocate Approvals", path: "/admin/advocates/management" },
+      { label: "Create Advocate", path: "/admin/advocates/create" },
     ],
   },
-  { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
+  // { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
   {
     label: "Contact Messages",
     path: "/admin/messages/contact",
@@ -67,6 +67,7 @@ const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
+  const CLIENT_URL = import.meta.env.VITE_API_CLIENT_URL;
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -76,8 +77,7 @@ const AdminSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
-  const { setAuthed, setRole, setUserName, userName } = useAuth();
-  const navigate = useNavigate();
+  const { setAuthed, setRole, setUserName, userName } = UseAuth();
 
   const handleLogOut = () => {
     try {
@@ -86,7 +86,7 @@ const AdminSidebar = () => {
         setAuthed(false);
         setRole(null);
         setUserName(null);
-        navigate("/login");
+        window.location.href = `${CLIENT_URL}/login`;
       }
     } catch (error) {
       console.error("Logout failed:", error);
@@ -237,23 +237,11 @@ const AdminSidebar = () => {
             {/* User Profile Section */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-                <img
-                  className="h-10 w-10 rounded-full border-2 border-white shadow-sm object-cover"
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="Admin"
-                />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800">Admin User</h3>
-                  <p className="text-sm text-gray-600">admin@example.com</p>
-                </div>
-              </div>
-              <div className="mt-4 space-y-2">
-                <button className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200">
-                  Profile Settings
-                </button>
+                
+                
                 <button className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition-all duration-200 flex items-center space-x-3">
                   <FaSignOutAlt />
-                  <span>Logout</span>
+                  <button onClick={()=> handleLogOut()}>Logout</button>
                 </button>
               </div>
             </div>

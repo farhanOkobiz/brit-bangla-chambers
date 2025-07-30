@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useAxios } from "../services/UseAxios";
+=======
+import { UseAxios } from "../services/UseAxios";
+>>>>>>> development
 import {
   FaUser,
   FaPhone,
@@ -21,12 +25,12 @@ const AdvocateManagement = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
 
-  const useAxiosHook = useAxios;
+  const UseAxiosHook = UseAxios;
 
   const fetchAdvocates = async () => {
     try {
       setLoading(true);
-      const res = await useAxiosHook("/advocate/all", {
+      const res = await UseAxiosHook("/advocate/all", {
         method: "GET",
       });
 
@@ -44,7 +48,7 @@ const AdvocateManagement = () => {
 
   const handleStatusUpdate = async (advocateId, newStatus) => {
     try {
-      const res = await useAxiosHook(`/advocate/update/${advocateId}`, {
+      const res = await UseAxiosHook(`/advocate/update/${advocateId}`, {
         method: "PUT",
         data: { status: newStatus },
       });

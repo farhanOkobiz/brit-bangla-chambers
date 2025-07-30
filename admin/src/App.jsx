@@ -21,11 +21,15 @@ import EditBlog from "../pages/blog/EditBlog";
 import AdvocateManagement from "../components/AdvocateManagement";
 import UserManagement from "../components/Users/UserManagement";
 import AdvocateProfile from "../components/Advocate/AdvocateProfile";
+// import CreateUserFile from "../pages/my_cases/CreateUserFile";
+import AllCaseFile from "../pages/my_cases/AllCaseFile";
 import RequestForAdvocate from "../components/request/RequestForAdvocate";
 import RequestForService from "../components/request/RequestForService";
+// import EditAdvocateGeneralInfo from "../components/Admin/EditAdvocateGeneralInfo";
 import AdvocateFileRequestForm from "../components/Advocate/AdvocateFileRequestForm";
+
 import AdvocateUpdate from "../components/Admin/AdvocateUpdate";
-import AllCaseFile from "../pages/my_cases/AllCaseFile";
+import CreateAdvocate from "../components/Admin/CreateAdvocate";
 import EditCaseFile from "../pages/my_cases/EditCaseFile";
 import DetailsFile from "../pages/my_cases/DetailsFile";
 import AdminAllCaseFile from "../pages/Admin/admin_case_file/AdminAllCaseFile";
@@ -91,6 +95,7 @@ export default function App() {
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
           <Route path="case-file" element={<AdminAllCaseFile />} />
+          <Route path="/admin/advocates/create" element={<CreateAdvocate />} />
 
           {/* Add more child routes here as needed */}
         </Route>

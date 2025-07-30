@@ -1,6 +1,10 @@
 // src/pages/AdvocateFileRequestForm.jsx
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { useAxios } from "../../services/UseAxios";
+=======
+import { UseAxios } from "../../services/UseAxios";
+>>>>>>> development
 import { useParams } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 
@@ -42,7 +46,7 @@ const AdvocateFileRequestForm = () => {
       payload.append("advocate_id", advocateId);
       payload.append("case_id", caseId);
 
-      const res = await useAxios("/file-request", {
+      const res = await UseAxios("/file-request", {
         method: "post",
         data: payload,
       });
@@ -62,7 +66,7 @@ const AdvocateFileRequestForm = () => {
 
   const fetchFileRequests = async (caseId) => {
     try {
-      const res = await useAxios(`/file-request/case/${caseId}`, {
+      const res = await UseAxios(`/file-request/case/${caseId}`, {
         method: "get",
       });
       setRequestId(res.data._id);
@@ -81,7 +85,7 @@ const AdvocateFileRequestForm = () => {
 
   const fetchCaseDetails = async () => {
     try {
-      const res = await useAxios(`/showOwnCaseFile/singleCaseFile/${id}`, {
+      const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`, {
         method: "get",
       });
 
@@ -99,11 +103,34 @@ const AdvocateFileRequestForm = () => {
   const handleDeleteFile = async (fileUrl) => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
 
+<<<<<<< HEAD
     try {
       const res = await useAxios(`/file-request/${requestId}/file`, {
         method: "delete",
         data: { file_url: fileUrl }, // ✅ This is the correct way
       });
+=======
+   try {
+     const res = await UseAxios(`/file-request/${requestId}/file`, {
+       method: "delete",
+       data: { file_url: fileUrl }, // ✅ This is the correct way
+     });
+
+     if (res?.data?.fileRequest) {
+       setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
+       setSuccessMsg("File deleted successfully.");
+     }
+     if(res.ok){
+      fetchFileRequests(caseId);
+     } else {
+       setError("Failed to delete file.");
+     }
+   } catch (err) {
+     console.error(err);
+     setError("Failed to delete file.");
+   }
+ };
+>>>>>>> development
 
       if (res?.data?.fileRequest) {
         setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));

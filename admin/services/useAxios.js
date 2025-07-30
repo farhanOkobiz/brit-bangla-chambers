@@ -4,13 +4,13 @@ export async function UseAxios(url, options = {}) {
   // Validate that URL is provided
   if (!url || typeof url !== "string") {
     console.error(
-      "useAxios: URL is required and must be a string. Received:",
+      "UseAxios: URL is required and must be a string. Received:",
       url
     );
     return {
       status: 400,
       ok: false,
-      data: { message: "Invalid URL provided to useAxios" },
+      data: { message: "Invalid URL provided to UseAxios" },
     };
   }
 
@@ -19,7 +19,7 @@ export async function UseAxios(url, options = {}) {
   // Validate that API base URL is configured
   if (!apiBaseUrl) {
     console.error(
-      "useAxios: VITE_API_BASE_URL environment variable is not set"
+      "UseAxios: VITE_API_BASE_URL environment variable is not set"
     );
     return {
       status: 500,

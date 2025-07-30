@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useAxios } from "../services/UseAxios";
+=======
+import { UseAxios } from "../services/UseAxios";
+>>>>>>> development
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
@@ -14,7 +18,7 @@ const ServiceForm = () => {
   const [editingService, setEditingService] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const useAxiosHook = useAxios;
+  const UseAxiosHook = UseAxios;
 
   // Dynamic fields that update based on available categories and subcategories
   const getFields = () => [
@@ -76,7 +80,7 @@ const ServiceForm = () => {
   const fetchCategories = async () => {
     try {
       console.log("Fetching categories...");
-      const res = await useAxiosHook("/specialization/get-all-categories", {
+      const res = await UseAxiosHook("/specialization/get-all-categories", {
         method: "GET",
       });
 
@@ -96,7 +100,7 @@ const ServiceForm = () => {
   const fetchSubcategories = async () => {
     try {
       console.log("Fetching subcategories...");
-      const res = await useAxiosHook("/sub-category/get-all-sub-categories", {
+      const res = await UseAxiosHook("/sub-category/get-all-sub-categories", {
         method: "GET",
       });
 
@@ -117,7 +121,7 @@ const ServiceForm = () => {
     try {
       setLoadingServices(true);
       console.log("Fetching services...");
-      const res = await useAxiosHook("/service/get-all-service", {
+      const res = await UseAxiosHook("/service/get-all-service", {
         method: "GET",
       });
 
@@ -187,7 +191,7 @@ const ServiceForm = () => {
 
       console.log(`Making ${method} request to ${url}`);
 
-      const res = await useAxiosHook(url, {
+      const res = await UseAxiosHook(url, {
         method,
         data: formData,
       });
@@ -250,7 +254,7 @@ const ServiceForm = () => {
 
     try {
       console.log("Deleting service:", serviceId);
-      const res = await useAxiosHook(`/service/delete-service/${serviceId}`, {
+      const res = await UseAxiosHook(`/service/delete-service/${serviceId}`, {
         method: "DELETE",
       });
 

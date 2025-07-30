@@ -1,5 +1,9 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import { useAxios } from "../../services/UseAxios";
+=======
+import { UseAxios } from "../../services/UseAxios";
+>>>>>>> development
 import { toast } from "react-toastify";
 
 function CreateBlog() {
@@ -51,7 +55,7 @@ function CreateBlog() {
       );
       formDataToSend.append("image", imageFile);
 
-      await useAxios("/blog/create-blog", {
+      await UseAxios("/blog/create-blog", {
         method: "POST",
         data: formDataToSend,
         headers: {

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useAxios } from "../../services/UseAxios";
+=======
+import { UseAxios } from "../../services/UseAxios";
+>>>>>>> development
 import UserStats from "./UserStats";
 import UserFilters from "./UserFilters";
 import UserTable from "./UserTable";
@@ -21,7 +25,7 @@ const UserManagement = () => {
     try {
       setLoading(true);
       const endpoint = userType === "client" ? "/client/all" : "/advocate/all";
-      const res = await useAxios(endpoint, { method: "GET" });
+      const res = await UseAxios(endpoint, { method: "GET" });
       console.log(`Fetched ${userType}s:`, res.data);
 
       if (res.ok) {
@@ -43,7 +47,7 @@ const UserManagement = () => {
           ? `/client/update/${userId}`
           : `/advocate/update/${userId}`;
 
-      const res = await useAxios(endpoint, {
+      const res = await UseAxios(endpoint, {
         method: "PUT",
         data: { status: newStatus },
       });
@@ -82,7 +86,7 @@ const UserManagement = () => {
           ? `/client/profile/${userId}`
           : `/advocate/profile/${userId}`;
 
-      const res = await useAxios(endpoint, { method: "DELETE" });
+      const res = await UseAxios(endpoint, { method: "DELETE" });
 
       if (res.ok) {
         alert(
@@ -114,7 +118,7 @@ const UserManagement = () => {
           ? `/client/update/${selectedUser._id}`
           : `/advocate/update/${selectedUser._id}`;
 
-      const res = await useAxios(endpoint, {
+      const res = await UseAxios(endpoint, {
         method: "PUT",
         data: formData,
       });
@@ -197,7 +201,6 @@ const UserManagement = () => {
     }
   };
 
-  const axiosInstance = useAxios(); // Ensure useAxios is called at the top level
 
   useEffect(() => {
     fetchUsers();
