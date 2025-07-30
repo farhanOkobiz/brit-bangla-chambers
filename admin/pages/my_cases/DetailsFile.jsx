@@ -29,6 +29,45 @@ function DetailsFile() {
     }
   };
 
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This case file will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      // Optimistic update
+      const previousCaseFiles = [...caseFiles];
+
+      setCaseFiles(caseFiles.filter((file) => file._id !== id));
+
+      try {
+        await useAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
+          method: "DELETE",
+        });
+
+        toast.success("Case file deleted successfully!");
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your case file has been removed.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        setCaseFiles(previousCaseFiles);
+        toast.error("Failed to delete the case file.");
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchCase = async () => {
       try {
