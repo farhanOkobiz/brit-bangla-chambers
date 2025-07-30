@@ -14,7 +14,7 @@ import {
   FaEye,
   FaRegFileAlt,
 } from "react-icons/fa";
-import { useAxios } from "../../../services/UseAxios";
+import { UseAxios } from "../../../services/UseAxios";
 
 function AdminAllCaseFile() {
   const [caseFiles, setCaseFiles] = useState([]);
@@ -26,7 +26,7 @@ function AdminAllCaseFile() {
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
-        const res = await useAxios("/showOwnCaseFile/allCaseFile");
+        const res = await UseAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
         console.log("caseFile:", caseFiles);
       } catch (err) {

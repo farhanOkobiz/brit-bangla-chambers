@@ -5,11 +5,7 @@ import UserUpdateForm from "../../components/Users/UserUpdateForm";
 import UserStatusChanger from "../../components/Users/UserStatusChanger";
 //import UserVerifyButton from "../../components/Users/UserVerifyButton";
 import UserDeleteButton from "../../components/Users/UserDeleteButton";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
 import { UseAxios } from "../../services/UseAxios";
->>>>>>> development
 
 const fetchUsers = async () => {
   const res = await UseAxios("/auth/users", { method: "GET" });

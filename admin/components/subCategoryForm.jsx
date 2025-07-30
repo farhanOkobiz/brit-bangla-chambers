@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { useAxios } from "../services/UseAxios";
-=======
 import { UseAxios } from "../services/UseAxios";
->>>>>>> development
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 

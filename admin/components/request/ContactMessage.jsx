@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
 import { UseAxios } from "../../services/UseAxios";
->>>>>>> development
 import Swal from "sweetalert2";
 
 function ContactMessage() {

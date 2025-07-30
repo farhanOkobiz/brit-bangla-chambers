@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
 import { UseAxios } from "../../services/UseAxios";
->>>>>>> development
 import Swal from "sweetalert2";
 
 function Blogs() {

@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
 import { UseAxios } from "../../services/UseAxios";
->>>>>>> development
 
 const AdvocateProfile = () => {
   const [profile, setProfile] = useState(null);

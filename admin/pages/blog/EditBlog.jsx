@@ -2,11 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate, useParams, useRouteError } from "react-router-dom";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
 import { UseAxios } from "../../services/UseAxios";
->>>>>>> development
 import { toast } from "react-toastify";
 
 function EditBlog() {

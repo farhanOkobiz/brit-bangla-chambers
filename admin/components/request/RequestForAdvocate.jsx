@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-<<<<<<< HEAD
-import { useAxios } from "../../services/UseAxios";
-=======
 import { UseAxios } from "../../services/UseAxios.js";
->>>>>>> development
 import { CheckCircle, XCircle, Clock, Mail, Phone, User } from "lucide-react";
 
 const RequestForAdvocate = () => {

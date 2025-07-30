@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAxios } from "../../services/UseAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 export default function AdvocateEducationUpdate({ id }) {
   const [educations, setEducations] = useState([]);
@@ -19,7 +19,7 @@ export default function AdvocateEducationUpdate({ id }) {
       setLoading(true);
       setError("");
       try {
-        const res = await useAxios(`/educations/${advocateId}`, {
+        const res = await UseAxios(`/educations/${advocateId}`, {
           method: "GET",
         });
         setEducations(res.data.educations || []);
@@ -73,7 +73,7 @@ export default function AdvocateEducationUpdate({ id }) {
         educationIndexes.push(Number(idx));
       });
       formData.append("educationIndexes", JSON.stringify(educationIndexes));
-      const res = await useAxios(`/educations/${advocateId}`, {
+      const res = await UseAxios(`/educations/${advocateId}`, {
         method: "POST",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },

@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { useAxios } from "../services/UseAxios"; // Fixed: Changed from default import to named import
-=======
 import { UseAxios } from "../services/UseAxios"; // Fixed: Changed from default import to named import
->>>>>>> development
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
