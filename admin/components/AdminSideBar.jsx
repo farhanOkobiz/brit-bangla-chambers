@@ -17,7 +17,7 @@ import {
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { useAuth } from "../auth/AuthContext";
+import { UseAuth } from "../auth/AuthContext";
 import { logout } from "../auth/api";
 
 const menuItems = [
@@ -76,7 +76,7 @@ const AdminSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
-  const { setAuthed, setRole, setUserName, userName } = useAuth();
+  const { setAuthed, setRole, setUserName, userName } = UseAuth();
 
   const handleLogOut = () => {
     try {

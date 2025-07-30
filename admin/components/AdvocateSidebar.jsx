@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { logout } from "../auth/api";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { UseAuth } from "../auth/AuthContext";
 
 import {
   FaUserCircle,
@@ -87,7 +87,7 @@ const AdvocateSidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { setAuthed, setRole, setUserName } = useAuth();
+  const { setAuthed, setRole, setUserName } = UseAuth();
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);

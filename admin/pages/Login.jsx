@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UseAxios } from "../services/UseAxios";
-import { useAuth } from "../auth/AuthContext";
-import { login } from "../auth/api";
+import { UseAuth } from "../auth/AuthContext";
 import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const {  authed, role , setAuthed, setRole, setUserName } = useAuth();
+  const {  authed, role , setAuthed, setRole, setUserName } = UseAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,6 +49,7 @@ const Login = () => {
         setError(res.data?.message || "Invalid credentials");
       }
     } catch (error) {
+      console.error("Login error:", error);
       setError("Login failed. Please try again.");
     }
   };
