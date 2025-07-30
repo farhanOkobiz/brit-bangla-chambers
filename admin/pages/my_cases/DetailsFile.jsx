@@ -60,6 +60,7 @@ function DetailsFile() {
         });
         navigate("/advocate/dashboard/all-case-file");
       } catch (error) {
+        console.error("Error deleting case file:", error);
         toast.error("Failed to delete the case file.");
       }
     }
