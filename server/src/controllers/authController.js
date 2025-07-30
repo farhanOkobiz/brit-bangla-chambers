@@ -3,6 +3,7 @@ import User from "../models/userSchema.js";
 import Client from "../models/clientSchema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Advocate from "../models/advocateSchema.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "BritBangla_jwt_secret";
 const JWT_REFRESH_SECRET =
@@ -213,6 +214,7 @@ export const verifyOtp = async (req, res) => {
 
 //return role
 export const checkAuth = async (req, res) => {
+  console.log("Checking auth...", req.cookies);
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ message: "No token provided" });
 
@@ -221,14 +223,26 @@ export const checkAuth = async (req, res) => {
     req.user = decoded;
     // Fetch user to get full_name
     const user = await User.findById(decoded.id).select("full_name");
+
+    let profilePhoto;
+    if(decoded.role === "client") {
+      profilePhoto = await Client.findOne({ user_id: decoded.id }).select("profile_photo");
+      
+    }
+    else if(req.user.role === "advocate") {
+      profilePhoto = await Advocate.findOne({ user_id: decoded.id }).select("profile_photo_url");
+    }
+    
+
     return res.json({
       ok: true,
       role: decoded.role,
       userName: user?.full_name || "",
       userId: decoded.id,
+      profilePhoto: profilePhoto.profile_photo || profilePhoto.profile_photo_url || null,
     });
-    console.log(user);
   } catch (err) {
+    console.log("Auth check error:", err);
     return res.status(401).json({ message: "Invalid token" });
   }
 };

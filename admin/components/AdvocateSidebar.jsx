@@ -52,11 +52,11 @@ const menuItems = [
   //   path: "/advocate/appointments",
   //   icon: <FaCalendarCheck />,
   // },
-  {
-    label: "Clients",
-    path: "/advocate/clients",
-    icon: <FaUsers />,
-  },
+  // {
+  //   label: "Clients",
+  //   path: "/advocate/clients",
+  //   icon: <FaUsers />,
+  // },
   {
     label: "Blogs",
     isDropdown: true,
@@ -86,7 +86,10 @@ const AdvocateSidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
   const CLIENT_URL = import.meta.env.VITE_API_CLIENT_URL;
-  const { setAuthed, setRole, setUserName } = UseAuth();
+  const { setAuthed, setRole, setUserName, setProfilePhoto, userName, profilePhoto } = UseAuth();
+  const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
+
+  console.log("AdvocateSidebar rendered with userName:", userName, "profilePhoto:", profilePhoto);
 
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -103,6 +106,7 @@ const AdvocateSidebar = () => {
         setAuthed(false);
         setRole(null);
         setUserName(null);
+        setProfilePhoto(null);
         window.location.href = `${CLIENT_URL}`; // Redirect to login page
       }
     } catch (error) {
@@ -131,7 +135,7 @@ const AdvocateSidebar = () => {
           </h1>
           <img
             className="h-8 w-8 rounded-full object-cover"
-            src="/placeholder.svg?height=32&width=32"
+            src={`${IMAGE_URL}${profilePhoto}`}
             alt="Advocate"
           />
         </div>
@@ -342,16 +346,19 @@ const AdvocateSidebar = () => {
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
               <img
-                className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
-                src="/placeholder.svg?height=32&width=32"
-                alt="Advocate"
-              />
+  className="h-8 w-8 rounded-full object-cover"
+  src={
+    profilePhoto?.startsWith("http")
+      ? profilePhoto
+      : `${IMAGE_URL}${profilePhoto || "placeholder.svg?height=32&width=32"}`
+  }
+  alt="Admin"
+/>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-gray-800 truncate">
-                  Advocate User
+                  {userName || "Advocate User"}
                 </h3>
                 <p className="text-xs text-gray-600 truncate">
-                  advocate@example.com
                 </p>
               </div>
               <button
