@@ -43,6 +43,7 @@ export default function EditUserFile() {
         // Set file list if needed (Optional)
         // setFileList(data.documents || []);
       } catch (err) {
+        console.error("Error fetching case file:", err);
         message.error("Failed to load case file.");
       }
     };

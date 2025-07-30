@@ -11,6 +11,8 @@ import {
 import { getStatusColor } from "./userUtils";
 
 const UserTable = ({ users, userType, onViewDetails, onEdit, onDelete }) => {
+  console.log("Rendering UserTable with users:", users);
+const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
@@ -51,9 +53,11 @@ const UserTable = ({ users, userType, onViewDetails, onEdit, onDelete }) => {
                         <img
                           className="h-10 w-10 rounded-full object-cover"
                           src={
-                            user.profile_photo ||
-                            user.profile_photo_url ||
-                            "/placeholder.svg?height=40&width=40"
+                            user.profile_photo
+                              ? `${IMAGE_URL}${user.profile_photo}`
+                              : user.profile_photo_url
+                              ? `${IMAGE_URL}${user.profile_photo_url}`
+                              : "/placeholder.svg?height=40&width=40"
                           }
                           alt={user.user_id?.full_name}
                         />

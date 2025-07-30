@@ -1,6 +1,6 @@
 import CertificationUpdate from "./CertificationUpdate";
-import AdvocateEducationUpdate from "./AdvocateEducationUpdate";
-import AdvocateDocumentUpdate from "./AdvocateDocumentUpdate";
+import AdvocateEducationUpdate from "./EducationUpdate";
+import AdvocateDocumentUpdate from "./DocumentUpdate";
 
 
 export default function AdvocateUpdateAdditionalInfo({ id }) {

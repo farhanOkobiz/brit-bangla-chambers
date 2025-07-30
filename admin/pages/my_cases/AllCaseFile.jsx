@@ -53,9 +53,6 @@ function AllCaseFile() {
     });
 
     if (result.isConfirmed) {
-      // Optimistic update
-      const previousCaseFiles = [...caseFiles];
-
       setCaseFiles(caseFiles.filter((file) => file._id !== id));
 
       try {
@@ -73,7 +70,7 @@ function AllCaseFile() {
           showConfirmButton: false,
         });
       } catch (error) {
-        setCaseFiles(previousCaseFiles);
+        console.error("Error deleting case file:", error);
         toast.error("Failed to delete the case file.");
       }
     }

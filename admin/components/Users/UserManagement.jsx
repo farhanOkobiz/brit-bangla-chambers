@@ -197,7 +197,6 @@ const UserManagement = () => {
     }
   };
 
-  const axiosInstance = UseAxios(); // Ensure UseAxios is called at the top level
 
   useEffect(() => {
     fetchUsers();
