@@ -5,10 +5,10 @@ import UserUpdateForm from "../../components/Users/UserUpdateForm";
 import UserStatusChanger from "../../components/Users/UserStatusChanger";
  //import UserVerifyButton from "../../components/Users/UserVerifyButton";
 import UserDeleteButton from "../../components/Users/UserDeleteButton";
-import { useAxios } from "../../services/useAxios";
+import { UseAxios } from "../../services/UseAxios";
 
 const fetchUsers = async () => {
-  const res = await useAxios("/auth/users", { method: "GET" });
+  const res = await UseAxios("/auth/users", { method: "GET" });
   return res.ok && res.data.users ? res.data.users : [];
 };
 
@@ -30,7 +30,7 @@ const Users = () => {
   const handleCancelUpdate = () => setShowUpdateForm(false);
   const handleSaveUpdate = async (updatedUser) => {
     // Update user data in backend
-    const res = await useAxios(`/client/update/${updatedUser._id}`, {
+    const res = await UseAxios(`/client/update/${updatedUser._id}`, {
       method: "PUT",
       data: updatedUser,
     });
@@ -41,7 +41,7 @@ const Users = () => {
     }
   };
   const handleDelete = async (user) => {
-    const res = await useAxios(`/client/profile/${user._id}`, {
+    const res = await UseAxios(`/client/profile/${user._id}`, {
       method: "DELETE",
     });
     if (res.ok) {
@@ -51,7 +51,7 @@ const Users = () => {
   };
   // Verification removed
   const handleStatusChange = async (user, status) => {
-    const res = await useAxios(`/client/update/${user._id}`, {
+    const res = await UseAxios(`/client/update/${user._id}`, {
       method: "PUT",
       data: { status },
     });

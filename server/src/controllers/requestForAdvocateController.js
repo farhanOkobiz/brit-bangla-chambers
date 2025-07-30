@@ -36,7 +36,6 @@ export const createAdvocateMessage = async (req, res) => {
 export const getAdvocateMessage = async (req, res) => {
   try {
     const messages = await RequestForAdvocate.find();
-    console.log(messages);
 
     res.json({ success: true, messages });
   } catch (error) {
@@ -68,7 +67,9 @@ export const getRequestForAdvocate = async (req, res) => {
 
     const messages = await RequestService.find({
       forwardedTo: advocate_id,
-    }).sort({ createdAt: -1 });
+    })
+      .populate("clientId", "full_name")
+      .sort({ createdAt: -1 });
 
     console.log(messages);
 

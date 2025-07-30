@@ -1,6 +1,5 @@
 import Document from "../models/documentSchema.js";
 import Advocate from "../models/advocateSchema.js";
-import User from "../models/userSchema.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -29,39 +28,69 @@ const deleteFile = (filePath) => {
   }
 };
 
+// === GET DOCUMENTS CONTROLLER ===
+export const getDocuments = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await Advocate.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Advocate not found" });
+    }
+
+    const documents = await Document.find({ user_id: userId });
+    res.status(200).json({ documents });
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 // === MAIN CONTROLLER ===
 export const updateOrCreateDocuments = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { userType, documents } = req.body;
+    const { documents, documentIndexes } = req.body;
 
     const documentArray = JSON.parse(documents || "[]");
-
-    if (!["Advocate", "Client"].includes(userType)) {
-      return res.status(400).json({ error: "Invalid user type" });
+    let documentIndexesArray = [];
+    if (typeof documentIndexes === "string") {
+      try {
+        documentIndexesArray = JSON.parse(documentIndexes);
+      } catch (e) {
+        documentIndexesArray = [Number(documentIndexes)];
+      }
+    } else if (Array.isArray(documentIndexes)) {
+      documentIndexesArray = documentIndexes.map(Number);
+    } else {
+      documentIndexesArray = [];
     }
 
     if (!Array.isArray(documentArray)) {
       return res.status(400).json({ error: "Invalid document data" });
     }
 
-    const userModel = userType === "Advocate" ? Advocate : User;
-    const user = await userModel.findById(userId);
+    const user = await Advocate.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: `${userType} not found` });
+      return res.status(404).json({ error: "Advocate not found" });
     }
 
     const savedIds = [];
 
     for (let i = 0; i < documentArray.length; i++) {
       const doc = documentArray[i];
-      const file = req.files?.[i]; // Match file by index
+      let file = null;
+      if (documentIndexesArray.length && req.files && req.files.length) {
+        const fileIdx = documentIndexesArray.indexOf(i);
+        if (fileIdx !== -1 && req.files[fileIdx]) {
+          file = req.files[fileIdx];
+        }
+      }
 
       const { _id, file_name, document_type, verified } = doc;
       const file_url = file ? `/uploads/${file.filename}` : null;
 
       if (_id) {
-        // === UPDATE EXISTING ===
         const existingDoc = await Document.findById(_id);
         if (existingDoc) {
           if (file_url && existingDoc.file_url) {
@@ -80,21 +109,17 @@ export const updateOrCreateDocuments = async (req, res) => {
           savedIds.push(existingDoc._id.toString());
         }
       } else {
-        // === CREATE NEW ===
         const newDoc = await Document.create({
-          user_type: userType,
           user_id: userId,
           file_url,
           file_name,
           document_type,
           verified: typeof verified === "boolean" ? verified : true,
         });
-
         savedIds.push(newDoc._id.toString());
       }
     }
 
-    // === DELETE OLD DOCUMENTS ===
     const previousIds = (user.document_ids || []).map(String);
     const toDelete = previousIds.filter((id) => !savedIds.includes(id));
 
@@ -122,4 +147,3 @@ export const updateOrCreateDocuments = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
- 

@@ -208,7 +208,7 @@ export const createAdvocateProfile = async (req, res) => {
     }
 
     uploadedFilename = req.file.filename;
-    const profilePhotoUrl = `${req.protocol}://${req.get("host")}/uploads/${uploadedFilename}`;
+    const profilePhotoUrl = `/uploads/${uploadedFilename}`;
 
     // Basic validation
     if (!full_name || !email || !phone || !password) {

@@ -1,8 +1,8 @@
-import { useAxios } from '../services/useAxios';
+import { UseAxios } from '../services/UseAxios';
 
 // Check if user is authenticated
 export async function checkAuth() {
-  const res = await useAxios('/auth/check');
+  const res = await UseAxios('/auth/check');
   if (res.ok && res.data) {
     return { ok: true, role: res.data.role , userName: res.data.userName || null }; 
   }
@@ -10,7 +10,7 @@ export async function checkAuth() {
 }
 // Login function
 export async function login(email, password) {
-  const res = await useAxios('/auth/login', {
+  const res = await UseAxios('/auth/login', {
     method: 'POST',
     body: { email, password },
   });
@@ -19,7 +19,7 @@ export async function login(email, password) {
 
 // Logout function (optional)
 export async function logout() {
-  const res = await useAxios('/auth/logout', {
+  const res = await UseAxios('/auth/logout', {
     method: 'POST',
   });
   return res.ok;
@@ -27,7 +27,7 @@ export async function logout() {
 
 //category functions
 export async function createCategory(name, image, description, link) {
-  const res = await useAxios(
+  const res = await UseAxios(
     "http://localhost:5000/api/v1/category/create-specialization",
     {
       method: "POST",
