@@ -8,7 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const {  authed, role , setAuthed, setRole, setUserName } = UseAuth();
+  const { authed, role, setAuthed, setRole, setUserName } = UseAuth();
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -100,30 +100,39 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
- const handleDeleteFile = async (fileUrl) => {
-   if (!window.confirm("Are you sure you want to delete this file?")) return;
+  const handleDeleteFile = async (fileUrl) => {
+    if (!window.confirm("Are you sure you want to delete this file?")) return;
 
-   try {
-     const res = await UseAxios(`/file-request/${requestId}/file`, {
-       method: "delete",
-       data: { file_url: fileUrl }, // ✅ This is the correct way
-     });
+    try {
+      const res = await UseAxios(`/file-request/${requestId}/file`, {
+        method: "delete",
+        data: { file_url: fileUrl }, // ✅ This is the correct way
+      });
 
-     if (res?.data?.fileRequest) {
-       setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
-       setSuccessMsg("File deleted successfully.");
-     }
-     if(res.ok){
-      fetchFileRequests(caseId);
-     } else {
-       setError("Failed to delete file.");
-     }
-   } catch (err) {
-     console.error(err);
-     setError("Failed to delete file.");
-   }
- };
+      if (res?.data?.fileRequest) {
+        setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
+        setSuccessMsg("File deleted successfully.");
+      }
+      if (res.ok) {
+        fetchFileRequests(caseId);
+      } else {
+        setError("Failed to delete file.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to delete file.");
+    }
+  };
 
+  if (res?.data?.fileRequest) {
+    setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
+    setSuccessMsg("File deleted successfully.");
+  }
+  if (res.ok) {
+    fetchFileRequests(caseId);
+  } else {
+    setError("Failed to delete file.");
+  }
 
   useEffect(() => {
     if (id) fetchCaseDetails();

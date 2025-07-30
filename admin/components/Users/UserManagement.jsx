@@ -197,7 +197,6 @@ const UserManagement = () => {
     }
   };
 
-
   useEffect(() => {
     fetchUsers();
   }, [userType]);
