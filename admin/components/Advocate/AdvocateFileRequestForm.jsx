@@ -124,15 +124,7 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
-  if (res?.data?.fileRequest) {
-    setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
-    setSuccessMsg("File deleted successfully.");
-  }
-  if (res.ok) {
-    fetchFileRequests(caseId);
-  } else {
-    setError("Failed to delete file.");
-  }
+
 
   useEffect(() => {
     if (id) fetchCaseDetails();
