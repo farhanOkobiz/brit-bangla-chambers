@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { logout } from "../auth/api";
-import { useNavigate } from "react-router-dom";
 import { UseAuth } from "../auth/AuthContext";
 
 import {
@@ -48,11 +47,11 @@ const menuItems = [
       },
     ],
   },
-  {
-    label: "Appointments",
-    path: "/advocate/appointments",
-    icon: <FaCalendarCheck />,
-  },
+  // {
+  //   label: "Appointments",
+  //   path: "/advocate/appointments",
+  //   icon: <FaCalendarCheck />,
+  // },
   {
     label: "Clients",
     path: "/advocate/clients",
@@ -86,7 +85,7 @@ const AdvocateSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const CLIENT_URL = import.meta.env.VITE_API_CLIENT_URL;
   const { setAuthed, setRole, setUserName } = UseAuth();
 
   const toggleDropdown = (label) => {
@@ -104,7 +103,7 @@ const AdvocateSidebar = () => {
         setAuthed(false);
         setRole(null);
         setUserName(null);
-        navigate("/login");
+        window.location.href = `${CLIENT_URL}`; // Redirect to login page
       }
     } catch (error) {
       console.error("Logout failed:", error);

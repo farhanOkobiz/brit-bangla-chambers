@@ -3,8 +3,8 @@ import { apiFetch } from "@/api/apiFetch";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import FileRequestForm from "@/components/FileRquestForm/FileRequestForm";
-import { useRouter } from "next/navigation";
+// import FileRequestForm from "@/components/FileRquestForm/FileRequestForm";
+// import { useRouter } from "next/navigation";
 import {
   useDeleteNotificationMutation,
   useGetNotificationsQuery,
@@ -36,7 +36,7 @@ export default function ClientDashboard() {
   const { data: user } = useGetAuthQuery(undefined);
   const userId = user?.data?.userId;
   const [data, setData] = useState<ApiResponse | null>(null);
-  const router = useRouter();
+  // const router = useRouter();
   const { data: notifications } = useGetNotificationsQuery(userId, {
     skip: !user?.data?.userId,
   });
@@ -86,9 +86,9 @@ export default function ClientDashboard() {
 
     fetchData();
   }, []);
-  const handleClickEvent = () => {
-    router.push("/client/file-request");
-  };
+  // const handleClickEvent = () => {
+  //   router.push("/client/file-request");
+  // };
 
   return (
     <>

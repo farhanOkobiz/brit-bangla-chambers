@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const FileRequestForm = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [data, setData] = useState(null);
+  // const [data, setData] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,9 +48,9 @@ const FileRequestForm = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h1>Title</h1>
-      <p>{title}</p>
+      {/* <p>{title}</p> */}
       <h1>Descripton</h1>
-      <p>{description}</p>
+      {/* <p>{description}</p> */}
       <h2 className="text-lg font-semibold mb-4">Upload PDF Files</h2>
 
       <input

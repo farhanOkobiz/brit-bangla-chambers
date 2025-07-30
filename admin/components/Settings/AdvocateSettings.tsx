@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 
-const AdminSettings = () => {
+const AdvocateSettings = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -96,5 +96,5 @@ const AdminSettings = () => {
     </div>
   );
 };
-export default AdminSettings;
+export default AdvocateSettings;
 
