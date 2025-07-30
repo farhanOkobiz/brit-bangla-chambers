@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function useAxios(url, options = {}) {
+export async function UseAxios(url, options = {}) {
   // Validate that URL is provided
   if (!url || typeof url !== "string") {
     console.error(

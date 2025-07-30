@@ -28,6 +28,7 @@ import AdvocateUpdate from "../components/Admin/AdvocateUpdate";
 import AllCaseFile from "../pages/my_cases/AllCaseFile";
 import EditCaseFile from "../pages/my_cases/EditCaseFile";
 import DetailsFile from "../pages/my_cases/DetailsFile";
+import AdminAllCaseFile from "../pages/Admin/admin_case_file/AdminAllCaseFile";
 
 export default function App() {
   return (
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
+          <Route path="case-file" element={<AdminAllCaseFile />} />
 
           {/* Add more child routes here as needed */}
         </Route>

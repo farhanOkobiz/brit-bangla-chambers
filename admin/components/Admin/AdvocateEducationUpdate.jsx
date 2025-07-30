@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 
 export default function AdvocateEducationUpdate({ id }) {
   const [educations, setEducations] = useState([]);
@@ -19,10 +19,9 @@ export default function AdvocateEducationUpdate({ id }) {
       setLoading(true);
       setError("");
       try {
-        const res = await useAxios(
-          `/educations/${advocateId}`,
-          { method: "GET" }
-        );
+        const res = await useAxios(`/educations/${advocateId}`, {
+          method: "GET",
+        });
         setEducations(res.data.educations || []);
       } catch (err) {
         setError("Failed to load education records");
@@ -34,9 +33,7 @@ export default function AdvocateEducationUpdate({ id }) {
 
   const handleEduChange = (idx, field, value) => {
     setEducations((prev) =>
-      prev.map((edu, i) =>
-        i === idx ? { ...edu, [field]: value } : edu
-      )
+      prev.map((edu, i) => (i === idx ? { ...edu, [field]: value } : edu))
     );
   };
 
@@ -76,14 +73,11 @@ export default function AdvocateEducationUpdate({ id }) {
         educationIndexes.push(Number(idx));
       });
       formData.append("educationIndexes", JSON.stringify(educationIndexes));
-      const res = await useAxios(
-        `/educations/${advocateId}`,
-        {
-          method: "POST",
-          data: formData,
-          headers: { "Content-Type": "multipart/form-data" }
-        }
-      );
+      const res = await useAxios(`/educations/${advocateId}`, {
+        method: "POST",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setSuccess("Education records updated successfully!");
       setEducations(res.data.educations || []);
       setFiles({});

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 import { toast } from "react-toastify";
 
 function CreateBlog() {

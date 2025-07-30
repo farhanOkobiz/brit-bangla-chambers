@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 import {
   FiTrash2,
   FiUser,

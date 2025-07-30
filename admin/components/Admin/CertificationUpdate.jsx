@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {useAxios} from "../../services/useAxios"
+import { useAxios } from "../../services/UseAxios";
 import { use } from "react";
 
 export default function CertificationUpdate({ id }) {
@@ -15,18 +15,16 @@ export default function CertificationUpdate({ id }) {
 
   useEffect(() => {
     setAdvocateId(id);
-  }
-    , [id]);
-    
+  }, [id]);
+
   useEffect(() => {
     async function fetchCerts() {
       setLoading(true);
       setError("");
       try {
-        const res = await useAxios( 
-            `/certifications/${advocateId}`,
-            { method: "GET" }
-        );
+        const res = await useAxios(`/certifications/${advocateId}`, {
+          method: "GET",
+        });
         console.log("Fetched certifications:", res.data);
         setCertifications(res.data.certifications || []);
       } catch (err) {
@@ -40,9 +38,7 @@ export default function CertificationUpdate({ id }) {
   // Handle input changes for certification fields
   const handleCertChange = (idx, field, value) => {
     setCertifications((prev) =>
-      prev.map((cert, i) =>
-        i === idx ? { ...cert, [field]: value } : cert
-      )
+      prev.map((cert, i) => (i === idx ? { ...cert, [field]: value } : cert))
     );
   };
 
@@ -55,7 +51,13 @@ export default function CertificationUpdate({ id }) {
   const addCertification = () => {
     setCertifications((prev) => [
       ...prev,
-      { title: "", issuer: "", year: "", certificate_type: "", description: "" },
+      {
+        title: "",
+        issuer: "",
+        year: "",
+        certificate_type: "",
+        description: "",
+      },
     ]);
   };
 
@@ -90,23 +92,18 @@ export default function CertificationUpdate({ id }) {
       if (fileIndexes.length === 1) {
         formData.append("certificateIndexes", fileIndexes[0]);
       } else if (fileIndexes.length > 1) {
-        fileIndexes.forEach(i => formData.append("certificateIndexes", i));
+        fileIndexes.forEach((i) => formData.append("certificateIndexes", i));
       }
-      const res = await useAxios(
-        `/certifications/${advocateId}`,
-        {
-          method: "PATCH",
-          data: formData,
-          headers: { "Content-Type": "multipart/form-data" }
-        }
-      );
+      const res = await useAxios(`/certifications/${advocateId}`, {
+        method: "PATCH",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setSuccess("Certifications updated successfully!");
       setCertifications(res.data.certifications || []);
       setFiles({});
     } catch (err) {
-      setError(
-        err.response?.data?.error || "Failed to update certifications"
-      );
+      setError(err.response?.data?.error || "Failed to update certifications");
     }
     setLoading(false);
   };
@@ -124,9 +121,7 @@ export default function CertificationUpdate({ id }) {
                 className="border rounded px-2 py-1 w-1/2"
                 placeholder="Title"
                 value={cert.title}
-                onChange={(e) =>
-                  handleCertChange(idx, "title", e.target.value)
-                }
+                onChange={(e) => handleCertChange(idx, "title", e.target.value)}
                 required
               />
               <input
@@ -145,9 +140,7 @@ export default function CertificationUpdate({ id }) {
                 placeholder="Year"
                 type="number"
                 value={cert.year}
-                onChange={(e) =>
-                  handleCertChange(idx, "year", e.target.value)
-                }
+                onChange={(e) => handleCertChange(idx, "year", e.target.value)}
                 required
               />
               <input
@@ -171,17 +164,15 @@ export default function CertificationUpdate({ id }) {
               <input
                 type="file"
                 accept="application/pdf,image/*"
-                onChange={(e) =>
-                  handleFileChange(idx, e.target.files[0])
-                }
+                onChange={(e) => handleFileChange(idx, e.target.files[0])}
               />
-              {cert.certificate_url && 
+              {cert.certificate_url && (
                 <img
                   src={`${IMAGE_URL}${cert.certificate_url}`}
                   alt="Certificate"
                   className="w-16 h-16 object-cover rounded"
                 />
-              }
+              )}
               <button
                 type="button"
                 className="text-red-600 ml-2"

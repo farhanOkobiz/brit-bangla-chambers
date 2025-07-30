@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 import Swal from "sweetalert2";
 
 function Blogs() {

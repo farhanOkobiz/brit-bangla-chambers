@@ -38,6 +38,7 @@ const menuItems = [
     path: "/admin/messages/service",
     icon: <FaConciergeBell />,
   },
+  { label: "Case file", path: "/admin/case-file", icon: <FaCog /> },
   {
     label: "Subcategories",
     path: "/admin/sub-categories",

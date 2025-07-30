@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Form, Input, Button, Select, Upload, message, Spin } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 import { DatePicker } from "antd";
 
 const { Option } = Select;

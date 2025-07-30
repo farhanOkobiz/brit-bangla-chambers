@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAxios } from "../services/useAxios";
+import { useAxios } from "../services/UseAxios";
 import {
   FaUser,
   FaPhone,

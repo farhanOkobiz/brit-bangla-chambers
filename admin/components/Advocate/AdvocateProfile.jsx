@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 
 const AdvocateProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -65,11 +65,19 @@ const AdvocateProfile = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {user?.full_name || "Advocate"}
               </h1>
-              <p className="text-lg text-gray-600 mb-4">{advocate.designation}</p>
+              <p className="text-lg text-gray-600 mb-4">
+                {advocate.designation}
+              </p>
               <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                 <span>Bar Enroll: {advocate.bar_council_enroll_num}</span>
                 <span>Experience: {advocate.experience_years} years</span>
-                <span className={`px-3 py-1 rounded-full ${advocate.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                <span
+                  className={`px-3 py-1 rounded-full ${
+                    advocate.status === "active"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
                   {advocate.status}
                 </span>
               </div>
@@ -78,7 +86,7 @@ const AdvocateProfile = () => {
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="text-2xl font-bold text-gray-900">
-                    {advocate.avg_rating || 'N/A'}
+                    {advocate.avg_rating || "N/A"}
                   </div>
                   <div className="text-sm text-gray-500">
                     {advocate.total_reviews} reviews
@@ -100,7 +108,9 @@ const AdvocateProfile = () => {
           <div className="lg:col-span-2 space-y-8">
             {/* About Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">About</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                About
+              </h2>
               <p className="text-gray-700 leading-relaxed">
                 {advocate.bio || "No bio available."}
               </p>
@@ -108,11 +118,18 @@ const AdvocateProfile = () => {
 
             {/* Available Hours */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Available Hours</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Available Hours
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {Object.entries(availableHours).map(([day, hours]) => (
-                  <div key={day} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
-                    <span className="font-medium text-gray-900 capitalize">{day}</span>
+                  <div
+                    key={day}
+                    className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
+                  >
+                    <span className="font-medium text-gray-900 capitalize">
+                      {day}
+                    </span>
                     <span className="text-gray-600">{hours || "Closed"}</span>
                   </div>
                 ))}
@@ -121,13 +138,17 @@ const AdvocateProfile = () => {
 
             {/* Statistics */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Statistics</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Statistics
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-900">
                     {stats.total_consultations || 0}
                   </div>
-                  <div className="text-sm text-gray-500">Total Consultations</div>
+                  <div className="text-sm text-gray-500">
+                    Total Consultations
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-900">
@@ -137,10 +158,9 @@ const AdvocateProfile = () => {
                 </div>
                 <div className="text-center">
                   <div className="text-lg font-medium text-gray-900">
-                    {stats.last_consultation ? 
-                      new Date(stats.last_consultation).toLocaleDateString() : 
-                      "N/A"
-                    }
+                    {stats.last_consultation
+                      ? new Date(stats.last_consultation).toLocaleDateString()
+                      : "N/A"}
                   </div>
                   <div className="text-sm text-gray-500">Last Consultation</div>
                 </div>
@@ -152,7 +172,9 @@ const AdvocateProfile = () => {
           <div className="space-y-8">
             {/* Contact Information */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact Information</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Contact Information
+              </h2>
               <div className="space-y-3">
                 <div>
                   <div className="text-sm font-medium text-gray-500">Email</div>
@@ -160,11 +182,17 @@ const AdvocateProfile = () => {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-500">Phone</div>
-                  <div className="text-gray-900">{user?.phone || contact.phone || "N/A"}</div>
+                  <div className="text-gray-900">
+                    {user?.phone || contact.phone || "N/A"}
+                  </div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-500">Office Address</div>
-                  <div className="text-gray-900">{advocate.office_address || "N/A"}</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    Office Address
+                  </div>
+                  <div className="text-gray-900">
+                    {advocate.office_address || "N/A"}
+                  </div>
                 </div>
               </div>
             </div>
@@ -172,12 +200,14 @@ const AdvocateProfile = () => {
             {/* Social Links */}
             {(contact.facebook || contact.linkedin) && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Social Links</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Social Links
+                </h2>
                 <div className="space-y-3">
                   {contact.facebook && (
-                    <a 
-                      href={contact.facebook} 
-                      target="_blank" 
+                    <a
+                      href={contact.facebook}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="block text-blue-600 hover:text-blue-800 hover:underline"
                     >
@@ -185,9 +215,9 @@ const AdvocateProfile = () => {
                     </a>
                   )}
                   {contact.linkedin && (
-                    <a 
-                      href={contact.linkedin} 
-                      target="_blank" 
+                    <a
+                      href={contact.linkedin}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="block text-blue-600 hover:text-blue-800 hover:underline"
                     >
@@ -200,16 +230,22 @@ const AdvocateProfile = () => {
 
             {/* Fee Structure */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Fee Structure</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Fee Structure
+              </h2>
               <div className="space-y-3">
                 <div>
-                  <div className="text-sm font-medium text-gray-500">Base Fee</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    Base Fee
+                  </div>
                   <div className="text-gray-900 font-medium">
                     {fee.base_fee ? `$${fee.base_fee}` : "Contact for pricing"}
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-500">Public Display</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    Public Display
+                  </div>
                   <div className="text-gray-900">
                     {fee.show_publicly ? "Yes" : "No"}
                   </div>
@@ -219,13 +255,19 @@ const AdvocateProfile = () => {
 
             {/* Consultation Status */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Consultation</h2>
-              <div className={`px-4 py-3 rounded-lg text-center font-medium ${
-                advocate.consultation_available 
-                  ? 'bg-green-50 text-green-800 border border-green-200' 
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}>
-                {advocate.consultation_available ? 'Available' : 'Not Available'}
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Consultation
+              </h2>
+              <div
+                className={`px-4 py-3 rounded-lg text-center font-medium ${
+                  advocate.consultation_available
+                    ? "bg-green-50 text-green-800 border border-green-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
+                {advocate.consultation_available
+                  ? "Available"
+                  : "Not Available"}
               </div>
             </div>
           </div>

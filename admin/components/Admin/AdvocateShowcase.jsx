@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 
 export default function AdvocateShowcase() {
   const [advocates, setAdvocates] = useState([]);
@@ -40,14 +40,27 @@ export default function AdvocateShowcase() {
           onClick={() => navigate(`/admin/advocates/${adv._id}`)}
         >
           <img
-            src={adv.profile_photo_url?.includes("null") ? "/default-profile.png" : adv.profile_photo_url}
+            src={
+              adv.profile_photo_url?.includes("null")
+                ? "/default-profile.png"
+                : adv.profile_photo_url
+            }
             alt={adv.user_id?.full_name || "Advocate"}
-            style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "6px" }}
+            style={{
+              width: "100%",
+              height: "120px",
+              objectFit: "cover",
+              borderRadius: "6px",
+            }}
           />
-          <h3 style={{ margin: "0.5rem 0 0.2rem" }}>{adv.user_id?.full_name}</h3>
+          <h3 style={{ margin: "0.5rem 0 0.2rem" }}>
+            {adv.user_id?.full_name}
+          </h3>
           <p style={{ margin: 0, fontWeight: "bold" }}>{adv.designation}</p>
           <p style={{ margin: 0 }}>{adv.office_address}</p>
-          <p style={{ margin: 0, color: "#555" }}>Experience: {adv.experience_years} yrs</p>
+          <p style={{ margin: 0, color: "#555" }}>
+            Experience: {adv.experience_years} yrs
+          </p>
         </div>
       ))}
     </div>

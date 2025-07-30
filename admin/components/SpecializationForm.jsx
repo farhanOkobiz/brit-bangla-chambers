@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAxios } from "../services/useAxios"; // Fixed: Changed from default import to named import
+import { useAxios } from "../services/UseAxios"; // Fixed: Changed from default import to named import
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
 
@@ -13,7 +13,12 @@ const SpecializationForm = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const fields = [
-    { name: "name", label: "Specialization Name", type: "text", required: true },
+    {
+      name: "name",
+      label: "Specialization Name",
+      type: "text",
+      required: true,
+    },
     {
       name: "details", // Changed from "description" to "details" to match the database field
       label: "Description",
@@ -108,7 +113,9 @@ const SpecializationForm = () => {
   };
 
   const handleDelete = async (SpecializationId) => {
-    if (!window.confirm("Are you sure you want to delete this Specialization?")) {
+    if (
+      !window.confirm("Are you sure you want to delete this Specialization?")
+    ) {
       return;
     }
 
@@ -200,7 +207,9 @@ const SpecializationForm = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Specialization</h1>
-            <p className="text-gray-600 mt-1">Create and manage Specialization</p>
+            <p className="text-gray-600 mt-1">
+              Create and manage Specialization
+            </p>
           </div>
         </div>
       </div>

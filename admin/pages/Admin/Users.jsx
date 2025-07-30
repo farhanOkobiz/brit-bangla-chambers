@@ -3,9 +3,9 @@ import UserList from "../../components/Users/UserList";
 import UserDetails from "../../components/Users/UserDetails";
 import UserUpdateForm from "../../components/Users/UserUpdateForm";
 import UserStatusChanger from "../../components/Users/UserStatusChanger";
- //import UserVerifyButton from "../../components/Users/UserVerifyButton";
+//import UserVerifyButton from "../../components/Users/UserVerifyButton";
 import UserDeleteButton from "../../components/Users/UserDeleteButton";
-import { useAxios } from "../../services/useAxios";
+import { useAxios } from "../../services/UseAxios";
 
 const fetchUsers = async () => {
   const res = await useAxios("/auth/users", { method: "GET" });
@@ -35,9 +35,19 @@ const Users = () => {
       data: updatedUser,
     });
     if (res.ok && res.data.client) {
-      setUsers((prev) => prev.map((u) => (u._id === updatedUser._id ? { ...u, ...res.data.client.user_id, ...res.data.client } : u)));
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === updatedUser._id
+            ? { ...u, ...res.data.client.user_id, ...res.data.client }
+            : u
+        )
+      );
       setShowUpdateForm(false);
-      setSelectedUser({ ...updatedUser, ...res.data.client.user_id, ...res.data.client });
+      setSelectedUser({
+        ...updatedUser,
+        ...res.data.client.user_id,
+        ...res.data.client,
+      });
     }
   };
   const handleDelete = async (user) => {
@@ -56,7 +66,9 @@ const Users = () => {
       data: { status },
     });
     if (res.ok && res.data.client) {
-      setUsers((prev) => prev.map((u) => (u._id === user._id ? { ...u, status } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u._id === user._id ? { ...u, status } : u))
+      );
     }
   };
 
@@ -88,4 +100,3 @@ const Users = () => {
 };
 
 export default Users;
-
