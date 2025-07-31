@@ -36,6 +36,7 @@ import AdminAllCaseFile from "../pages/Admin/admin_case_file/AdminAllCaseFile";
 import AdminSettings from "../components/Settings/AdminSettings";
 import AdvocateSettings from "../components/Settings/AdvocateSettings";
 import AdminDetailsCaseFile from "../pages/Admin/admin_case_file/AdminDetailsCaseFile";
+import CaseDetails from "../components/Advocate/CaseDetails";
 
 export default function App() {
   return (
