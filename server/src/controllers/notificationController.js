@@ -26,9 +26,9 @@ export const getNotifications = async (req, res) => {
 // Mark a notification as read
 export const readNotification = async (req, res) => {
   try {
-    const { notificationId } = req.params;
+    const userId = req?.user?.id;
 
-    await Notification.findByIdAndUpdate(notificationId, { isRead: true });
+    await Notification.updateMany({ userId, isRead: false }, { isRead: true });
 
     res.status(200).json({ message: "Notification marked as read" });
   } catch (error) {

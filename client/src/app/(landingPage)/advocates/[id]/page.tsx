@@ -3,10 +3,11 @@ import { apiFetch } from "@/api/apiFetch";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { Advocate } from "@/types/advocate.interface";
 
 function Page() {
   const { id } = useParams();
-  const [advocate, setAdvocate] = useState(null);
+  const [advocate, setAdvocate] = useState<Advocate | null>(null);
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   useEffect(() => {

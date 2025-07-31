@@ -4,25 +4,16 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
-
-type FormData = {
-  name: string;
-  email: string;
-  phone: string;
-  nid: string;
-  presentAddress: string;
-  permanentAddress: string;
-  issueType: string;
-  message: string;
-};
-
-type Payload = {
-  userMessage: FormData;
-  serviceId?: number;
-};
+import { RootState } from "@/redux/store";
+import Payload, { FormData } from "@/types/requestServiceForm.interface";
 
 interface item {
   _id: number;
+  name: string;
+}
+
+interface SelectedServiceType {
+  id: number;
   name: string;
 }
 
@@ -30,8 +21,10 @@ function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedService = useSelector((state) => state.selectedService);
-
+  const selectedService = useSelector(
+    (state: RootState): SelectedServiceType | null =>
+      state.selectedService as SelectedServiceType | null
+  );
   // Hydrate Redux from localStorage if empty
   React.useEffect(() => {
     console.log("Selected service:", selectedService);

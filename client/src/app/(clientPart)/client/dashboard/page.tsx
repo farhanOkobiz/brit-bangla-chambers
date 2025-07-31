@@ -36,19 +36,18 @@ export default function ClientDashboard() {
   const { data: user } = useGetAuthQuery(undefined);
   const userId = user?.data?.userId;
   const [data, setData] = useState<ApiResponse | null>(null);
-  const [file, setFile] = useState<ApiResponse | null>(null);
+  const [file, setFile] = useState<number>(0);
   const router = useRouter();
   const { data: notifications } = useGetNotificationsQuery(userId, {
     skip: !user?.data?.userId,
   });
 
   const [readNotification] = useReadNotificationsMutation();
+  const [deleteNotification] = useDeleteNotificationMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
-  const [deleteNotification] = useDeleteNotificationMutation();
 
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
@@ -108,15 +107,13 @@ export default function ClientDashboard() {
     fetchRequests();
   }, []);
 
-  const handleClick = async (notificationId) => {
+  const handleClick = async () => {
     try {
-      await readNotification(notificationId).unwrap();
+      await readNotification().unwrap();
     } catch {
       toast.error("Failed to mark notification as read");
     }
   };
-
-  console.log(notifications);
 
   return (
     <>
@@ -124,14 +121,8 @@ export default function ClientDashboard() {
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between px-4 md:px-8">
-              <div>
-                <h1 className="text-2xl font-extrabold text-gray-900">
-                  Client Dashboard
-                </h1>
-                <p className="text-gray-600 mt-1">Welcome back, John!</p>
-              </div>
-              <div className=" flex justify-between items-center gap-4 bg-white shadow-md rounded-md p-6 max-w-sm mx-auto my-6 text-center">
+            <div className=" grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 md:px-8">
+              <div className=" flex justify-between items-center gap-4 bg-white shadow-md rounded-md p-6  my-6 text-center">
                 <h2 className="text-2xl font-semibold text-gray-800">
                   Total Cases
                 </h2>
@@ -139,7 +130,7 @@ export default function ClientDashboard() {
                   {data?.totalCases || 0}
                 </p>
               </div>
-              <div className=" flex justify-between items-center gap-4 bg-white shadow-md rounded-md p-6 max-w-sm mx-auto my-6 text-center">
+              <div className=" flex justify-between items-center gap-4 bg-white shadow-md rounded-md p-6  my-6 text-center">
                 <button
                   className="text-2xl font-semibold text-gray-800"
                   onClick={() => {
@@ -149,12 +140,12 @@ export default function ClientDashboard() {
                   File Request <span className="text-red-600">{file}</span>
                 </button>
               </div>
-              <div className="">
+              <div className="flex justify-between items-center">
                 <button
                   type="button"
                   onClick={() => {
                     openModal();
-                    handleClick(notifications?._id);
+                    handleClick();
                   }}
                   className="flex items-center justify-between w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition duration-300 cursor-pointer"
                 >

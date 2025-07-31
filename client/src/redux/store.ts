@@ -5,9 +5,11 @@ import { blogApi } from "./api/blogApi";
 import { authApi } from "./api/authApi";
 import { specializationApi } from "./api/specializationApi";
 import { notificationApi } from "./api/notificationApi";
+// import selectedServiceReducer from "./slices/selectedServiceSlice";
 
 export const store = configureStore({
   reducer: {
+    selectedService: selectedServiceReducer, // 👈 add this
     // Add the generated reducer as a specific top-level slice
     [authApi.reducerPath]: authApi.reducer,
     [blogApi.reducerPath]: blogApi.reducer,
@@ -28,3 +30,5 @@ export const store = configureStore({
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
 setupListeners(store.dispatch);
+// 👇 Export RootState type from the store
+export type RootState = ReturnType<typeof store.getState>;

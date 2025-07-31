@@ -16,44 +16,7 @@ import { apiFetch } from "@/api/apiFetch";
 import UpdateClientInfo from "@/components/Profile/UpdateClientInfo";
 import Image from "next/image";
 import { toast } from "react-toastify";
-
-interface UserData {
-  _id: string;
-  role: string;
-  full_name: string;
-  email: string;
-  phone: string;
-  otp_verified: boolean;
-  created_at: string;
-  __v: number;
-}
-
-interface Consultation {
-  doctorId: string;
-  date: string;
-  notes: string;
-}
-
-interface ClientData {
-  _id: string;
-  user_id: UserData;
-  nid_number: string;
-  date_of_birth: string;
-  gender: string;
-  profile_photo: string;
-  present_address: string;
-  permanent_address: string;
-  consultation_history: Consultation[];
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-interface ProfileData {
-  user: UserData;
-  client: ClientData;
-}
+import ProfileData, { ClientData } from "@/types/ClientProfile.interface";
 
 export default function ClientProfile() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);

@@ -3,13 +3,14 @@ import { useGetSingleBlogQuery } from "@/redux/api/blogApi";
 import { useParams } from "next/navigation";
 import React from "react";
 import Image from "next/image";
+import { Blog } from "@/types/blog.interface";
 
 function Page() {
   const { id } = useParams();
   const { data } = useGetSingleBlogQuery(id);
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
-  const blog = data?.data?.data;
+  const blog: Blog = data?.data?.data;
 
   const fullImageUrl = blog?.image
     ? `${imageUrl?.endsWith("/") ? imageUrl.slice(0, -1) : imageUrl}/${
