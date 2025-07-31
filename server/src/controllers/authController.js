@@ -232,7 +232,9 @@ export const checkAuth = async (req, res) => {
     else if(req.user.role === "advocate") {
       profilePhoto = await Advocate.findOne({ user_id: decoded.id }).select("profile_photo_url");
     }
-    
+    else{
+      profilePhoto = { profile_photo: null }; // Default if no profile found
+    }
 
     return res.json({
       ok: true,
