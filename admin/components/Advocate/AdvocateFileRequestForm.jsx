@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import { useParams } from "react-router-dom";
+import { TiTick } from "react-icons/ti";
 import {
   FaTrashAlt,
   FaFileAlt,
   FaExclamationCircle,
   FaCheckCircle,
+  FaAlignRight,
 } from "react-icons/fa";
 
 const AdvocateFileRequestForm = () => {
@@ -24,6 +26,8 @@ const AdvocateFileRequestForm = () => {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
   const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [tickedFiles, setTickedFiles] = useState([]);
+
   const [disabled, setDisabled] = useState(false);
 
   const handleChange = (e) => {
@@ -76,7 +80,6 @@ const AdvocateFileRequestForm = () => {
       const res = await UseAxios(`/file-request/case/${caseId}`, {
         method: "get",
       });
-      console.log("File requests:", res.data);
       setRequestId(res.data._id);
 
       if (res.ok) {
@@ -110,11 +113,14 @@ const AdvocateFileRequestForm = () => {
       });
 
       const data = res.data?.data;
+      console.log("Fetched case details:", data);
       setClientId(data.client_id);
       setAdvocateId(data.advocate_id);
       setCaseId(data._id);
       setCaseNumber(data.case_number);
       fetchFileRequests(data._id);
+      setTickedFiles((prev) => [...prev, ...(data.documents || [])]);
+ // here document is an array how to fix this problem
     } catch (err) {
       console.error(err);
       setError("Failed to load case details.");
@@ -164,6 +170,31 @@ const AdvocateFileRequestForm = () => {
       setError("Failed to delete file.");
     }
   };
+
+  const handleAddFileToCaseFile = async (filename) =>{
+    console.log("Adding file to case file:", filename);
+    try {
+      const res = await UseAxios(
+        `showOwnCaseFile/caseFile/${id}/add-document`,
+        {
+          method: "post",
+          data: { documentUrl: filename },
+        }
+      );
+      console.log("Add file response:", res.data);
+
+      if (res?.data?.success) {
+        setTickedFiles((prev) => [...prev, filename]);
+        setSuccessMsg("File added to case file successfully.");
+        fetchCaseDetails(); // Refresh case details
+      } else {
+        setError("Failed to add file to case file.");
+      }
+    } catch (error) {
+      console.error("Error adding file to case file:", error);
+      setError("Failed to add file to case file.");
+    }
+  }
 
   useEffect(() => {
     if (id) fetchCaseDetails();
@@ -330,13 +361,25 @@ const AdvocateFileRequestForm = () => {
                               </p>
                             </div>
 
-                            <button
-                              onClick={() => handleDeleteFile(filename)}
-                              className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
-                              title="Delete file"
-                            >
-                              <FaTrashAlt className="text-sm" />
-                            </button>
+                            <div className="flex items-center space-x-2 gap-0">
+                              <button
+                                onClick={() => handleDeleteFile(filename)}
+                                className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
+                                title="Delete file"
+                              >
+                                <FaTrashAlt className="text-sm" />
+                              </button>
+
+                              {!tickedFiles.includes(file) && (
+                                <button
+                                  onClick={() => handleAddFileToCaseFile(file)}
+                                  className="flex-shrink-0 p-2 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
+                                  title="Add to case file"
+                                >
+                                  <TiTick className="text-lg" />
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );

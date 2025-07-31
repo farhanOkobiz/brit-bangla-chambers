@@ -156,3 +156,24 @@ export const deleteCaseFile = async (req, res) => {
     });
   }
 };
+
+export const addDocumentToCaseFile = async (req, res) => {
+  console.log("hit add document to case file:", req.body);
+  try {
+    const { id } = req.params;
+    const { documentUrl } = req.body;
+
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({ error: "Case file not found" });
+    }
+
+    caseFile.documents.push(documentUrl);
+    await caseFile.save();
+
+    res.status(200).json({ success: true, data: caseFile });
+  } catch (error) {
+    console.error("Error adding document to case file:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
