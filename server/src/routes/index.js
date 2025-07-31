@@ -17,6 +17,7 @@ import documentRoutes from "./api/documentRoutes.js";
 import fileRequestRoutes from "./api/fileRequestRoutes.js"; // Ensure this is imported correctly
 import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
 import notificationsRoutes from "./api/notificationsRoutes.js";
+import advocateDashboardRoutes from "./api/adocateDashboardRoutes.js"; // Ensure this is imported correctly
 
 const router = Router();
 
@@ -39,5 +40,6 @@ router.use("/documents", documentRoutes);
 router.use("/file-request", fileRequestRoutes); // Ensure this is imported correctly
 router.use("/client-dashboard", clientDashboardRoutes);
 router.use("/notifications", notificationsRoutes);
+router.use("/advocate-dashboard", advocateDashboardRoutes); // Ensure this is imported correctly
 
 export default router;

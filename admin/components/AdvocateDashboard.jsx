@@ -1,109 +1,103 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { UseAxios } from "../services/UseAxios.js"; // adjust the path based on your project
+import { Loader } from "lucide-react"; // optional icon, requires `lucide-react`
 
-const messagesData = [
-  {
-    name: "John Doe",
-    email: "john@example.com",
-    issue: "Property dispute",
-    status: "pending",
-  },
-  {
-    name: "Jane Smith",
-    email: "jane@example.com",
-    issue: "Divorce case",
-    status: "resolved",
-  },
-  {
-    name: "Rahim Uddin",
-    email: "rahim@example.com",
-    issue: "Land ownership",
-    status: "pending",
-  },
-  {
-    name: "Salma Akter",
-    email: "salma@example.com",
-    issue: "Inheritance issue",
-    status: "resolved",
-  },
-];
+const AdvocateDashboard = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-function AdvocateDashboard() {
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      const res = await UseAxios("/advocate-dashboard/information");
+      if (res.ok) {
+        setData(res.data);
+      }
+      setLoading(false);
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader className="animate-spin w-6 h-6 text-gray-500" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="text-center text-red-500 mt-10">
+        Failed to load dashboard information.
+      </div>
+    );
+  }
+
+  const { blogs, caseFiles, fileRequests , requests } = data;
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      {/* Header */}
-      <h1 className="text-2xl font-bold mb-6">Welcome, Advocate!</h1>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 max-w-5xl mx-auto">
+      <DashboardCard label="Blogs" count={blogs} color="bg-blue-100" />
+      <DashboardCard label="Case Files" count={caseFiles} color="bg-green-100" />
+      <DashboardCard label="File Requests" count={fileRequests} color="bg-yellow-100" />
+     
+    <div className="col-span-1 sm:col-span-3 mt-6">
+      <h2 className="text-xl font-semibold mb-4">Recent Requests</h2>
+      <ul className="space-y-2">
+        {requests.map((request) => (
+          <li
+            key={request._id}
+            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
+          >
+            <p className="text-gray-800">
+              Request from: {request.clientId.full_name} 
+              <span className="text-sm text-gray-500">{request.service}</span>
+              {/* condition color for status */}
+              {request.status == "pending" ? (
+                <span className="text-yellow-600 ml-2">Pending</span>
+              ) : request.status == "accepted" ? (
+                <span className="text-green-600 ml-2">Accepted</span>
+              ) : (
+                <span className="text-red-600 ml-2">Rejected</span>
+              )
+              }
+            </p>
+            <span className="text-sm text-gray-500">
+              {new Date(request.createdAt).toLocaleDateString()}
+            </span>
+          </li>
+        ))}
+      </ul>
 
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white shadow rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-700">
-            Total Messages
-          </h2>
-          <p className="text-3xl font-bold text-indigo-600 mt-2">
-            {messagesData.length}
-          </p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-700">
-            Pending Requests
-          </h2>
-          <p className="text-3xl font-bold text-yellow-600 mt-2">
-            {messagesData.filter((msg) => msg.status === "pending").length}
-          </p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-700">
-            Resolved Issues
-          </h2>
-          <p className="text-3xl font-bold text-green-600 mt-2">
-            {messagesData.filter((msg) => msg.status === "resolved").length}
-          </p>
-        </div>
       </div>
-
-      {/* Table */}
-      <div className="bg-white shadow rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Recent Messages
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left">
-            <thead>
-              <tr className="text-gray-600 border-b">
-                <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4">Email</th>
-                <th className="py-2 px-4">Issue</th>
-                <th className="py-2 px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {messagesData.map((msg, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b hover:bg-gray-50 transition duration-150"
-                >
-                  <td className="py-2 px-4">{msg.name}</td>
-                  <td className="py-2 px-4">{msg.email}</td>
-                  <td className="py-2 px-4">{msg.issue}</td>
-                  <td className="py-2 px-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        msg.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {msg.status.charAt(0).toUpperCase() + msg.status.slice(1)}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+       <div className="col-span-1 sm:col-span-3">
+        <h2 className="text-xl font-semibold mb-4">Recent Notifications</h2>
+        <ul className="space-y-2">
+          {data.notifications.map((notification) => (
+            <li
+              key={notification._id}
+              className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
+            >
+              <p className="text-gray-800">{notification.message}</p>
+              <span className="text-sm text-gray-500">
+                {new Date(notification.createdAt).toLocaleDateString()}
+              </span>
+            </li>
+          ))}
+        </ul> 
     </div>
+      </div>
   );
-}
+};
+
+const DashboardCard = ({ label, count, color }) => (
+  <div
+    className={`rounded-2xl shadow-sm p-6 text-center ${color} hover:shadow-md transition`}
+  >
+    <h2 className="text-3xl font-semibold text-gray-800">{count}</h2>
+    <p className="text-sm text-gray-600 mt-2">{label}</p>
+  </div>
+);
 
 export default AdvocateDashboard;
