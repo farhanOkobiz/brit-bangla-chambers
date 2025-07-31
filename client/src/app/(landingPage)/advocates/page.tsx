@@ -1,123 +1,90 @@
-// import Image from "next/image";
+"use client";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { apiFetch } from "@/api/apiFetch";
+import { toast } from "react-toastify";
 
-// const advocates = [
-//   {
-//     id: 1,
-//     name: "Mohammad Rahman",
-//     image:
-//       "https://cdn.pixabay.com/photo/2020/03/18/15/42/right-4944546_640.jpg",
-//     designation: "Senior Advocate, Supreme Court",
-//     expertise: ["Criminal Law", "Family Law", "Civil Litigation"],
-//     profileLink: "/advocates/rahman",
-//   },
-//   {
-//     id: 2,
-//     name: "Sharmin Akter",
-//     image:
-//       "https://cdn.pixabay.com/photo/2017/10/05/20/49/office-2820890_640.jpg",
-//     designation: "Advocate, Dhaka Judge Court",
-//     expertise: ["Immigration", "Property Law"],
-//     profileLink: "/advocates/sharmin",
-//   },
-//   {
-//     id: 3,
-//     name: "Kamrul Hasan",
-//     image:
-//       "https://cdn.pixabay.com/photo/2020/03/18/15/43/right-4944550_640.jpg",
-//     designation: "Advocate, Civil & Corporate",
-//     expertise: ["Corporate Law", "Contract Disputes"],
-//     profileLink: "/advocates/kamrul",
-//   },
-//   {
-//     id: 4,
-//     name: "Rokeya Sultana",
-//     image:
-//       "https://cdn.pixabay.com/photo/2022/04/10/16/41/lawyer-7123798_640.jpg",
-//     designation: "Family Law Specialist",
-//     expertise: ["Divorce", "Child Custody"],
-//     profileLink: "/advocates/rokeya",
-//   },
-//   {
-//     id: 5,
-//     name: "Tanvir Ahmed",
-//     image:
-//       "https://cdn.pixabay.com/photo/2020/03/18/15/44/right-4944555_640.jpg",
-//     designation: "Legal Advisor, UK Immigration",
-//     expertise: ["UK Visa", "Asylum Cases"],
-//     profileLink: "/advocates/tanvir",
-//   },
-//   {
-//     id: 6,
-//     name: "Nasima Khatun",
-//     image:
-//       "https://cdn.pixabay.com/photo/2022/08/14/01/46/lawyer-7384762_640.jpg",
-//     designation: "Property Law Expert",
-//     expertise: ["Land Dispute", "Real Estate"],
-//     profileLink: "/advocates/nasima",
-//   },
-// ];
+function Page() {
+  const [advocates, setAdvocates] = useState([]);
+  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
-// export default function AllAdvocatesPage() {
-//   return (
-//     <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-16 px-6 md:px-12 text-white">
-//       <div className="max-w-6xl mx-auto text-center mb-12">
-//         <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-//           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-//             All Advocates
-//           </span>
-//         </h1>
-//         <p className="text-gray-300 text-lg">
-//           Browse our team of legal professionals and choose the right expert for
-//           your case.
-//         </p>
-//       </div>
+  useEffect(() => {
+    const fetchAdvocates = async () => {
+      try {
+        const res = await apiFetch("/advocate/advocateByFeatured");
+        setAdvocates(res.data);
+      } catch {
+        toast.error("Failed to fetch advocates");
+      }
+    };
 
-//       <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-//         {advocates.map((advocate, i) => (
-//           <div
-//             key={i}
-//             className="bg-white/5 p-6 rounded-xl border border-white/10 backdrop-blur hover:shadow-lg transition"
-//           >
-//             <Image
-//               src={advocate.image}
-//               alt={advocate.name}
-//               fill
-//               className="rounded-full border-4 border-purple-500 object-cover"
-//             />
-//             <h3 className="text-xl font-semibold text-center">
-//               {advocate.name}
-//             </h3>
-//             <p className="text-sm text-purple-300 text-center">
-//               {advocate.designation}
-//             </p>
-//             <ul className="mt-4 text-sm text-gray-300 list-disc list-inside">
-//               {advocate.expertise.map((area, idx) => (
-//                 <li key={idx}>{area}</li>
-//               ))}
-//             </ul>
-//             <div className="mt-6 text-center">
-//               <a
-//                 href={`/advocates/${advocate.id}`}
-//                 className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-600 hover:to-purple-600 px-5 py-2 rounded-md text-sm font-semibold"
-//               >
-//                 View Profile
-//               </a>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// }
+    fetchAdvocates();
+  }, []);
 
-
-const advocate = () => {
   return (
-    <div>
-      <h1>Advocate Profile Page</h1>
-      {/* Content will go here */}
-    </div>
+    <section
+      className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      style={{
+        backgroundImage: `url('/images/partners/partner.jpg')`,
+      }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/90 bg-opacity-60" />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl w-full mx-auto text-center">
+        <p className="text-lg text-gray-300 uppercase tracking-wider"></p>
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          Advocates at Attorna
+        </h2>
+        <div className="w-24 h-1 bg-white mx-auto mb-10"></div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {advocates?.map((advocate, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out flex flex-col"
+            >
+              <div className="w-full h-[300px] relative rounded overflow-hidden">
+                <Image
+                  src={`${imageUrl}/${advocate?.profile_photo_url?.replace(
+                    /^\/+/,
+                    ""
+                  )}`}
+                  alt={advocate?.user_id?.full_name}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded"
+                />
+              </div>
+
+              {/* ✅ Flex layout ensures consistent height */}
+              <div className="flex flex-col justify-between flex-1 p-6 text-gray-800 text-center">
+                <div>
+                  <h3 className="text-2xl font-semibold mb-1">
+                    {advocate?.user_id?.full_name}
+                  </h3>
+                  <p className="text-sm uppercase tracking-wider text-gray-600">
+                    {advocate?.designation}
+                  </p>
+                </div>
+
+                {/* 👉 Always-at-bottom Button */}
+                <Link
+                  href={`/advocates/${advocate?._id}`}
+                  className="bg-[#5e3030] text-white px-6 py-3 mt-6 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer"
+                >
+                  View
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
-export default advocate;
+export default Page;

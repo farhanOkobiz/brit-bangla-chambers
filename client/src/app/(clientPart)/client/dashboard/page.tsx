@@ -12,7 +12,6 @@ import { Bell } from "lucide-react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
-
 interface Note {
   _id: string;
   title: string;
@@ -41,6 +40,9 @@ export default function ClientDashboard() {
   const { data: notifications } = useGetNotificationsQuery(userId, {
     skip: !user?.data?.userId,
   });
+  // const { data: notifications } = useGetNotificationsQuery(userId, {
+  //   skip: !user?.data?.userId,
+  // });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -75,17 +77,17 @@ export default function ClientDashboard() {
     router.push("/client/file-request");
   };
 
-    const fetchRequests = async () => {
-      try {
-        const response = await apiFetch(`/file-request/clientId`, {
-          method: "GET",
-        });
-        if (!response.ok) throw new Error("Failed to fetch requests.");
-        setFile(response.data.length || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const fetchRequests = async () => {
+    try {
+      const response = await apiFetch(`/file-request/clientId`, {
+        method: "GET",
+      });
+      if (!response.ok) throw new Error("Failed to fetch requests.");
+      setFile(response.data.length || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,6 +107,23 @@ export default function ClientDashboard() {
     fetchRequests();
   }, []);
 
+  const handleClick = async (notificationId) => {
+    try {
+      await apiFetch(`/notifications/${notificationId}/read`, {
+        method: "POST",
+      });
+      // Update UI
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif._id === notificationId ? { ...notif, isRead: true } : notif
+        )
+      );
+      setUnreadCount((count) => count - 1);
+      // Redirect or other logic here
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
@@ -140,7 +159,10 @@ export default function ClientDashboard() {
               <div className="">
                 <button
                   type="button"
-                  onClick={openModal}
+                  onClick={() => {
+                    openModal();
+                    handleClick(notifications?._id);
+                  }}
                   className="flex items-center justify-between w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition duration-300 cursor-pointer"
                 >
                   <div className="flex items-center gap-3">

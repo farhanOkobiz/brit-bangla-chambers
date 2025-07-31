@@ -71,8 +71,6 @@ export const getRequestForAdvocate = async (req, res) => {
       .populate("clientId", "full_name")
       .sort({ createdAt: -1 });
 
-    console.log(messages);
-
     res.json({ success: true, messages });
   } catch (error) {
     console.error("Error fetching advocate messages:", error);

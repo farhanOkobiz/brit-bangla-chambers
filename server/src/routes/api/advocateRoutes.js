@@ -35,7 +35,11 @@ router.get(
 router.get("/profile/:id", checkAdmin, showAdvocateByUserId);
 
 // Get advocate by advocate id
-router.get("/profile/advocate/:id", checkAdmin, showAdvocateById);
+router.get(
+  "/profile/advocate/:id",
+  protect(["admin", "client"]),
+  showAdvocateById
+);
 
 // Create advocate profile (with photo upload support)
 router.post(

@@ -115,7 +115,6 @@ export const showAdvocatesByFeatured = async (req, res) => {
     if (!advocates || advocates.length === 0) {
       return res.status(404).json({ message: "No advocates found" });
     }
-    console.log(advocates);
 
     res.status(200).json(advocates);
   } catch (error) {
@@ -159,6 +158,8 @@ export const showAdvocateById = async (req, res) => {
     if (!advocate) {
       return res.status(404).json({ message: "Advocate not found" });
     }
+    console.log(advocate);
+
     res.status(200).json({ advocate });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

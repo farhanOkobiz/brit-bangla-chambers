@@ -10,6 +10,13 @@ export const notificationApi = createApi({
       query: (userId) => `/notifications/${userId}`,
       providesTags: [{ type: "Notification", id: "LIST" }],
     }),
+    readNotifications: builder.mutation({
+      query: (notificationId) => ({
+        url: `/notifications/${notificationId}/read`,
+        method: "PATCH",
+      }),
+      invalidatesTags: [{ type: "Notification", id: "LIST" }],
+    }),
     deleteNotification: builder.mutation({
       query: (id) => ({
         url: `/notifications/${id}`,
@@ -20,5 +27,8 @@ export const notificationApi = createApi({
   }),
 });
 
-export const { useGetNotificationsQuery, useDeleteNotificationMutation } =
-  notificationApi;
+export const {
+  useGetNotificationsQuery,
+  useReadNotificationsMutation,
+  useDeleteNotificationMutation,
+} = notificationApi;
