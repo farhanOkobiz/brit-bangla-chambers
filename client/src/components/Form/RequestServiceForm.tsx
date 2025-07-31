@@ -16,10 +16,6 @@ type FormData = {
   message: string;
 };
 
-type Payload = {
-  userMessage: FormData;
-  serviceId?: number;
-};
 
 interface item {
   _id: number;

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Calendar, Tag, Filter, X, Search } from "lucide-react";
 import { apiFetch } from "../../../api/apiFetch";
 
-type Root = IServicesDisplay[];
 
 interface IServicesDisplay {
   _id: string;
