@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
+import { RootState } from "@/redux/store";
 
 type FormData = {
   name: string;
@@ -16,7 +17,6 @@ type FormData = {
   message: string;
 };
 
-
 interface item {
   _id: number;
   name: string;
@@ -26,7 +26,9 @@ function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedService = useSelector((state) => state.selectedService);
+  const selectedService = useSelector(
+    (state: RootState) => state.selectedService
+  );
   const [attachments, setAttachments] = useState<FileList | null>(null);
 
   // Hydrate Redux from localStorage if empty
