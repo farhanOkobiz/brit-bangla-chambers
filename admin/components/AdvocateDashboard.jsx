@@ -58,10 +58,15 @@ const AdvocateDashboard = () => {
                 <span className="text-yellow-600 ml-2">Pending</span>
               ) : request.status == "accepted" ? (
                 <span className="text-green-600 ml-2">Accepted</span>
-              ) : (
+              ) : request.status == "sent_to_advocate" ? (
+                <span className="text-blue-600 ml-2">Pending</span>
+              ) : request.status == "rejected" ? (
                 <span className="text-red-600 ml-2">Rejected</span>
               )
-              }
+               :
+              <span className="text-gray-600 ml-2">Unknown Status</span>
+
+            }
             </p>
             <span className="text-sm text-gray-500">
               {new Date(request.createdAt).toLocaleDateString()}

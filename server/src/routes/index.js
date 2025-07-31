@@ -12,12 +12,13 @@ import clientRoutes from "./api/clientRoutes.js";
 import advocateRoutes from "./api/advocateRoutes.js";
 import caseFileRoutes from "./api/caseFileRoutes.js";
 import educationRoutes from "./api/educationRoutes.js";
-import certicationRoutes from "./api/certificationRoutes.js"; // Ensure this is imported correctly
+import certicationRoutes from "./api/certificationRoutes.js"; 
 import documentRoutes from "./api/documentRoutes.js";
-import fileRequestRoutes from "./api/fileRequestRoutes.js"; // Ensure this is imported correctly
+import fileRequestRoutes from "./api/fileRequestRoutes.js"; 
 import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
 import notificationsRoutes from "./api/notificationsRoutes.js";
-import advocateDashboardRoutes from "./api/adocateDashboardRoutes.js"; // Ensure this is imported correctly
+import advocateDashboardRoutes from "./api/adocateDashboardRoutes.js";
+import adminDashboardRoutes from "./api/adminDashboardRoutes.js";
 
 const router = Router();
 
@@ -41,5 +42,6 @@ router.use("/file-request", fileRequestRoutes); // Ensure this is imported corre
 router.use("/client-dashboard", clientDashboardRoutes);
 router.use("/notifications", notificationsRoutes);
 router.use("/advocate-dashboard", advocateDashboardRoutes); // Ensure this is imported correctly
+router.use("/admin-dashboard", adminDashboardRoutes); // Ensure this is imported correctly
 
 export default router;

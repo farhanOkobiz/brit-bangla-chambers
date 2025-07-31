@@ -227,10 +227,15 @@ export const checkAuth = async (req, res) => {
     let profilePhoto;
     if(decoded.role === "client") {
       profilePhoto = await Client.findOne({ user_id: decoded.id }).select("profile_photo");
-      
+      if(profilePhoto) {
+        profilePhoto = profilePhoto.profile_photo || null;
+      }
     }
     else if(req.user.role === "advocate") {
       profilePhoto = await Advocate.findOne({ user_id: decoded.id }).select("profile_photo_url");
+      if(profilePhoto) {
+        profilePhoto = profilePhoto.profile_photo_url || null;
+      }
     }
     else{
       profilePhoto = { profile_photo: null }; // Default if no profile found
@@ -241,7 +246,7 @@ export const checkAuth = async (req, res) => {
       role: decoded.role,
       userName: user?.full_name || "",
       userId: decoded.id,
-      profilePhoto: profilePhoto.profile_photo || profilePhoto.profile_photo_url || null,
+      profilePhoto: profilePhoto || null,
     });
   } catch (err) {
     console.log("Auth check error:", err);
