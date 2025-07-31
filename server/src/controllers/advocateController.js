@@ -7,7 +7,6 @@ import { fileURLToPath } from "url";
 import Education from "../models/educationSchema.js";
 import mongoose from "mongoose";
 
-
 import testimonialSchema from "../models/testimonialSchema.js";
 import caseHistory from "../models/caseHistory.js";
 import documentSchema from "../models/documentSchema.js";
@@ -67,8 +66,6 @@ const parseBooleans = (requestData, keys) => {
   });
 };
 
-
-
 export const showAdvocate = async (req, res) => {
   try {
     const user_id = req.user._id;
@@ -103,6 +100,23 @@ export const showAllAdvocates = async (req, res) => {
     if (!advocates || advocates.length === 0) {
       return res.status(404).json({ message: "No advocates found" });
     }
+    res.status(200).json(advocates);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Get  advocates by featured
+export const showAdvocatesByFeatured = async (req, res) => {
+  try {
+    const advocates = await Advocate.find({ featured: true }).populate(
+      "user_id"
+    );
+    if (!advocates || advocates.length === 0) {
+      return res.status(404).json({ message: "No advocates found" });
+    }
+    console.log(advocates);
+
     res.status(200).json(advocates);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -231,14 +245,14 @@ export const createAdvocateProfile = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     let generatedSlug = "";
 
-   generatedSlug =
+    generatedSlug =
       full_name && full_name.length > 0
         ? full_name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
         : `advocate-${Date.now()}`;
-      
+
     // Create user
     const user = await User.create(
       [
@@ -336,7 +350,7 @@ export const updateAdvocateProfile = async (req, res) => {
         "contact",
         "fee_structure",
         "stats",
-        "bar_memberships"
+        "bar_memberships",
       ]);
       parseBooleans(req.body, ["consultation_available", "featured"]);
     }
@@ -370,12 +384,16 @@ export const updateAdvocateProfile = async (req, res) => {
     } = req.body;
 
     // Handle empty string for booleans
-    const safeConsultationAvailable = consultation_available === "" ? undefined : consultation_available;
+    const safeConsultationAvailable =
+      consultation_available === "" ? undefined : consultation_available;
     const safeFeatured = featured === "" ? undefined : featured;
-    
+
     // For nested fee_structure.show_publicly
     if (fee_structure && typeof fee_structure.show_publicly !== "undefined") {
-      fee_structure.show_publicly = fee_structure.show_publicly === "" ? undefined : fee_structure.show_publicly;
+      fee_structure.show_publicly =
+        fee_structure.show_publicly === ""
+          ? undefined
+          : fee_structure.show_publicly;
     }
 
     // Find the advocate
@@ -397,14 +415,18 @@ export const updateAdvocateProfile = async (req, res) => {
 
     // === Update advocate fields ===
     if (designation !== undefined) advocate.designation = designation;
-    if (bar_council_enroll_num !== undefined) advocate.bar_council_enroll_num = bar_council_enroll_num;
-    if (experience_years !== undefined) advocate.experience_years = experience_years;
+    if (bar_council_enroll_num !== undefined)
+      advocate.bar_council_enroll_num = bar_council_enroll_num;
+    if (experience_years !== undefined)
+      advocate.experience_years = experience_years;
     if (bio !== undefined) advocate.bio = bio;
     if (office_address !== undefined) advocate.office_address = office_address;
-    if (available_hours !== undefined) advocate.available_hours = available_hours;
+    if (available_hours !== undefined)
+      advocate.available_hours = available_hours;
     if (contact !== undefined) advocate.contact = contact;
     if (languages !== undefined) advocate.languages = languages;
-    if (specialization_ids !== undefined) advocate.specialization_ids = specialization_ids;
+    if (specialization_ids !== undefined)
+      advocate.specialization_ids = specialization_ids;
 
     // Handle education update/creation
     if (Array.isArray(req.body.education)) {
@@ -419,7 +441,7 @@ export const updateAdvocateProfile = async (req, res) => {
           const newEdu = await Education.create({
             ...edu,
             user_type: "Advocate",
-            user_id: advocate.user_id
+            user_id: advocate.user_id,
           });
           updatedEducationIds.push(newEdu._id);
         }
@@ -429,32 +451,43 @@ export const updateAdvocateProfile = async (req, res) => {
       advocate.education_ids = education_ids;
     }
 
-    if (certification_ids !== undefined) advocate.certification_ids = certification_ids;
-    if (testimonial_ids !== undefined) advocate.testimonial_ids = testimonial_ids;
-    if (case_history_ids !== undefined) advocate.case_history_ids = case_history_ids;
+    if (certification_ids !== undefined)
+      advocate.certification_ids = certification_ids;
+    if (testimonial_ids !== undefined)
+      advocate.testimonial_ids = testimonial_ids;
+    if (case_history_ids !== undefined)
+      advocate.case_history_ids = case_history_ids;
     if (document_ids !== undefined) advocate.document_ids = document_ids;
-    if (safeConsultationAvailable !== undefined) advocate.consultation_available = safeConsultationAvailable;
+    if (safeConsultationAvailable !== undefined)
+      advocate.consultation_available = safeConsultationAvailable;
     if (fee_structure !== undefined) advocate.fee_structure = fee_structure;
     if (stats !== undefined) advocate.stats = stats;
     if (status !== undefined) advocate.status = status;
     if (safeFeatured !== undefined) advocate.featured = safeFeatured;
-    if (bar_memberships !== undefined) advocate.bar_memberships = bar_memberships;
+    if (bar_memberships !== undefined)
+      advocate.bar_memberships = bar_memberships;
     if (avg_rating !== undefined) advocate.avg_rating = avg_rating;
     if (total_reviews !== undefined) advocate.total_reviews = total_reviews;
 
     // === Handle new profile photo ===
     if (req.file) {
       newProfilePhotoPath = path.join(uploadPath, req.file.filename);
-      
+
       // Delete old profile photo if exists
       if (advocate.profile_photo_url) {
-        const oldPhotoPath = path.join(uploadPath, path.basename(advocate.profile_photo_url));
+        const oldPhotoPath = path.join(
+          uploadPath,
+          path.basename(advocate.profile_photo_url)
+        );
         try {
           if (fs.existsSync(oldPhotoPath)) {
             fs.unlinkSync(oldPhotoPath);
           }
         } catch (deleteError) {
-          console.warn("Could not delete old profile photo:", deleteError.message);
+          console.warn(
+            "Could not delete old profile photo:",
+            deleteError.message
+          );
         }
       }
       advocate.profile_photo_url = `/uploads/${req.file.filename}`;
@@ -464,11 +497,10 @@ export const updateAdvocateProfile = async (req, res) => {
     await advocate.save();
     const populatedAdvocate = await advocate.populate("user_id", "-password");
 
-    res.status(200).json({ 
-      message: "Advocate profile updated successfully", 
-      advocate: populatedAdvocate 
+    res.status(200).json({
+      message: "Advocate profile updated successfully",
+      advocate: populatedAdvocate,
     });
-
   } catch (error) {
     // Cleanup uploaded file if error occurred
     if (newProfilePhotoPath) {
@@ -480,15 +512,14 @@ export const updateAdvocateProfile = async (req, res) => {
         console.warn("Could not cleanup uploaded file:", cleanupError.message);
       }
     }
-    
+
     console.error("Advocate profile update error:", error);
-    res.status(500).json({ 
-      message: "Server error", 
-      error: error.message 
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
     });
   }
 };
-
 
 // Delete advocate profile
 export const deleteAdvocateProfile = async (req, res) => {

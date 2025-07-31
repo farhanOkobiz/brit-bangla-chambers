@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { FileRequest } from "../models/fileRequestSchema.js";
+import { Notification } from "../models/notificationSchema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,6 +62,14 @@ export const createFileRequest = async (req, res) => {
       case_number,
       description,
       file_url: file_urls,
+    });
+
+    // 🔔
+    await Notification.create({
+      userId: client_id,
+      title: "Documents Needed for Your Case",
+      message: `Your assigned advocate has requested some documents related to your case. Please log in and complete the submission.`,
+      relatedCaseId: case_id,
     });
 
     res.status(201).json(newRequest);

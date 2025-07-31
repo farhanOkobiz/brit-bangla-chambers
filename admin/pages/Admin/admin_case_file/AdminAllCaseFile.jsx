@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import { toast } from "react-toastify";
 import {
-  FaEdit,
-  FaTrash,
   FaFileAlt,
   FaCalendarAlt,
   FaUser,
@@ -12,7 +8,6 @@ import {
   FaSearch,
   FaFilter,
   FaEye,
-  FaRegFileAlt,
 } from "react-icons/fa";
 import { UseAxios } from "../../../services/UseAxios";
 
@@ -26,7 +21,7 @@ function AdminAllCaseFile() {
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
-        const res = await UseAxios("/showOwnCaseFile/allCaseFile");
+        const res = await UseAxios("/showOwnCaseFile/allCaseFile/for-admin");
         setCaseFiles(res.data?.data || []);
         console.log("caseFile:", caseFiles);
       } catch (err) {
@@ -140,25 +135,25 @@ function AdminAllCaseFile() {
         <div className=" bg-white rounded-2xl shadow-md p-4 border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-xl font-bold text-blue-600">
                 {caseFiles.length}
               </div>
               <div className="text-gray-600">Total Cases</div>
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-amber-600">
+              <div className="text-xl font-bold text-amber-600">
                 {caseFiles.filter((f) => f.status === "pending").length}
               </div>
               <div className="text-gray-600">Pending</div>
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-xl font-bold text-blue-600">
                 {caseFiles.filter((f) => f.status === "in_progress").length}
               </div>
               <div className="text-gray-600">In Progress</div>
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-emerald-600">
+              <div className="text-xl font-bold text-emerald-600">
                 {caseFiles.filter((f) => f.status === "closed").length}
               </div>
               <div className="text-gray-600">Closed</div>
@@ -177,29 +172,24 @@ function AdminAllCaseFile() {
               <div className="p-6 relative">
                 <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
                   <Link
-                    to={`/advocate/dashboard/request-file/${file._id}`}
-                    className="p-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 rounded-lg transition-colors duration-200"
-                  >
-                    <FaRegFileAlt className="text-sm" />
-                  </Link>
-
-                  <Link
-                    to={`/advocate/dashboard/detail-case-file/${file._id}`}
+                    to={`/admin/detail-case-file/${file._id}`}
                     className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
                     title="View Details"
                   >
                     <FaEye className="text-sm" />
                   </Link>
-                  <Link
-                    to={`/advocate/dashboard/edit-case-file/${file._id}`}
-                    className="p-2 bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-700 rounded-lg transition-colors duration-200"
-                    title="Edit Case"
-                  >
-                    <FaEdit className="text-sm" />
-                  </Link>
                 </div>
 
-                <h3 className="text-xl font-bold mb-2 mt-12 leading-tight">
+                <div className="flex items-start gap-2">
+                  <FaUser className="text-orange-500 mt-0.5" />
+                  <div>
+                    <span className="text-gray-600">Client Name:</span>
+                    <span className="font-medium text-gray-800 ml-1">
+                      {file.client_name}
+                    </span>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-2 mt-3 lg:mt-6 leading-tight">
                   {file.title || "Untitled Case"}
                 </h3>
                 <div className="flex items-center gap-4">
@@ -244,15 +234,6 @@ function AdminAllCaseFile() {
                       <span className="text-gray-600">Court:</span>
                       <span className="font-medium text-gray-800 ml-1">
                         {file.court_name || "-"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <FaUser className="text-orange-500 mt-0.5" />
-                    <div>
-                      <span className="text-gray-600">Client:</span>
-                      <span className="font-medium text-gray-800 ml-1">
-                        {file.client_name}
                       </span>
                     </div>
                   </div>

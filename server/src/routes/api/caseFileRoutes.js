@@ -2,9 +2,9 @@ import express from "express";
 import {
   createCaseFile,
   deleteCaseFile,
-  getAllCaseFiles,
   getAllCaseFilesForAdmin,
-  getSingleCaseFile,
+  getAllCaseFilesForAdvocate,
+  getCaseFileForClient,
   getSingleCaseFileById,
   updateCaseFile,
 } from "../../controllers/caseFileController.js";
@@ -18,11 +18,11 @@ import {
 const router = express.Router();
 
 router.post("/createCaseFile", protect(["advocate", "client"]), createCaseFile); // Create case
-router.get("/allCaseFile", checkAdvocate, getAllCaseFiles); // Get all cases
+router.get("/allCaseFile", checkAdvocate, getAllCaseFilesForAdvocate); // Get all cases
 router.get("/allCaseFile/for-admin", checkAdmin, getAllCaseFilesForAdmin); // Get all cases for admin
-router.get("/singleCaseFile", checkClient, getSingleCaseFile); // Get single case for client
-router.get("/singleCaseFile/:id", getSingleCaseFileById); // Get single case
-router.put("/updateCaseFile/:id", updateCaseFile); // Update case
-router.delete("/deleteCaseFile/:id", deleteCaseFile); // Delete case
+router.get("/allCaseFile/for-client", checkClient, getCaseFileForClient); // Get single case for client
+router.get("/singleCaseFile/:id", getSingleCaseFileById);
+router.put("/updateCaseFile/:id", checkAdvocate, updateCaseFile); // Update case
+router.delete("/deleteCaseFile/:id", checkAdvocate, deleteCaseFile); // Delete case
 
 export default router;

@@ -5,7 +5,7 @@ const { Schema, model, Types } = mongoose;
 const CaseHistorySchema = new Schema(
   {
     advocate_id: { type: Types.ObjectId, ref: "Advocate", required: true },
-    client_id: { type: Types.ObjectId, ref: "User" },
+    ff: { type: Types.ObjectId, ref: "User" },
     title: { type: String, required: true },
     summary: { type: String, required: true },
     case_type: { type: String },

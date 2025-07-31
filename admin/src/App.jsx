@@ -35,6 +35,7 @@ import DetailsFile from "../pages/my_cases/DetailsFile";
 import AdminAllCaseFile from "../pages/Admin/admin_case_file/AdminAllCaseFile";
 import AdminSettings from "../components/Settings/AdminSettings";
 import AdvocateSettings from "../components/Settings/AdvocateSettings";
+import AdminDetailsCaseFile from "../pages/Admin/admin_case_file/AdminDetailsCaseFile";
 
 export default function App() {
   return (
@@ -69,7 +70,7 @@ export default function App() {
             path="dashboard/request-file/:id"
             element={<AdvocateFileRequestForm />}
           />
-          <Route path="/advocate/settings" element={<AdvocateSettings />} /> 
+          <Route path="/advocate/settings" element={<AdvocateSettings />} />
         </Route>
 
         {/* Admin Routes */}
@@ -98,8 +99,12 @@ export default function App() {
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
           <Route path="case-file" element={<AdminAllCaseFile />} />
+          <Route
+            path="detail-case-file/:id"
+            element={<AdminDetailsCaseFile />}
+          />
           <Route path="/admin/advocates/create" element={<CreateAdvocate />} />
-          <Route path="/admin/Settings" element={ <AdminSettings/>} />
+          <Route path="/admin/Settings" element={<AdminSettings />} />
 
           {/* Add more child routes here as needed */}
         </Route>
