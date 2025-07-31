@@ -1,8 +1,27 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { apiFetch } from "@/api/apiFetch";
+import { toast } from "react-toastify";
 
 const Advocates: React.FC = () => {
+  const [advocates, setAdvocates] = useState([]);
+  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
+
+  useEffect(() => {
+    const fetchAdvocates = async () => {
+      try {
+        const res = await apiFetch("/advocate/advocateByFeatured");
+        setAdvocates(res.data);
+      } catch {
+        toast.error("Failed to fetch advocates");
+      }
+    };
+
+    fetchAdvocates();
+  }, []);
+
   return (
     <section
       className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
@@ -30,19 +49,18 @@ const Advocates: React.FC = () => {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { name: "James Milner", img: "James+Milner" },
-            { name: "Emma Bunton", img: "Emma+Bunton" },
-            { name: "Melanie Brown", img: "Melanie+Brown" },
-          ].map((partner, idx) => (
+          {advocates?.map((advocate, idx) => (
             <div
               key={idx}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out"
             >
               <div className="w-full h-[300px] relative rounded overflow-hidden">
                 <Image
-                  src="https://cdn.pixabay.com/photo/2022/04/10/16/41/lawyer-7123798_640.jpg"
-                  alt={partner.name}
+                  src={`${imageUrl}/${advocate?.profile_photo_url?.replace(
+                    /^\/+/,
+                    ""
+                  )}`}
+                  alt={advocate?.user_id?.full_name}
                   fill
                   style={{ objectFit: "cover" }}
                   className="rounded"
@@ -50,9 +68,11 @@ const Advocates: React.FC = () => {
               </div>
 
               <div className="p-6 text-gray-800 text-center">
-                <h3 className="text-2xl font-semibold mb-1">{partner.name}</h3>
+                <h3 className="text-2xl font-semibold mb-1">
+                  {advocate?.user_id?.full_name}
+                </h3>
                 <p className="text-sm uppercase tracking-wider text-gray-600">
-                  Advocate
+                  {advocate?.designation}
                 </p>
               </div>
             </div>

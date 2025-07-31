@@ -237,11 +237,9 @@ const AdminSidebar = () => {
             {/* User Profile Section */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-                
-                
                 <button className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition-all duration-200 flex items-center space-x-3">
                   <FaSignOutAlt />
-                  <button onClick={()=> handleLogOut()}>Logout</button>
+                  <button onClick={() => handleLogOut()}>Logout</button>
                 </button>
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   updateAdvocateProfile,
   deleteAdvocateProfile,
   showAdvocate,
+  showAdvocatesByFeatured,
 } from "../../controllers/advocateController.js";
 import upload from "../../middleware/multerMiddleware.js";
 import {
@@ -16,14 +17,19 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { updateOrCreateCertifications } from "../../controllers/certificationController.js";
 
-
-
 const router = Router();
 //Get individual advocate profile
 router.get("/profile", checkAdvocate, showAdvocate);
 
 // Get all advocates
 router.get("/all", checkAdmin, showAllAdvocates);
+
+// Get advocates by featured
+router.get(
+  "/advocateByFeatured",
+  protect(["admin", "client"]),
+  showAdvocatesByFeatured
+);
 
 // Get advocate by user id
 router.get("/profile/:id", checkAdmin, showAdvocateByUserId);

@@ -21,7 +21,7 @@ export const createCaseFile = async (req, res) => {
 };
 
 // ✅ Get All Case Files
-export const getAllCaseFiles = async (req, res) => {
+export const getAllCaseFilesForAdvocate = async (req, res) => {
   try {
     const id = req?.user?.id;
 
@@ -55,7 +55,7 @@ export const getAllCaseFilesForAdmin = async (req, res) => {
 };
 
 // ✅ Get Single Case File
-export const getSingleCaseFile = async (req, res) => {
+export const getCaseFileForClient = async (req, res) => {
   try {
     const client_id = req?.user?.id;
 
@@ -78,7 +78,7 @@ export const getSingleCaseFile = async (req, res) => {
   }
 };
 
-// ✅ Get Single Case File by id
+// ✅ Get Single Case File by id for details
 export const getSingleCaseFileById = async (req, res) => {
   try {
     const id = req?.params?.id;

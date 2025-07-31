@@ -23,7 +23,7 @@ function Page() {
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
-        const res = await apiFetch("/showOwnCaseFile/singleCaseFile");
+        const res = await apiFetch("/showOwnCaseFile/allCaseFile/for-client");
         console.log(res);
 
         setCaseFiles(res.data?.data || []);

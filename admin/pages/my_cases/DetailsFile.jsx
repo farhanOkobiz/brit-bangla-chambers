@@ -126,7 +126,17 @@ function DetailsFile() {
                 </button>
               </div>
 
-              <h3 className="text-xl font-bold mb-2 mt-12 leading-tight">
+              <div className="flex items-start gap-2 mt-12 lg:mt-0">
+                <FaUser className="text-orange-500 mt-0.5" />
+                <div>
+                  <span className="text-gray-600">Client Name:</span>
+                  <span className="font-medium text-gray-800 ml-1">
+                    {file.client_name}
+                  </span>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold mb-2 mt-3 lg:mt-6 leading-tight">
                 {file?.title || "Untitled Case"}
               </h3>
               <div className="flex items-center gap-4">
@@ -169,15 +179,6 @@ function DetailsFile() {
                     <span className="text-gray-600">Court:</span>
                     <span className="font-medium text-gray-800 ml-1">
                       {file?.court_name || "-"}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <FaUser className="text-orange-500 mt-0.5" />
-                  <div>
-                    <span className="text-gray-600">Client:</span>
-                    <span className="font-medium text-gray-800 ml-1">
-                      {file?.client_name}
                     </span>
                   </div>
                 </div>

@@ -177,25 +177,25 @@ function AllCaseFile() {
           <div className=" bg-white rounded-2xl shadow-md p-4 border border-gray-100">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-blue-600">
+                <div className="text-xl font-bold text-blue-600">
                   {caseFiles.length}
                 </div>
                 <div className="text-gray-600">Total Cases</div>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-amber-600">
+                <div className="text-xl font-bold text-amber-600">
                   {caseFiles.filter((f) => f.status === "pending").length}
                 </div>
                 <div className="text-gray-600">Pending</div>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-blue-600">
+                <div className="text-xl font-bold text-blue-600">
                   {caseFiles.filter((f) => f.status === "in_progress").length}
                 </div>
                 <div className="text-gray-600">In Progress</div>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-emerald-600">
+                <div className="text-xl font-bold text-emerald-600">
                   {caseFiles.filter((f) => f.status === "closed").length}
                 </div>
                 <div className="text-gray-600">Closed</div>
@@ -243,7 +243,16 @@ function AllCaseFile() {
                     </button>
                   </div>
 
-                  <h3 className="text-xl font-bold mb-2 mt-12 leading-tight">
+                  <div className="flex items-start gap-2 mt-12 lg:mt-0">
+                    <FaUser className="text-orange-500 mt-0.5" />
+                    <div>
+                      <span className="text-gray-600">Client Name:</span>
+                      <span className="font-medium text-gray-800 ml-1">
+                        {file.client_name}
+                      </span>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 mt-3 lg:mt-6 leading-tight">
                     {file.title || "Untitled Case"}
                   </h3>
                   <div className="flex items-center gap-4">
@@ -288,15 +297,6 @@ function AllCaseFile() {
                         <span className="text-gray-600">Court:</span>
                         <span className="font-medium text-gray-800 ml-1">
                           {file.court_name || "-"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <FaUser className="text-orange-500 mt-0.5" />
-                      <div>
-                        <span className="text-gray-600">Client:</span>
-                        <span className="font-medium text-gray-800 ml-1">
-                          {file.client_name}
                         </span>
                       </div>
                     </div>

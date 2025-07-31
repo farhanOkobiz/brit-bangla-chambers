@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { FileRequest } from "../models/fileRequestSchema.js";
+import { Notification } from "../models/notificationSchema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +60,14 @@ export const createFileRequest = async (req, res) => {
       case_id,
       description,
       file_url: file_urls,
+    });
+
+    // 🔔
+    await Notification.create({
+      userId: client_id,
+      title: "Documents Needed for Your Case",
+      message: `Your assigned advocate has requested some documents related to your case. Please log in and complete the submission.`,
+      relatedCaseId: case_id,
     });
 
     res.status(201).json(newRequest);
@@ -252,7 +261,7 @@ export const deleteSingleFileFromRequest = async (req, res) => {
   try {
     const { _id } = req.params;
     const { file_url } = req.body; // ⬅️ GET from query
-    console.log("hit delete single file from request:",_id, file_url);
+    console.log("hit delete single file from request:", _id, file_url);
 
     if (!_id || !file_url) {
       return res
@@ -283,13 +292,11 @@ export const deleteSingleFileFromRequest = async (req, res) => {
     const filePath = getUploadPath(fullPath);
     deleteFile(fullPath);
 
-    res
-      .status(200)
-      .json({
-        message: "File deleted successfully.",
-        success: true,
-        fileRequest,
-      });
+    res.status(200).json({
+      message: "File deleted successfully.",
+      success: true,
+      fileRequest,
+    });
   } catch (err) {
     console.error("Error deleting file:", err);
     res.status(500).json({ message: "Server error while deleting file." });
