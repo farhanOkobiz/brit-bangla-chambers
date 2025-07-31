@@ -35,7 +35,6 @@ const deleteFile = (filePath) => {
 // controllers/fileRequestController.js
 
 export const createFileRequest = async (req, res) => {
-  console.log("hit create file request:", req.body);
   try {
     const { client_id, advocate_id, case_id, title, description, case_number } =
       req.body;

@@ -11,6 +11,10 @@ const notificationSchema = new mongoose.Schema(
     message: String,
     relatedCaseId: { type: mongoose.Schema.Types.ObjectId, ref: "CaseFile" },
     case_number: { type: String },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
