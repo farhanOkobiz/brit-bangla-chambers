@@ -155,7 +155,7 @@ const RequestForAdvocate = () => {
                     <strong>Permanent Address:</strong> {m?.permanentAddress}
                   </p>
                   <p>
-                    <strong>Issue Type:</strong> {m?.issueType}
+                    <strong>Specilization:</strong> {m?.issueType}
                   </p>
                   <p>
                     <strong>Message:</strong> {m?.message}

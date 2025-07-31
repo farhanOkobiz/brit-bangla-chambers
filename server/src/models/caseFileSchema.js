@@ -51,8 +51,7 @@ const CaseFileSchema = new Schema(
       court_order_url: String, // optional file link
     },
     documents: [{
-      type: Types.ObjectId,
-      ref: "fileRequest"
+      type: String
     }],
     related_laws: [String], // e.g. ["Section 420 IPC", "Civil Procedure Code"]
     tags: [String], // optional, for searching/filtering

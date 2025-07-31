@@ -13,7 +13,7 @@ import CreateBlog from "../pages/blog/CreateBlog";
 import ContactMessage from "../components/request/ContactMessage";
 // import Users from "../pages/Admin/Users";
 import Users from "../pages/Admin/Users";
-import ServiceForm from "../components/ServiceForm";
+import ServiceForm from "../components/Admin/ServiceForm";
 import AdvocateForm from "../components/Admin/AdvocateForm";
 import AdvocateShowcase from "../components/Admin/AdvocateShowcase";
 import ShowIndividualAdvocate from "../components/Admin/ShowIndividualAdvocate";
@@ -36,6 +36,7 @@ import AdminAllCaseFile from "../pages/Admin/admin_case_file/AdminAllCaseFile";
 import AdminSettings from "../components/Settings/AdminSettings";
 import AdvocateSettings from "../components/Settings/AdvocateSettings";
 import AdminDetailsCaseFile from "../pages/Admin/admin_case_file/AdminDetailsCaseFile";
+import CaseDetails from "../components/Advocate/CaseDetails";
 
 export default function App() {
   return (

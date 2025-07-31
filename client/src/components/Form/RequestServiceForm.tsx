@@ -4,16 +4,25 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
-import { RootState } from "@/redux/store";
-import Payload, { FormData } from "@/types/requestServiceForm.interface";
+
+type FormData = {
+  name: string;
+  email: string;
+  phone: string;
+  nid: string;
+  presentAddress: string;
+  permanentAddress: string;
+  issueType: string;
+  message: string;
+};
+
+type Payload = {
+  userMessage: FormData;
+  serviceId?: number;
+};
 
 interface item {
   _id: number;
-  name: string;
-}
-
-interface SelectedServiceType {
-  id: number;
   name: string;
 }
 
@@ -21,10 +30,9 @@ function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedService = useSelector(
-    (state: RootState): SelectedServiceType | null =>
-      state.selectedService as SelectedServiceType | null
-  );
+  const selectedService = useSelector((state) => state.selectedService);
+  const [attachments, setAttachments] = useState<FileList | null>(null);
+
   // Hydrate Redux from localStorage if empty
   React.useEffect(() => {
     console.log("Selected service:", selectedService);
@@ -79,10 +87,10 @@ function RequestServiceForm() {
     e.preventDefault();
 
     try {
-      const payload: Payload = {
-        userMessage: form,
-      };
-      // Use Redux or localStorage for serviceId
+      const formData = new FormData();
+
+      formData.append("userMessage", JSON.stringify(form));
+
       let serviceId = selectedService?.id;
       if (!serviceId) {
         const stored = localStorage.getItem("selectedService");
@@ -94,22 +102,25 @@ function RequestServiceForm() {
         }
       }
       if (serviceId) {
-        payload.serviceId = serviceId;
+        formData.append("serviceId", serviceId);
+      }
+
+      if (attachments && attachments.length > 0) {
+        for (let i = 0; i < attachments.length; i++) {
+          formData.append("attachments", attachments[i]);
+        }
       }
 
       const response = await apiFetch("/request-service", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!response.ok) {
         toast.warning("Failed to submit");
         return;
       }
-
+      console.log("Form submitted successfully:", response.data);
       toast.success("Request sent successfully!");
       dispatch(clearSelectedService());
       localStorage.removeItem("selectedService");
@@ -123,10 +134,15 @@ function RequestServiceForm() {
         issueType: "",
         message: "",
       });
+      setAttachments(null);
       router.push("/");
     } catch {
       toast.warning("Error submitting the form. Please try again.");
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAttachments(e.target.files);
   };
 
   useEffect(() => {
@@ -201,13 +217,12 @@ function RequestServiceForm() {
           />
         </div>
 
-        {/* Issue Type */}
         <div>
           <label
             htmlFor="issueType"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Issue Type
+            Specilization
           </label>
           <select
             name="issueType"
@@ -217,7 +232,7 @@ function RequestServiceForm() {
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
             disabled={!!selectedService?.name}
           >
-            <option value="">Select Issue Type</option>
+            <option value="">Select Specialization</option>
             {specialization?.map((item: item) => (
               <option key={item?._id} value={item?.name}>
                 {item?.name}
@@ -244,6 +259,23 @@ function RequestServiceForm() {
             required
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
           ></textarea>
+        </div>
+
+        <div>
+          <label
+            htmlFor="attachments"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Attach PDF documents (optional)
+          </label>
+          <input
+            type="file"
+            name="attachments"
+            accept=".pdf"
+            multiple
+            onChange={handleFileChange}
+            className="w-full border border-gray-300 p-2 rounded-md text-gray-800"
+          />
         </div>
 
         <button

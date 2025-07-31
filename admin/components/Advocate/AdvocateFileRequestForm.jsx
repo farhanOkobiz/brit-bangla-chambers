@@ -2,11 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import { useParams } from "react-router-dom";
-import { FaTrashAlt } from "react-icons/fa";
+import { TiTick } from "react-icons/ti";
+import {
+  FaTrashAlt,
+  FaFileAlt,
+  FaExclamationCircle,
+  FaCheckCircle,
+  FaAlignRight,
+} from "react-icons/fa";
 
 const AdvocateFileRequestForm = () => {
   const { id } = useParams();
-  console.log("AdvocateFileRequestForm ID:", id);
 
   const [formData, setFormData] = useState({ title: "", description: "" });
   const [clientId, setClientId] = useState("");
@@ -19,6 +25,11 @@ const AdvocateFileRequestForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [tickedFiles, setTickedFiles] = useState([]);
+  const image_url = import.meta.env.VITE_API_IMAGE_URL;
+
+  const [disabled, setDisabled] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,6 +65,8 @@ const AdvocateFileRequestForm = () => {
         setSuccessMsg("File request submitted successfully!");
         setFormData({ title: "", description: "" });
         fetchFileRequests(res.data.case_id); // get latest list
+        setShowDeleteButton(true);
+        setDisabled(true);
       }
     } catch (err) {
       console.error(err);
@@ -70,9 +83,21 @@ const AdvocateFileRequestForm = () => {
       });
       setRequestId(res.data._id);
 
+      if (res.ok) {
+        setFormData({
+          title: res.data.title,
+          description: res.data.description,
+        });
+      }
+
       if (Array.isArray(res.data?.file_url)) {
         setFiles(res.data.file_url);
         setShowFiles(true);
+        if (files.length > 0) {
+          setShowDeleteButton(true);
+        }
+        setShowDeleteButton(true);
+        setDisabled(true);
       } else {
         setShowFiles(false);
       }
@@ -89,14 +114,37 @@ const AdvocateFileRequestForm = () => {
       });
 
       const data = res.data?.data;
+      console.log("Fetched case details:", data);
       setClientId(data.client_id);
       setAdvocateId(data.advocate_id);
       setCaseId(data._id);
       setCaseNumber(data.case_number);
       fetchFileRequests(data._id);
+      setTickedFiles((prev) => [...prev, ...(data.documents || [])]);
+ // here document is an array how to fix this problem
     } catch (err) {
       console.error(err);
       setError("Failed to load case details.");
+    }
+  };
+
+  const handleDeleteFileRequest = async () => {
+    if (!window.confirm("Are you sure you want to delete this file?")) return;
+    try {
+      const res = await UseAxios(`/file-request/${requestId}`, {
+        method: "DELETE",
+      });
+
+      if (res?.ok) {
+        setDisabled(false);
+        fetchFileRequests(caseId);
+        setFormData({ title: "", description: "" });
+
+        setSuccessMsg("Requested File deleted successfully.");
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      setError("Failed to delete file.");
     }
   };
 
@@ -124,116 +172,241 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
+  const handleAddFileToCaseFile = async (filename) =>{
+    console.log("Adding file to case file:", filename);
+    try {
+      const res = await UseAxios(
+        `showOwnCaseFile/caseFile/${id}/add-document`,
+        {
+          method: "post",
+          data: { documentUrl: filename },
+        }
+      );
+      console.log("Add file response:", res.data);
 
+      if (res?.data?.success) {
+        setTickedFiles((prev) => [...prev, filename]);
+        setSuccessMsg("File added to case file successfully.");
+        fetchCaseDetails(); // Refresh case details
+      } else {
+        setError("Failed to add file to case file.");
+      }
+    } catch (error) {
+      console.error("Error adding file to case file:", error);
+      setError("Failed to add file to case file.");
+    }
+  }
 
   useEffect(() => {
     if (id) fetchCaseDetails();
   }, [id]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-blue-100 p-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg border border-gray-200 p-6 sm:p-8">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Submit File Request
-        </h1>
-
-        {error && (
-          <div className="bg-red-100 text-red-700 border border-red-300 p-3 rounded-md mb-4 text-sm">
-            {error}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-6 sm:py-12">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-lg">
+            <FaFileAlt className="text-white text-2xl" />
           </div>
-        )}
-        {successMsg && (
-          <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded-md mb-4 text-sm">
-            {successMsg}
-          </div>
-        )}
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
+            Submit File Request
+          </h1>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Request files for your case with detailed information
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label
-              htmlFor="title"
-              className="block font-semibold text-gray-700 mb-1"
-            >
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Enter request title"
-              required
-            />
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+                <h2 className="text-white font-semibold text-lg">
+                  Request Details
+                </h2>
+              </div>
 
-          <div>
-            <label
-              htmlFor="description"
-              className="block font-semibold text-gray-700 mb-1"
-            >
-              Description <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-              placeholder="Enter a short description"
-              required
-            />
-          </div>
+              <div className="p-6 sm:p-8">
+                {/* Alert Messages */}
+                {error && (
+                  <div className="flex items-start space-x-3 bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-6">
+                    <FaExclamationCircle className="text-red-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-red-700 text-sm font-medium">
+                      {error}
+                    </div>
+                  </div>
+                )}
 
-          <div className="text-right">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition-all disabled:opacity-60"
-            >
-              {isLoading ? "Submitting..." : "Submit Request"}
-            </button>
-          </div>
-        </form>
+                {successMsg && (
+                  <div className="flex items-start space-x-3 bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg mb-6">
+                    <FaCheckCircle className="text-green-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-green-700 text-sm font-medium">
+                      {successMsg}
+                    </div>
+                  </div>
+                )}
 
-        {showFiles && files.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">
-              Uploaded Files
-            </h2>
-            <ul className="space-y-3">
-              {files.map((file, index) => {
-                const filename = file.split("/").pop();
-
-                return (
-                  <li
-                    key={index}
-                    className="flex items-center justify-between text-sm bg-gray-50 p-3 rounded-lg border border-gray-200"
-                  >
-                    <a
-                      href={file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline break-all"
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Title Field */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="title"
+                      className="block text-sm font-semibold text-gray-700"
                     >
-                      {filename}
-                    </a>
+                      Request Title <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="title"
+                      name="title"
+                      type="text"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-sm sm:text-base"
+                      placeholder="Enter a descriptive title for your request"
+                      required
+                    />
+                  </div>
+
+                  {/* Description Field */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-semibold text-gray-700"
+                    >
+                      Description <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      rows="5"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none transition-all duration-200 text-sm sm:text-base"
+                      placeholder="Provide detailed information about the files you need..."
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Be specific about what files you need and why they're
+                      important for your case.
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                    {showDeleteButton && (
+                      <button
+                        type="button"
+                        onClick={handleDeleteFileRequest}
+                        className="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 focus:ring-4 focus:ring-red-200 transition-all duration-200 text-sm sm:text-base"
+                      >
+                        <FaTrashAlt className="mr-2" />
+                        Delete Request
+                      </button>
+                    )}
 
                     <button
-                      onClick={() => handleDeleteFile(filename)}
-                      className="ml-4 text-red-500 hover:text-red-700"
-                      title="Delete file"
+                      type="submit"
+                      disabled={isLoading || disabled}
+                      className="flex items-center justify-center flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-indigo-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 text-sm sm:text-base"
                     >
-                      <FaTrashAlt />
+                      {isLoading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit Request"
+                      )}
                     </button>
-                  </li>
-                );
-              })}
-            </ul>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
-        )}
+
+          {/* Files Sidebar */}
+          <div className="lg:col-span-1">
+            {showFiles && files.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden sticky top-6">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
+                  <h3 className="text-white font-semibold text-lg flex items-center">
+                    <FaFileAlt className="mr-2" />
+                    Uploaded Files ({files.length})
+                  </h3>
+                </div>
+
+                <div className="p-4 max-h-96 overflow-y-auto">
+                  <div className="space-y-3">
+                    {files.map((file, index) => {
+                      const filename = file.split("/").pop();
+
+                      return (
+                        <div
+                          key={index}
+                          className="group bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl p-4 transition-all duration-200"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <a
+                                href={`${image_url}${file}`}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-blue-600 hover:text-blue-800 font-medium text-sm break-all line-clamp-2 transition-colors duration-200"
+                                title={filename}
+                              >
+                                {filename}
+                              </a>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Click to view
+                              </p>
+                            </div>
+
+                            <div className="flex items-center space-x-2 gap-0">
+                              <button
+                                onClick={() => handleDeleteFile(filename)}
+                                className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
+                                title="Delete file"
+                              >
+                                <FaTrashAlt className="text-sm" />
+                              </button>
+
+                              {!tickedFiles.includes(file) && (
+                                <button
+                                  onClick={() => handleAddFileToCaseFile(file)}
+                                  className="flex-shrink-0 p-2 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
+                                  title="Add to case file"
+                                >
+                                  <TiTick className="text-lg" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {showFiles && files.length === 0 && (
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaFileAlt className="text-gray-400 text-xl" />
+                </div>
+                <h3 className="text-gray-700 font-semibold mb-2">
+                  No Files Yet
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  Files will appear here once uploaded
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,8 @@ export async function checkAuth() {
       ok: true,
       role: res.data.role,
       userName: res.data.userName || null,
+      profilePhoto: res.data.profilePhoto || null, // New field for profile photo
+      id : res.data.userId, // Include user ID if needed
     };
   }
   return { ok: false, role: null };

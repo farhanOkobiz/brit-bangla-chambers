@@ -5,7 +5,7 @@ import { blogApi } from "./api/blogApi";
 import { authApi } from "./api/authApi";
 import { specializationApi } from "./api/specializationApi";
 import { notificationApi } from "./api/notificationApi";
-// import selectedServiceReducer from "./slices/selectedServiceSlice";
+import selectedServiceReducer from "./slices/selectedServiceSlice";
 
 export const store = configureStore({
   reducer: {

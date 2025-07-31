@@ -5,7 +5,8 @@ import { setSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { useRouter } from "next/navigation";
 import { Calendar, Tag, Filter, X, Search } from "lucide-react";
 import { apiFetch } from "../../../api/apiFetch";
-import Image from "next/image";
+
+type Root = IServicesDisplay[];
 
 interface IServicesDisplay {
   _id: string;
@@ -41,9 +42,7 @@ interface CreatedBy {
 
 const ServicesDisplay = () => {
   const [services, setServices] = useState<IServicesDisplay[]>([]);
-  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>(
-    []
-  );
+  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -51,8 +50,7 @@ const ServicesDisplay = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedService, setSelectedServiceModal] =
-    useState<IServicesDisplay | null>(null);
+  const [selectedService, setSelectedServiceModal] = useState<IServicesDisplay | null>(null);
   const [showModal, setShowModal] = useState(false);
   const image_url = process.env.NEXT_PUBLIC_IMAGE_URL;
   const dispatch = useDispatch();
@@ -81,8 +79,9 @@ const ServicesDisplay = () => {
         ].filter((s): s is string => !!s);
         setCategories(uniqueCategories);
         setSubcategories(uniqueSubcategories);
-      } catch {
+      } catch (err) {
         setError("Failed to fetch services");
+        console.error("Error fetching services:", err);
       } finally {
         setLoading(false);
       }
@@ -297,11 +296,9 @@ const ServicesDisplay = () => {
                         >
                           {/* Service Image */}
                           <div className="relative h-32 overflow-hidden">
-                            <Image
+                            <img
                               src={`${image_url}${service.serviceImage}`}
                               alt={service.title}
-                              width={600}
-                              height={300}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                             />
                             <div className="absolute top-2 right-2">
@@ -339,21 +336,16 @@ const ServicesDisplay = () => {
                                 </button>
                                 <button
                                   onClick={() => {
-                                    dispatch(
-                                      setSelectedService({
-                                        id: service._id,
-                                        name: service.title,
-                                        serviceImage: service.serviceImage,
-                                      })
-                                    );
-                                    localStorage.setItem(
-                                      "selectedService",
-                                      JSON.stringify({
-                                        id: service._id,
-                                        name: service.title,
-                                        serviceImage: service.serviceImage,
-                                      })
-                                    );
+                                    dispatch(setSelectedService({
+                                      id: service._id,
+                                      name: service.title,
+                                      serviceImage: service.serviceImage,
+                                    }));
+                                    localStorage.setItem("selectedService", JSON.stringify({
+                                      id: service._id,
+                                      name: service.title,
+                                      serviceImage: service.serviceImage,
+                                    }));
                                     router.push("/request-for-service");
                                   }}
                                   className="bg-green-50 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-100 transition-colors cursor-pointer"
@@ -386,12 +378,10 @@ const ServicesDisplay = () => {
             <h2 className="text-xl font-semibold mb-4">
               {selectedService.title}
             </h2>
-            <Image
+            <img
               src={selectedService.serviceImage}
               alt={selectedService.title}
               className="w-full h-48 object-cover rounded mb-4"
-              height={48}
-              width={48}
             />
             <p className="text-gray-700 mb-2">
               <strong>Category:</strong>{" "}

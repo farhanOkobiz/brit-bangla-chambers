@@ -27,7 +27,6 @@ router.get("/all", checkAdmin, showAllAdvocates);
 // Get advocates by featured
 router.get(
   "/advocateByFeatured",
-  protect(["admin", "client"]),
   showAdvocatesByFeatured
 );
 

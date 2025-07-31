@@ -68,7 +68,7 @@ const AdminSidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
   const CLIENT_URL = import.meta.env.VITE_API_CLIENT_URL;
-
+  const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
   };
@@ -77,7 +77,7 @@ const AdminSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
-  const { setAuthed, setRole, setUserName, userName } = UseAuth();
+  const { setAuthed, setRole, setUserName, setProfilePhoto, userName, profilePhoto } = UseAuth();
 
   const handleLogOut = () => {
     try {
@@ -86,6 +86,7 @@ const AdminSidebar = () => {
         setAuthed(false);
         setRole(null);
         setUserName(null);
+        setProfilePhoto(null);
         window.location.href = `${CLIENT_URL}/login`;
       }
     } catch (error) {
@@ -326,7 +327,7 @@ const AdminSidebar = () => {
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
               <img
                 className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
-                src="/placeholder.svg?height=32&width=32"
+                src={`${IMAGE_URL}${profilePhoto || "/placeholder.svg?height=32&width=32"}`}
                 alt="Admin"
               />
               <div className="flex-1 min-w-0">

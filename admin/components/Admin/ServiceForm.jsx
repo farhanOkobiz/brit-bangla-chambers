@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UseAxios } from "../services/UseAxios";
-import DataList from "./common/DataList";
-import FormModal from "./common/FormModal";
+import { UseAxios } from "../../services/UseAxios";
+import DataList from "../common/DataList";
+import FormModal from "../common/FormModal";
 
 const ServiceForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +13,7 @@ const ServiceForm = () => {
   const [loadingServices, setLoadingServices] = useState(true);
   const [editingService, setEditingService] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const image_url = import.meta.env.VITE_API_IMAGE_URL;
 
   const UseAxiosHook = UseAxios;
 
@@ -325,7 +326,7 @@ const ServiceForm = () => {
         <div className="flex-shrink-0">
           {item.serviceImage ? (
             <img
-              src={item.serviceImage || "/placeholder.svg"}
+              src={`${image_url}${item.serviceImage}` || "/placeholder.svg"}
               alt={item.title}
               className="w-16 h-16 rounded-lg object-cover border border-gray-200"
             />

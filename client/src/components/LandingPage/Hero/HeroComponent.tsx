@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function HeroSection() {
+export default function HeroSection() {
   return (
     <section
       className="relative h-[60vh] md:h-[80vh] bg-cover bg-center flex items-center justify-center text-white overflow-hidden"

@@ -9,6 +9,9 @@ import {
   FaRegFileAlt,
   FaTrash,
   FaUser,
+  FaTag,
+  FaBalanceScale,
+  FaFileContract,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 
@@ -16,6 +19,7 @@ function DetailsFile() {
   const { id } = useParams();
   const [file, setFile] = useState("");
   const navigate = useNavigate();
+  const image_url = import.meta.env.VITE_API_IMAGE_URL;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -43,25 +47,54 @@ function DetailsFile() {
     });
 
     if (result.isConfirmed) {
-      // Optimistic update
       try {
         await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
           method: "DELETE",
         });
 
         toast.success("Case file deleted successfully!");
-
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your case file has been removed.",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-        });
         navigate("/advocate/dashboard/all-case-file");
       } catch (error) {
         console.error("Error deleting case file:", error);
         toast.error("Failed to delete the case file.");
+      }
+    }
+  };
+
+  const handleDeleteDocument = async (index) => {
+    const result = await Swal.fire({
+      title: "Delete Document?",
+      text: "This document will be permanently removed from the case file!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // Create a new array without the deleted document
+        const updatedDocuments = [...file.documents];
+        updatedDocuments.splice(index, 1);
+
+        // Update the file state
+        setFile((prev) => ({
+          ...prev,
+          documents: updatedDocuments,
+        }));
+
+        // API call to update the case file on the server
+        await UseAxios(`/showOwnCaseFile/updateCaseFile/${id}`, {
+          method: "PUT",
+          data: { documents: updatedDocuments },
+        });
+
+        toast.success("Document deleted successfully!");
+      } catch (error) {
+        toast.error("Failed to delete document.");
+        console.error(error);
       }
     }
   };
@@ -98,7 +131,7 @@ function DetailsFile() {
         <div className="mt-10">
           <div
             key={file._id}
-            className=" bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 mt-4"
+            className="bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 mt-4"
           >
             {/* Card Header */}
             <div className="p-6 relative">
@@ -154,9 +187,9 @@ function DetailsFile() {
             {/* Card Body */}
             <div className="p-6 space-y-4">
               {/* Key Information */}
-              <div className="grid grid-cols-1 gap-4 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <FaGavel className="text-blue-500" />
+                  <FaBalanceScale className="text-blue-500" />
                   <span className="text-gray-600">Type:</span>
                   <span className="font-medium text-gray-800">
                     {file?.case_type || "-"}
@@ -166,20 +199,34 @@ function DetailsFile() {
                   <FaCalendarAlt className="text-green-500" />
                   <span className="text-gray-600">Filed:</span>
                   <span className="font-medium text-gray-800">
-                    {new Date(file?.filing_date).toLocaleDateString()}
+                    {file?.filing_date
+                      ? new Date(file.filing_date).toLocaleDateString()
+                      : "-"}
                   </span>
                 </div>
-              </div>
-
-              {/* Court and Client */}
-              <div className="space-y-2 text-sm">
-                <div className="flex items-start gap-2">
-                  <FaGavel className="text-purple-500 mt-0.5" />
-                  <div>
-                    <span className="text-gray-600">Court:</span>
-                    <span className="font-medium text-gray-800 ml-1">
-                      {file?.court_name || "-"}
-                    </span>
+                <div className="flex items-center gap-2">
+                  <FaGavel className="text-purple-500" />
+                  <span className="text-gray-600">Court:</span>
+                  <span className="font-medium text-gray-800">
+                    {file?.court_name || "-"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaTag className="text-indigo-500" />
+                  <span className="text-gray-600">Tags:</span>
+                  <div className="flex flex-wrap gap-1">
+                    {file?.tags?.length > 0 ? (
+                      file.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full text-xs"
+                        >
+                          {tag}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-500">None</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -190,74 +237,185 @@ function DetailsFile() {
                   <h4 className="font-semibold text-gray-700 mb-2">
                     Parties Involved
                   </h4>
-                  <div>
-                    <span className="text-blue-600 font-medium">
-                      Plaintiff:
-                    </span>
-                    <span className="text-gray-700 ml-1">
-                      {file?.parties?.plaintiff?.name} (
-                      {file?.parties?.plaintiff?.contact})
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-red-600 font-medium">Defendant:</span>
-                    <span className="text-gray-700 ml-1">
-                      {file?.parties?.defendant?.name} (
-                      {file?.parties?.defendant?.contact})
-                    </span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-blue-600 font-medium">
+                        Plaintiff:
+                      </span>
+                      <div className="mt-1 ml-4">
+                        <p className="text-gray-700">
+                          {file?.parties?.plaintiff?.name || "N/A"}
+                        </p>
+                        {file?.parties?.plaintiff?.contact && (
+                          <p className="text-gray-600 text-sm">
+                            Contact: {file.parties.plaintiff.contact}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-red-600 font-medium">
+                        Defendant:
+                      </span>
+                      <div className="mt-1 ml-4">
+                        <p className="text-gray-700">
+                          {file?.parties?.defendant?.name || "N/A"}
+                        </p>
+                        {file?.parties?.defendant?.contact && (
+                          <p className="text-gray-600 text-sm">
+                            Contact: {file.parties.defendant.contact}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Summary */}
               {file.summary && (
-                <div className="text-sm">
-                  <h4 className="font-semibold text-gray-700 mb-2">
+                <div className="text-sm bg-blue-50 rounded-xl p-4">
+                  <h4 className="font-semibold text-blue-700 mb-2">
                     Case Summary
                   </h4>
-                  <p className="text-gray-600 line-clamp-3 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed">
                     {file?.summary}
                   </p>
                 </div>
               )}
 
-              {/* Next Hearing Date */}
-              {file.next_hearing_date && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaCalendarAlt className="text-blue-600" />
-                  <span>Next Hearing:</span>
-                  <span className="font-medium">
-                    {new Date(file?.next_hearing_date).toLocaleDateString()}
-                  </span>
+              {/* Related Laws */}
+              {file.related_laws?.length > 0 && (
+                <div className="bg-purple-50 rounded-xl p-4 text-sm">
+                  <h4 className="font-semibold text-purple-700 mb-2">
+                    Related Laws
+                  </h4>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {file.related_laws.map((law, index) => (
+                      <li key={index} className="text-gray-700">
+                        {law}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
-              {/* Verdict Date */}
-              {file.verdict_date && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaGavel className="text-green-600" />
-                  <span>Verdict Date:</span>
-                  <span className="font-medium">
-                    {new Date(file?.verdict_date).toLocaleDateString()}
-                  </span>
+              {/* Documents */}
+              {file.documents?.length > 0 && (
+                <div className="bg-amber-50 rounded-xl p-4 text-sm">
+                  <h4 className="font-semibold text-amber-700 mb-3">
+                    Case Documents
+                  </h4>
+                  <div className="flex overflow-x-auto pb-3 -mx-1 px-1">
+                    <div className="flex space-x-4 min-w-max">
+                      {file.documents.map((doc, index) => (
+                        <div
+                          key={index}
+                          className="group relative flex flex-col items-center w-32"
+                        >
+                          <div className="flex flex-col items-center bg-white border border-amber-200 rounded-lg p-3 w-full hover:shadow-md transition-all duration-200">
+                            <a
+                              href={`${image_url}${doc}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex flex-col items-center w-full"
+                            >
+                              <div className="bg-amber-100 p-3 rounded-full mb-2">
+                                <FaFileContract className="text-amber-600 text-xl" />
+                              </div>
+                              <span className="text-xs font-medium text-center text-gray-700 truncate w-full">
+                                Document {index + 1}
+                              </span>
+                            </a>
+
+                            {/* Delete Button - positioned at bottom, visible on hover */}
+                            <button
+                              onClick={() => handleDeleteDocument(index)}
+                              className="absolute bottom-0 left-0 right-0 w-full py-1.5 bg-red-500 text-white rounded-b-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-1 hover:bg-red-600 focus:outline-none"
+                              title="Delete document"
+                            >
+                              <FaTrash className="text-xs" />
+                              <span className="text-xs">Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {/* Timeline Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Next Hearing Date */}
+                {file.next_hearing_date && (
+                  <div className="bg-green-50 rounded-xl p-4 text-sm">
+                    <h4 className="font-semibold text-green-700 mb-2 flex items-center">
+                      <FaCalendarAlt className="mr-2 text-green-600" />
+                      Next Hearing
+                    </h4>
+                    <p className="font-medium">
+                      {new Date(file.next_hearing_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+
+                {/* Verdict Date */}
+                {file.verdict_date && (
+                  <div className="bg-red-50 rounded-xl p-4 text-sm">
+                    <h4 className="font-semibold text-red-700 mb-2 flex items-center">
+                      <FaGavel className="mr-2 text-red-600" />
+                      Verdict Date
+                    </h4>
+                    <p className="font-medium">
+                      {new Date(file.verdict_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* Judgment */}
-              {file.judgment?.decision_summary && (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
-                  <h4 className="font-semibold text-green-800 mb-2">
-                    Judgment
+              {file.judgment && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm">
+                  <h4 className="font-semibold text-emerald-800 mb-2">
+                    Judgment Details
                   </h4>
-                  <p className="text-green-700">
-                    {file?.judgment?.decision_summary}
-                  </p>
-                  <p>
-                    Decision Date:
-                    {new Date(
-                      file?.judgment?.decision_date
-                    ).toLocaleDateString()}
-                  </p>
+
+                  {file.judgment.decision_summary && (
+                    <div className="mb-3">
+                      <p className="font-medium text-gray-700">Summary:</p>
+                      <p className="text-gray-600 mt-1">
+                        {file.judgment.decision_summary}
+                      </p>
+                    </div>
+                  )}
+
+                  {file.judgment.decision_date && (
+                    <div className="mb-3">
+                      <p className="font-medium text-gray-700">
+                        Decision Date:
+                      </p>
+                      <p>
+                        {new Date(
+                          file.judgment.decision_date
+                        ).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+
+                  {file.judgment.court_order_url && (
+                    <div>
+                      <p className="font-medium text-gray-700">Court Order:</p>
+                      <a
+                        href={file.judgment.court_order_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center mt-1"
+                      >
+                        <FaRegFileAlt className="mr-1" /> View Court Order
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

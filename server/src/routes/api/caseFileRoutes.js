@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addDocumentToCaseFile,
   createCaseFile,
   deleteCaseFile,
   getAllCaseFilesForAdmin,
@@ -18,6 +19,11 @@ import {
 const router = express.Router();
 
 router.post("/createCaseFile", protect(["advocate", "client"]), createCaseFile); // Create case
+router.post(
+  "/caseFile/:id/add-document",
+  protect(["advocate"]),
+  addDocumentToCaseFile
+); // Get single case by ID
 router.get("/allCaseFile", checkAdvocate, getAllCaseFilesForAdvocate); // Get all cases
 router.get("/allCaseFile/for-admin", checkAdmin, getAllCaseFilesForAdmin); // Get all cases for admin
 router.get("/allCaseFile/for-client", checkClient, getCaseFileForClient); // Get single case for client
