@@ -89,7 +89,7 @@ export const createService = async (req, res) => {
     }
 
     const imagePath = req.file
-      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+      ? `/uploads/${req.file.filename}`
       : "";
 
     const service = await Service.create({

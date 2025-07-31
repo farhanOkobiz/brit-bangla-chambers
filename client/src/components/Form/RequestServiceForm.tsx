@@ -121,7 +121,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       toast.warning("Failed to submit");
       return;
     }
-
+    console.log("Form submitted successfully:", response.data);
     toast.success("Request sent successfully!");
     dispatch(clearSelectedService());
     localStorage.removeItem("selectedService");

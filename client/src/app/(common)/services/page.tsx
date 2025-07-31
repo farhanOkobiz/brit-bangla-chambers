@@ -60,7 +60,7 @@ const ServicesDisplay = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        let response = await apiFetch("/service/get-all-service");
+        const response = await apiFetch("/service/get-all-service");
 
         const data: IServicesDisplay[] = response.data || [];
         console.log("Fetched services:", data);
@@ -297,7 +297,7 @@ const ServicesDisplay = () => {
                           {/* Service Image */}
                           <div className="relative h-32 overflow-hidden">
                             <img
-                              src={`${service.serviceImage}`}
+                              src={`${image_url}${service.serviceImage}`}
                               alt={service.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                             />
