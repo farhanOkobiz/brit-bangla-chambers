@@ -27,6 +27,7 @@ const AdvocateFileRequestForm = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [tickedFiles, setTickedFiles] = useState([]);
+  const image_url = import.meta.env.VITE_API_IMAGE_URL;
 
   const [disabled, setDisabled] = useState(false);
 
@@ -348,7 +349,8 @@ const AdvocateFileRequestForm = () => {
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
                               <a
-                                href={file}
+                                href={`${image_url}${file}`}
+                                download
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="block text-blue-600 hover:text-blue-800 font-medium text-sm break-all line-clamp-2 transition-colors duration-200"

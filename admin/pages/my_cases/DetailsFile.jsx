@@ -19,6 +19,7 @@ function DetailsFile() {
   const { id } = useParams();
   const [file, setFile] = useState("");
   const navigate = useNavigate();
+  const image_url = import.meta.env.VITE_API_IMAGE_URL;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -314,7 +315,7 @@ function DetailsFile() {
                         >
                           <div className="flex flex-col items-center bg-white border border-amber-200 rounded-lg p-3 w-full hover:shadow-md transition-all duration-200">
                             <a
-                              href={doc}
+                              href={`${image_url}${doc}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex flex-col items-center w-full"
