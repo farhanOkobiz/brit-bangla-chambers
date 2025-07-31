@@ -6,30 +6,28 @@ import {
   deleteFileRequest,
   uploadFilesToRequest,
   getAllFileRequests,
-  getFileRequestById,
+  getFileRequestByClintId,
   getFileRequestByCaseId,
   deleteSingleFileFromRequest,
 } from "../../controllers/fileRequestController.js";
+import { checkClient } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
-// ✅ Advocate creates a file request
+// Specific routes FIRST
 router.post("/", upload.array("files"), createFileRequest);
-
-// ✅ Get all requests (optionally filtered by advocate_id/client_id)
-router.get("/", getAllFileRequests);
-
-// ✅ Get a single request by ID
-router.get("/:_id", getFileRequestById);
+router.put(
+  "/:id/upload",
+  checkClient,
+  upload.array("files"),
+  uploadFilesToRequest
+);
 router.get("/case/:_id", getFileRequestByCaseId);
 
-// ✅ Advocate updates the request (title/description/files)
+// Then parameterized routes
+router.get("/", getAllFileRequests);
+router.get("/clientId", checkClient, getFileRequestByClintId);
 router.put("/:id", upload.array("files"), updateFileRequest);
-
-// ✅ Client uploads files to an existing request
-router.put("/:id/upload", upload.array("files"), uploadFilesToRequest);
-
-// ✅ Delete a request
 router.delete("/:id", deleteFileRequest);
 router.delete("/:_id/file", deleteSingleFileFromRequest);
 

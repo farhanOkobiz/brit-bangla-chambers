@@ -285,3 +285,26 @@ export const logout = (req, res) => {
   });
   res.json({ message: "Logged out" });
 };
+
+export const changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ message: "No token provided" });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to change password" });
+  }
+}

@@ -6,11 +6,13 @@ import { FaTrashAlt } from "react-icons/fa";
 
 const AdvocateFileRequestForm = () => {
   const { id } = useParams();
+  console.log("AdvocateFileRequestForm ID:", id);
 
   const [formData, setFormData] = useState({ title: "", description: "" });
   const [clientId, setClientId] = useState("");
   const [advocateId, setAdvocateId] = useState("");
   const [caseId, setCaseId] = useState("");
+  const [caseNumber, setCaseNumber] = useState("");
   const [files, setFiles] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
   const [requestId, setRequestId] = useState("");
@@ -41,6 +43,7 @@ const AdvocateFileRequestForm = () => {
       payload.append("client_id", clientId);
       payload.append("advocate_id", advocateId);
       payload.append("case_id", caseId);
+      payload.append("case_number", caseNumber);
 
       const res = await UseAxios("/file-request", {
         method: "post",
@@ -89,6 +92,7 @@ const AdvocateFileRequestForm = () => {
       setClientId(data.client_id);
       setAdvocateId(data.advocate_id);
       setCaseId(data._id);
+      setCaseNumber(data.case_number);
       fetchFileRequests(data._id);
     } catch (err) {
       console.error(err);
@@ -120,15 +124,7 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
-  if (res?.data?.fileRequest) {
-    setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
-    setSuccessMsg("File deleted successfully.");
-  }
-  if (res.ok) {
-    fetchFileRequests(caseId);
-  } else {
-    setError("Failed to delete file.");
-  }
+
 
   useEffect(() => {
     if (id) fetchCaseDetails();

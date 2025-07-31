@@ -121,7 +121,7 @@ function AdminDashboard() {
               </p>
             </div>
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center space-y-3 lg:space-y-0 lg:space-x-4">
-              <div className="relative">
+              {/* <div className="relative">
                 <input
                   type="text"
                   placeholder="Search..."
@@ -142,9 +142,9 @@ function AdminDashboard() {
                     />
                   </svg>
                 </div>
-              </div>
-              <div className="flex items-center justify-between lg:justify-start lg:space-x-4">
-                <div className="relative">
+              </div> */}
+              {/* <div className="flex items-center justify-between lg:justify-start lg:space-x-4"> */}
+                {/* <div className="relative">
                   <button className="p-2 text-gray-400 hover:text-gray-600 relative">
                     <svg
                       className="h-5 w-5 lg:h-6 lg:w-6"
@@ -163,8 +163,8 @@ function AdminDashboard() {
                       3
                     </span>
                   </button>
-                </div>
-                <div className="flex items-center space-x-2">
+                </div> */}
+                {/* <div className="flex items-center space-x-2">
                   <img
                     className="h-8 w-8 rounded-full object-cover"
                     src="/placeholder.svg?height=32&width=32"
@@ -174,7 +174,7 @@ function AdminDashboard() {
                     Admin User
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
