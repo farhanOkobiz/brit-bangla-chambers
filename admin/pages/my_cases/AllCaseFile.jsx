@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import {
   FaEdit,
-  FaTrash,
   FaFileAlt,
   FaCalendarAlt,
   FaUser,
@@ -15,6 +14,7 @@ import {
   FaEye,
   FaRegFileAlt,
 } from "react-icons/fa";
+import { RiFileCloseFill } from "react-icons/ri";
 
 function AllCaseFile() {
   const [caseFiles, setCaseFiles] = useState([]);
@@ -40,39 +40,64 @@ function AllCaseFile() {
     fetchCaseFiles();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleToggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === "closed" ? "in_progress" : "closed";
+    const actionText = newStatus === "closed" ? "close" : "activate";
+    const successText = newStatus === "closed" ? "closed" : "activated";
+
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This case file will be permanently deleted!",
+      text: `This case file will be ${successText}`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: `Yes, ${actionText} it!`,
       cancelButtonText: "Cancel",
     });
 
-    if (result.isConfirmed) {
-      setCaseFiles(caseFiles.filter((file) => file._id !== id));
+    if (!result.isConfirmed) return;
 
-      try {
-        await UseAxios(`/showOwnCaseFile/deleteCaseFile/${id}`, {
-          method: "DELETE",
-        });
+    try {
+      // Optimistic UI update
+      setCaseFiles((prevFiles) =>
+        prevFiles.map((file) =>
+          file._id === id ? { ...file, status: newStatus } : file
+        )
+      );
 
-        toast.success("Case file deleted successfully!");
+      const res = await UseAxios(`/showOwnCaseFile/changeStatus/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({ status: newStatus }),
+      });
 
+      if (res.data?.success) {
+        toast.success(`Case file ${successText} successfully!`);
         Swal.fire({
-          title: "Deleted!",
-          text: "Your case file has been removed.",
+          title: `${
+            successText.charAt(0).toUpperCase() + successText.slice(1)
+          }!`,
+          text: `Your case file has been ${successText}.`,
           icon: "success",
           timer: 1500,
           showConfirmButton: false,
         });
-      } catch (error) {
-        console.error("Error deleting case file:", error);
-        toast.error("Failed to delete the case file.");
+      } else {
+        throw new Error(
+          res.data?.message || `Failed to ${actionText} case file`
+        );
       }
+    } catch (error) {
+      // Revert on error
+      setCaseFiles((prevFiles) =>
+        prevFiles.map((file) =>
+          file._id === id ? { ...file, status: currentStatus } : file
+        )
+      );
+
+      console.error(`Error ${actionText}ing case file:`, error);
+      toast.error(error.message || `Failed to ${actionText} the case file.`);
     }
   };
 
@@ -206,11 +231,11 @@ function AllCaseFile() {
           {/* Case Files Grid */}
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-2">
             {filteredCases.map((file) => (
-              <Link to={`/advocate/dashboard/detail-case-file/${file._id}`}>
-                <div
-                  key={file._id}
-                  className=" bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 pb-6"
-                >
+              <div
+                key={file._id}
+                className=" bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 pb-6"
+              >
+                <div>
                   {/* Card Header */}
                   <div className="p-6 relative">
                     <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
@@ -220,14 +245,6 @@ function AllCaseFile() {
                       >
                         <FaRegFileAlt className="text-sm" />
                       </Link>
-
-                      <Link
-                        to={`/advocate/dashboard/detail-case-file/${file._id}`}
-                        className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
-                        title="View Details"
-                      >
-                        <FaEye className="text-sm" />
-                      </Link>
                       <Link
                         to={`/advocate/dashboard/edit-case-file/${file._id}`}
                         className="p-2 bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-700 rounded-lg transition-colors duration-200"
@@ -236,11 +253,28 @@ function AllCaseFile() {
                         <FaEdit className="text-sm" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(file._id)}
-                        className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors duration-200 cursor-pointer"
-                        title="Delete Case"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleStatus(file._id, file.status);
+                        }}
+                        className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${
+                          file.status === "closed"
+                            ? "bg-gray-300"
+                            : "bg-blue-600"
+                        }`}
+                        title={
+                          file.status === "closed"
+                            ? "Activate case"
+                            : "Close case"
+                        }
                       >
-                        <FaTrash className="text-sm" />
+                        <span
+                          className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${
+                            file.status === "closed"
+                              ? "translate-x-1"
+                              : "translate-x-6"
+                          }`}
+                        />
                       </button>
                     </div>
 
@@ -271,64 +305,69 @@ function AllCaseFile() {
                   </div>
 
                   {/* Card Body */}
-                  <div className="px-6 space-y-4">
-                    {/* Key Information */}
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex items-center gap-2">
-                        <FaGavel className="text-blue-500" />
-                        <span className="text-gray-600"> Case type:</span>
-                        <span className="font-medium text-gray-800">
-                          {file.case_type || "-"}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaCalendarAlt className="text-green-500" />
-                        <span className="text-gray-600">Filed:</span>
-                        <span className="font-medium text-gray-800">
-                          {new Date(file.filing_date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Court and Client */}
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-2">
-                        <FaGavel className="text-purple-500 mt-0.5" />
-                        <div>
-                          <span className="text-gray-600">Court:</span>
-                          <span className="font-medium text-gray-800 ml-1">
-                            {file.court_name || "-"}
+                  <Link
+                    to={`/advocate/dashboard/detail-case-file/${file._id}`}
+                    className="cursor-pointer"
+                  >
+                    <div className="px-6 space-y-4">
+                      {/* Key Information */}
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex items-center gap-2">
+                          <FaGavel className="text-blue-500" />
+                          <span className="text-gray-600"> Case type:</span>
+                          <span className="font-medium text-gray-800">
+                            {file.case_type || "-"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FaCalendarAlt className="text-green-500" />
+                          <span className="text-gray-600">Filed:</span>
+                          <span className="font-medium text-gray-800">
+                            {new Date(file.filing_date).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
+
+                      {/* Court and Client */}
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-2">
+                          <FaGavel className="text-purple-500 mt-0.5" />
+                          <div>
+                            <span className="text-gray-600">Court:</span>
+                            <span className="font-medium text-gray-800 ml-1">
+                              {file.court_name || "-"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Next Hearing Date */}
+                      {file.next_hearing_date && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <FaCalendarAlt className="text-blue-600" />
+                          <span>Next Hearing:</span>
+                          <span className="font-medium">
+                            {new Date(
+                              file.next_hearing_date
+                            ).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Verdict Date */}
+                      {file.verdict_date && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <FaGavel className="text-green-600" />
+                          <span>Verdict Date:</span>
+                          <span className="font-medium">
+                            {new Date(file.verdict_date).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
                     </div>
-
-                    {/* Next Hearing Date */}
-                    {file.next_hearing_date && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <FaCalendarAlt className="text-blue-600" />
-                        <span>Next Hearing:</span>
-                        <span className="font-medium">
-                          {new Date(
-                            file.next_hearing_date
-                          ).toLocaleDateString()}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Verdict Date */}
-                    {file.verdict_date && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <FaGavel className="text-green-600" />
-                        <span>Verdict Date:</span>
-                        <span className="font-medium">
-                          {new Date(file.verdict_date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  </Link>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

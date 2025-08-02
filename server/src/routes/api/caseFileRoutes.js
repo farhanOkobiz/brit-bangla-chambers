@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addDocumentToCaseFile,
+  changeCaseFileStatus,
   createCaseFile,
   deleteCaseFile,
   getAllCaseFilesForAdmin,
@@ -30,5 +31,6 @@ router.get("/allCaseFile/for-client", checkClient, getCaseFileForClient); // Get
 router.get("/singleCaseFile/:id", getSingleCaseFileById);
 router.put("/updateCaseFile/:id", checkAdvocate, updateCaseFile); // Update case
 router.delete("/deleteCaseFile/:id", checkAdvocate, deleteCaseFile); // Delete case
+router.post("/changeStatus/:id", changeCaseFileStatus)
 
 export default router;
