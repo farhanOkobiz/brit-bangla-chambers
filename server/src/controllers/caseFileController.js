@@ -180,4 +180,58 @@ export const addDocumentToCaseFile = async (req, res) => {
     console.error("Error adding document to case file:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-}
+};
+
+export const changeCaseFileStatus = async (req, res) => {
+  console.log("hit api change case file status")
+  try {
+    const { id } = req.params;
+    const { status } = req.body  // Handle undefined req.body
+
+    console.log("id: ", id)
+
+    // Check if status exists
+    if (status === undefined || status === null) {
+      return res.status(400).json({
+        success: false,
+        message: "Status field is required in request body",
+      });
+    }
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Case file ID is required",
+      });
+    }
+
+    const updatedCaseFile = await CaseFile.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedCaseFile) {
+      return res.status(404).json({
+        success: false,
+        error: "Case file not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: updatedCaseFile,
+      message: "Case file status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating case file status:", error);
+
+    const statusCode = error.name === "ValidationError" ? 400 : 500;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message || "Internal server error",
+      errorType: error.name,
+    });
+  }
+};

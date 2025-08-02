@@ -99,6 +99,55 @@ function DetailsFile() {
     }
   };
 
+const handleToggleStatus = async (currentStatus) => {
+  const newStatus = currentStatus === "closed" ? "in_progress" : "closed";
+  const actionText = newStatus === "closed" ? "close" : "activate";
+  const successText = newStatus === "closed" ? "closed" : "activated";
+
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: `This case file will be ${successText}`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: `Yes, ${actionText} it!`,
+    cancelButtonText: "Cancel",
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    // Optimistic UI update for single file
+    setFile((prev) => ({ ...prev, status: newStatus }));
+
+    const res = await UseAxios(`/showOwnCaseFile/changeStatus/${id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: JSON.stringify({ status: newStatus }),
+    });
+
+    if (res.data?.success) {
+      toast.success(`Case file ${successText} successfully!`);
+      Swal.fire({
+        title: `${successText.charAt(0).toUpperCase() + successText.slice(1)}!`,
+        text: `Your case file has been ${successText}.`,
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } else {
+      throw new Error(res.data?.message || `Failed to ${actionText} case file`);
+    }
+  } catch (error) {
+    // Revert on error
+    setFile((prev) => ({ ...prev, status: currentStatus }));
+
+    console.error(`Error ${actionText}ing case file:`, error);
+    toast.error(error.message || `Failed to ${actionText} the case file.`);
+  }
+};
+
   useEffect(() => {
     const fetchCase = async () => {
       try {
@@ -151,6 +200,26 @@ function DetailsFile() {
                 >
                   <FaEdit className="text-sm" />
                 </Link>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleStatus(file.status);
+                  }}
+                  className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${
+                    file.status === "closed" ? "bg-gray-300" : "bg-blue-600"
+                  }`}
+                  title={
+                    file.status === "closed" ? "Activate case" : "Close case"
+                  }
+                >
+                  <span
+                    className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${
+                      file.status === "closed"
+                        ? "translate-x-1"
+                        : "translate-x-6"
+                    }`}
+                  />
+                </button>
                 <button
                   onClick={() => handleDelete(file?._id)}
                   className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors duration-200 cursor-pointer"
