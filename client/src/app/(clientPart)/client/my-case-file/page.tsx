@@ -12,11 +12,12 @@ import {
 
 import { apiFetch } from "@/api/apiFetch";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import ClientCaseFile from "@/types/clientCaseFile.interface";
 
 function Page() {
-  const [caseFiles, setCaseFiles] = useState([]);
+  const [caseFiles, setCaseFiles] = useState<ClientCaseFile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
@@ -24,13 +25,11 @@ function Page() {
     const fetchCaseFiles = async () => {
       try {
         const res = await apiFetch("/showOwnCaseFile/allCaseFile/for-client");
-        console.log(res);
 
         setCaseFiles(res.data?.data || []);
         console.log("caseFile:", caseFiles);
-      } catch (err) {
-        console.error("Error fetching case files:", err);
-        setError("Failed to load case files.");
+      } catch {
+        toast.error("Error fetching case files");
       } finally {
         setLoading(false);
       }
@@ -39,7 +38,7 @@ function Page() {
     fetchCaseFiles();
   }, []);
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
         return "bg-amber-100 text-amber-800 border-amber-200";
@@ -115,15 +114,8 @@ function Page() {
           </div>
         )}
 
-        {/* Error State */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-            <p className="text-red-600 font-medium">{error}</p>
-          </div>
-        )}
-
         {/* Empty State */}
-        {!loading && !error && filteredCases.length === 0 && (
+        {!loading && filteredCases.length === 0 && (
           <div className="text-center py-16">
             <FaFileAlt className="mx-auto h-16 w-16 text-gray-300 mb-4" />
             <h3 className="text-xl font-medium text-gray-600 mb-2">

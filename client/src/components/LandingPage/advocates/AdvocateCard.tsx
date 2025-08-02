@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { apiFetch } from "@/api/apiFetch";
 import { toast } from "react-toastify";
+import { Advocate } from "@/types/advocate.interface";
 
 const Advocates: React.FC = () => {
-  const [advocates, setAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   useEffect(() => {

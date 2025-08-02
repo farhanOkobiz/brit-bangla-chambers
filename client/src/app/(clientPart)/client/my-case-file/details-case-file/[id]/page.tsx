@@ -1,14 +1,16 @@
 "use client";
 import { apiFetch } from "@/api/apiFetch";
+import ClientDetailsCaseFile from "@/types/clientDetailsCaseFile.interface";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaCalendarAlt, FaGavel, FaUser } from "react-icons/fa";
+import { toast } from "react-toastify";
 
-function page() {
+function Page() {
   const { id } = useParams();
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState<ClientDetailsCaseFile | null>(null);
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
         return "bg-amber-100 text-amber-800 border-amber-200";
@@ -34,6 +36,14 @@ function page() {
 
     fetchCase();
   }, [id]);
+
+  if (!file) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-gray-500">
+        Loading case file...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
@@ -184,22 +194,23 @@ function page() {
               )}
 
               {/* Judgment */}
-              {file.judgment?.decision_summary && (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
-                  <h4 className="font-semibold text-green-800 mb-2">
-                    Judgment
-                  </h4>
-                  <p className="text-green-700">
-                    {file?.judgment?.decision_summary}
-                  </p>
-                  <p>
-                    Decision Date:
-                    {new Date(
-                      file?.judgment?.decision_date
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
+              {file.judgment?.decision_summary &&
+                file.judgment?.decision_date && (
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
+                    <h4 className="font-semibold text-green-800 mb-2">
+                      Judgment
+                    </h4>
+                    <p className="text-green-700">
+                      {file.judgment.decision_summary}
+                    </p>
+                    <p>
+                      Decision Date:{" "}
+                      {new Date(
+                        file.judgment.decision_date
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
             </div>
           </div>
         </div>
@@ -207,4 +218,4 @@ function page() {
     </div>
   );
 }
-export default page;
+export default Page;

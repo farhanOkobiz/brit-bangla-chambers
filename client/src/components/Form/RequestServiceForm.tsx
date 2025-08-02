@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
+import { RootState } from "@/redux/store";
 
 type FormData = {
   name: string;
@@ -16,7 +17,6 @@ type FormData = {
   message: string;
 };
 
-
 interface item {
   _id: number;
   name: string;
@@ -26,9 +26,10 @@ function RequestServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedService = useSelector((state) => state.selectedService);
+  const selectedService = useSelector(
+    (state: RootState) => state.selectedService
+  );
   const [attachments, setAttachments] = useState<FileList | null>(null);
-
 
   // Hydrate Redux from localStorage if empty
   React.useEffect(() => {
@@ -80,69 +81,67 @@ function RequestServiceForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append("userMessage", JSON.stringify(form));
+      formData.append("userMessage", JSON.stringify(form));
 
-    let serviceId = selectedService?.id;
-    if (!serviceId) {
-      const stored = localStorage.getItem("selectedService");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          serviceId = parsed.id;
-        } catch {}
+      let serviceId = selectedService?.id;
+      if (!serviceId) {
+        const stored = localStorage.getItem("selectedService");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            serviceId = parsed.id;
+          } catch {}
+        }
       }
-    }
-    if (serviceId) {
-      formData.append("serviceId", serviceId);
-    }
-
-    if (attachments && attachments.length > 0) {
-      for (let i = 0; i < attachments.length; i++) {
-        formData.append("attachments", attachments[i]);
+      if (serviceId) {
+        formData.append("serviceId", serviceId);
       }
+
+      if (attachments && attachments.length > 0) {
+        for (let i = 0; i < attachments.length; i++) {
+          formData.append("attachments", attachments[i]);
+        }
+      }
+
+      const response = await apiFetch("/request-service", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        toast.warning("Failed to submit");
+        return;
+      }
+      console.log("Form submitted successfully:", response.data);
+      toast.success("Request sent successfully!");
+      dispatch(clearSelectedService());
+      localStorage.removeItem("selectedService");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        nid: "",
+        presentAddress: "",
+        permanentAddress: "",
+        issueType: "",
+        message: "",
+      });
+      setAttachments(null);
+      router.push("/");
+    } catch {
+      toast.warning("Error submitting the form. Please try again.");
     }
-
-    const response = await apiFetch("/request-service", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      toast.warning("Failed to submit");
-      return;
-    }
-    console.log("Form submitted successfully:", response.data);
-    toast.success("Request sent successfully!");
-    dispatch(clearSelectedService());
-    localStorage.removeItem("selectedService");
-    setForm({
-      name: "",
-      email: "",
-      phone: "",
-      nid: "",
-      presentAddress: "",
-      permanentAddress: "",
-      issueType: "",
-      message: "",
-    });
-    setAttachments(null);
-    router.push("/");
-  } catch {
-    toast.warning("Error submitting the form. Please try again.");
-  }
-};
-
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  setAttachments(e.target.files);
-};
-
+    setAttachments(e.target.files);
+  };
 
   useEffect(() => {
     async function fetchSpecialization() {
@@ -261,21 +260,21 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
 
         <div>
-  <label
-    htmlFor="attachments"
-    className="block text-sm font-medium text-gray-700 mb-1"
-  >
-    Attach PDF documents (optional)
-  </label>
-  <input
-    type="file"
-    name="attachments"
-    accept=".pdf"
-    multiple
-    onChange={handleFileChange}
-    className="w-full border border-gray-300 p-2 rounded-md text-gray-800"
-  />
-</div>
+          <label
+            htmlFor="attachments"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Attach PDF documents (optional)
+          </label>
+          <input
+            type="file"
+            name="attachments"
+            accept=".pdf"
+            multiple
+            onChange={handleFileChange}
+            className="w-full border border-gray-300 p-2 rounded-md text-gray-800"
+          />
+        </div>
 
         <button
           type="submit"

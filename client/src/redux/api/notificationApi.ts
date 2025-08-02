@@ -10,9 +10,9 @@ export const notificationApi = createApi({
       query: (userId) => `/notifications/${userId}`,
       providesTags: [{ type: "Notification", id: "LIST" }],
     }),
-    readNotifications: builder.mutation({
-      query: (notificationId) => ({
-        url: `/notifications/${notificationId}/read`,
+    readNotifications: builder.mutation<void, void>({
+      query: () => ({
+        url: "/notifications/read",
         method: "PATCH",
       }),
       invalidatesTags: [{ type: "Notification", id: "LIST" }],

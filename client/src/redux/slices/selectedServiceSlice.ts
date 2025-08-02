@@ -32,5 +32,6 @@ const selectedServiceSlice = createSlice({
   },
 });
 
-export const { setSelectedService, clearSelectedService } = selectedServiceSlice.actions;
+export const { setSelectedService, clearSelectedService } =
+  selectedServiceSlice.actions;
 export default selectedServiceSlice.reducer;

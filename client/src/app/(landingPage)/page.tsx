@@ -1,5 +1,5 @@
 import AboutUs from "@/components/LandingPage/aboutus/AboutUs";
-import  HeroComponent  from "@/components/LandingPage/Hero/HeroComponent";
+import HeroComponent from "@/components/LandingPage/Hero/HeroComponent";
 import OurExpertise from "@/components/LandingPage/ourExpertise/OurExpertise";
 import { Services } from "@/components/LandingPage/Services/Services";
 import StatsAndGrowth from "@/components/LandingPage/statsAndGrowth/StatsAndGrowth";
