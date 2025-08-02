@@ -180,7 +180,7 @@ function CreateBlog() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white font-medium text-lg px-4 py-3 rounded-md hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white font-medium text-lg px-4 py-3 rounded-md hover:bg-blue-700 transition cursor-pointer"
           >
             {loading ? "Creating..." : "Create Blog"}
           </button>

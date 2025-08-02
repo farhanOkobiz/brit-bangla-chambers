@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useNavigate, useParams, useRouteError } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { UseAxios } from "../../services/UseAxios";
 import { toast } from "react-toastify";
 
@@ -34,7 +34,7 @@ function EditBlog() {
           status: blog.status || "",
           author: blog.author || "",
         });
-      } catch (error) {
+      } catch {
         Swal.fire("Error", "Failed to load blog", "error");
       }
     };
@@ -58,12 +58,6 @@ function EditBlog() {
     setLoading(true);
 
     try {
-      if (!imageFile) {
-        toast.error("Please upload an image.");
-        setLoading(false);
-        return;
-      }
-
       const { title, content, tags, status, author_model } = formData;
 
       const formDataToSend = new FormData();
@@ -101,7 +95,7 @@ function EditBlog() {
         content: "",
         tags: "",
         status: "draft",
-        author_model: "Advocate",
+        author_model: "Admin",
       });
       setImageFile(null);
     } catch (error) {
@@ -168,7 +162,11 @@ function EditBlog() {
           </label>
           <input
             name="tags"
-            value={formData.tags}
+            value={
+              Array.isArray(formData.tags)
+                ? formData.tags.join(", ")
+                : formData.tags
+            }
             onChange={handleChange}
             placeholder="Tags (comma-separated)"
             className="w-full p-3 border border-gray-300 rounded-md"

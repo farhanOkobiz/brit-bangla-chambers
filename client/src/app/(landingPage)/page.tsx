@@ -7,6 +7,7 @@ import Advocates from "@/components/LandingPage/advocates/AdvocateCard";
 //import Blogs from "@/components/blogs/Blogs";
 import WhyChooseUs from "@/components/WhyChooseUs/WhyChooseUs";
 import ContactUs from "@/components/LandingPage/ContactUs/ContactUs";
+import Blogs from "@/components/blogs/Blogs";
 
 export default function Home() {
   return (
@@ -18,7 +19,7 @@ export default function Home() {
       <Advocates />
       <WhyChooseUs />
       <StatsAndGrowth />
-      {/* <Blogs /> */}
+      <Blogs />
       <ContactUs />
     </div>
   );

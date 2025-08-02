@@ -5,7 +5,7 @@ import { setSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { useRouter } from "next/navigation";
 import { Calendar, Tag, Filter, X, Search } from "lucide-react";
 import { apiFetch } from "../../../api/apiFetch";
-
+import Image from "next/image";
 
 interface IServicesDisplay {
   _id: string;
@@ -41,7 +41,9 @@ interface CreatedBy {
 
 const ServicesDisplay = () => {
   const [services, setServices] = useState<IServicesDisplay[]>([]);
-  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>([]);
+  const [filteredServices, setFilteredServices] = useState<IServicesDisplay[]>(
+    []
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -49,7 +51,8 @@ const ServicesDisplay = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedService, setSelectedServiceModal] = useState<IServicesDisplay | null>(null);
+  const [selectedService, setSelectedServiceModal] =
+    useState<IServicesDisplay | null>(null);
   const [showModal, setShowModal] = useState(false);
   const image_url = process.env.NEXT_PUBLIC_IMAGE_URL;
   const dispatch = useDispatch();
@@ -295,9 +298,10 @@ const ServicesDisplay = () => {
                         >
                           {/* Service Image */}
                           <div className="relative h-32 overflow-hidden">
-                            <img
+                            <Image
                               src={`${image_url}${service.serviceImage}`}
                               alt={service.title}
+                              fill
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                             />
                             <div className="absolute top-2 right-2">
@@ -335,16 +339,21 @@ const ServicesDisplay = () => {
                                 </button>
                                 <button
                                   onClick={() => {
-                                    dispatch(setSelectedService({
-                                      id: service._id,
-                                      name: service.title,
-                                      serviceImage: service.serviceImage,
-                                    }));
-                                    localStorage.setItem("selectedService", JSON.stringify({
-                                      id: service._id,
-                                      name: service.title,
-                                      serviceImage: service.serviceImage,
-                                    }));
+                                    dispatch(
+                                      setSelectedService({
+                                        id: service._id,
+                                        name: service.title,
+                                        serviceImage: service.serviceImage,
+                                      })
+                                    );
+                                    localStorage.setItem(
+                                      "selectedService",
+                                      JSON.stringify({
+                                        id: service._id,
+                                        name: service.title,
+                                        serviceImage: service.serviceImage,
+                                      })
+                                    );
                                     router.push("/request-for-service");
                                   }}
                                   className="bg-green-50 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-100 transition-colors cursor-pointer"
@@ -375,26 +384,29 @@ const ServicesDisplay = () => {
               <X className=" w-6 h-6 md:w-8 md:h-8 cursor-pointer" />
             </button>
             <h2 className="text-xl font-semibold mb-4">
-              {selectedService.title}
+              {selectedService?.title}
             </h2>
-            <img
-              src={selectedService.serviceImage}
-              alt={selectedService.title}
-              className="w-full h-48 object-cover rounded mb-4"
-            />
+            <div className="relative w-full h-48 mb-4 rounded overflow-hidden">
+              <Image
+                src={`${image_url}${selectedService?.serviceImage}`}
+                alt={selectedService?.title}
+                fill
+                className="object-cover"
+              />
+            </div>
             <p className="text-gray-700 mb-2">
               <strong>Category:</strong>{" "}
-              {selectedService.category?.name || "N/A"}
+              {selectedService?.category?.name || "N/A"}
             </p>
             <p className="text-gray-700 mb-2">
               <strong>Subcategory:</strong>{" "}
-              {selectedService.subcategory?.name || "N/A"}
+              {selectedService?.subcategory?.name || "N/A"}
             </p>
             <p className="text-gray-700 mb-4">
-              <strong>Description:</strong> {selectedService.description}
+              <strong>Description:</strong> {selectedService?.description}
             </p>
             <div className="text-sm text-gray-500">
-              Created on: {formatDate(selectedService.created_at)}
+              Created on: {formatDate(selectedService?.created_at)}
             </div>
           </div>
         </div>

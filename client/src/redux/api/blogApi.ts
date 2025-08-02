@@ -13,9 +13,16 @@ export const blogApi = createApi({
     getSingleBlog: build.query({
       query: (id) => `blog/get-single-blog/${id}`,
     }),
+    getBlogPublished: build.query({
+      query: () => `blog/get-blog-published/`,
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetBlogsQuery, useGetSingleBlogQuery } = blogApi;
+export const {
+  useGetBlogsQuery,
+  useGetSingleBlogQuery,
+  useGetBlogPublishedQuery,
+} = blogApi;

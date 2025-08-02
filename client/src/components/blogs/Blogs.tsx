@@ -1,12 +1,12 @@
 "use client";
-import { useGetBlogsQuery } from "@/redux/api/blogApi";
+import { useGetBlogPublishedQuery } from "@/redux/api/blogApi";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import { Blog } from "@/types/blog.interface";
 
 function Blogs() {
-  const { data: blogs } = useGetBlogsQuery(undefined);
+  const { data: blogs } = useGetBlogPublishedQuery(undefined);
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   return (
@@ -47,8 +47,7 @@ function Blogs() {
                 />
                 <div className="p-6 text-gray-800">
                   <p className="text-sm text-gray-500 mb-2">
-                    By{" "}
-                    <span className="font-semibold">{blog.author_model}</span> ·{" "}
+                    By <span className="font-semibold">{blog.author}</span> ·
                     {new Date(blog.createdAt).toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "short",
@@ -61,12 +60,6 @@ function Blogs() {
             </Link>
           ))}
         </div>
-
-        <Link href="/blogs" className="inline-block">
-          <button className="bg-[#5e3030] text-white mt-8 px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer uppercase">
-            Read The Blog
-          </button>
-        </Link>
       </div>
     </section>
   );

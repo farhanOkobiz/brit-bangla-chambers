@@ -38,7 +38,7 @@ export default function BlogPage() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogs?.data?.data.map((blog: Blog, idx: number) => (
+          {blogs?.data?.data?.map((blog: Blog, idx: number) => (
             <Link
               href={`/blogs/${blog._id}`}
               key={idx}
@@ -46,8 +46,8 @@ export default function BlogPage() {
             >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
                 <Image
-                  src={`${imageUrl}${blog.image}`}
-                  alt={blog.title}
+                  src={`${imageUrl}${blog?.image}`}
+                  alt={blog?.title}
                   width={700}
                   height={150}
                   className="object-cover w-full"
@@ -55,15 +55,14 @@ export default function BlogPage() {
 
                 <div className="p-6 text-gray-800">
                   <p className="text-sm text-gray-500 mb-2">
-                    By{" "}
-                    <span className="font-semibold">{blog.author_model}</span> ·{" "}
+                    By <span className="font-semibold">{blog?.author}</span> ·
                     {new Date(blog.createdAt).toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
                     })}
                   </p>
-                  <h3 className="text-xl font-semibold">{blog.title}</h3>
+                  <h3 className="text-xl font-semibold">{blog?.title}</h3>
                 </div>
               </div>
             </Link>

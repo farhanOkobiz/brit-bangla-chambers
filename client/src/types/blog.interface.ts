@@ -1,7 +1,7 @@
 export interface Blog {
   _id: string;
   author_id: string;
-  author_model: string;
+  author: string;
   image: string;
   title: string;
   slug: string;

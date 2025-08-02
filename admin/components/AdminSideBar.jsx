@@ -14,6 +14,7 @@ import {
   FaTags,
   FaEnvelope,
   FaCog,
+  FaBlogger,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -54,6 +55,23 @@ const menuItems = [
       { label: "Create Advocate", path: "/admin/advocates/create" },
     ],
   },
+  {
+    label: "Blogs",
+    isDropdown: true,
+    icon: <FaBlogger />,
+    subItems: [
+      {
+        label: "All Blogs",
+        path: "/admin/dashboard/blogs",
+        icon: <FaBlogger />,
+      },
+      {
+        label: "Create Blog",
+        path: "/admin/dashboard/create-blog",
+        icon: <FaBlogger />,
+      },
+    ],
+  },
   // { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
   {
     label: "Contact Messages",
@@ -77,7 +95,14 @@ const AdminSidebar = () => {
     setIsOpen(false);
     setOpenDropdown(null);
   };
-  const { setAuthed, setRole, setUserName, setProfilePhoto, userName, profilePhoto } = UseAuth();
+  const {
+    setAuthed,
+    setRole,
+    setUserName,
+    setProfilePhoto,
+    userName,
+    profilePhoto,
+  } = UseAuth();
 
   const handleLogOut = () => {
     try {
@@ -327,7 +352,9 @@ const AdminSidebar = () => {
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
               <img
                 className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
-                src={`${IMAGE_URL}${profilePhoto || "/placeholder.svg?height=32&width=32"}`}
+                src={`${IMAGE_URL}${
+                  profilePhoto || "/placeholder.svg?height=32&width=32"
+                }`}
                 alt="Admin"
               />
               <div className="flex-1 min-w-0">

@@ -58,6 +58,34 @@ export const getAllBlogs = async (req, res, next) => {
     next(err);
   }
 };
+// Get published blogs (with filters, pagination, search)
+export const getBlogsPublished = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, search = "" } = req.query;
+
+    const query = {
+      status: "published", // শুধু published ব্লগ
+      ...(search && {
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { content: { $regex: search, $options: "i" } },
+          { tags: { $in: [search] } },
+        ],
+      }),
+    };
+
+    const blogs = await Blog.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    const total = await Blog.countDocuments(query);
+
+    res.json({ success: true, data: blogs, total });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // Get single blog by slug
 export const getBlogById = async (req, res, next) => {
@@ -103,7 +131,7 @@ export const updateBlog = async (req, res, next) => {
 
     // If an image was uploaded
     if (req.file) {
-      updatePayload.image = req.file; // or process the file if needed
+      updatePayload.image = `/uploads/${req.file.filename}`; // or process the file if needed
     }
 
     const updated = await Blog.findByIdAndUpdate(id, updatePayload, {

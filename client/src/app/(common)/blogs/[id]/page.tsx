@@ -30,12 +30,12 @@ function Page() {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl w-full px-4 mx-auto text-center">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-700 uppercase">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-700 uppercase">
           {blog?.title}
         </h2>
         {/* Author & Date */}
         <p className="text-sm text-gray-500 mb-2">
-          By <span className="font-semibold">{blog?.author_model}</span> ·{" "}
+          By <span className="font-semibold">{blog?.author}</span> ·{" "}
           {new Date(blog?.createdAt).toLocaleDateString("en-GB", {
             day: "numeric",
             month: "short",
@@ -64,8 +64,8 @@ function Page() {
               />
 
               {/* Tags */}
-              <div className="mt-6">
-                <h4 className="font-semibold text-gray-700 mb-2">Tags:</h4>
+              <div className="mt-6 flex gap-2 justify-center">
+                <h4 className="font-semibold text-gray-700">Tags:</h4>
                 <div className="flex flex-wrap justify-center gap-2">
                   {blog?.tags.map((tag) => (
                     <span
