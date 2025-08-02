@@ -3,11 +3,14 @@ import { Link } from "react-router-dom";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { UseAxios } from "../../services/UseAxios";
 import Swal from "sweetalert2";
+import { UseAuth } from "../../auth/AuthContext";
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { role } = UseAuth();
+
   const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
   useEffect(() => {
@@ -94,23 +97,25 @@ function Blogs() {
                 />
 
                 {/* Edit/Delete Icons on top-right */}
-                <div className="absolute top-2 right-2 flex gap-2 z-10">
-                  <Link
-                    to={`edit-blog/${blog._id}`}
-                    title="Edit"
-                    className="p-1 rounded-full shadow text-blue-600 cursor-pointer"
-                  >
-                    <FiEdit size={18} />
-                  </Link>
+                {role === "admin" && (
+                  <div className="absolute top-2 right-2 flex gap-2 z-10">
+                    <Link
+                      to={`/admin/dashboard/edit-blog/${blog._id}`}
+                      title="Edit"
+                      className="p-1 rounded-full shadow text-blue-600 cursor-pointer"
+                    >
+                      <FiEdit size={18} />
+                    </Link>
 
-                  <button
-                    onClick={() => handleDelete(blog._id)}
-                    title="Delete"
-                    className="p-1 rounded-full shadow text-red-600 cursor-pointer"
-                  >
-                    <FiTrash2 size={18} />
-                  </button>
-                </div>
+                    <button
+                      onClick={() => handleDelete(blog._id)}
+                      title="Delete"
+                      className="p-1 rounded-full shadow text-red-600 cursor-pointer"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Blog Content */}
@@ -127,7 +132,7 @@ function Blogs() {
 
                 <div className="mt-4 flex justify-between items-center">
                   <Link
-                    to={`/blogs/${blog._id}`}
+                    to={`/advocate/dashboard/details-blog/${blog._id}`}
                     className="text-blue-600 hover:underline text-sm"
                   >
                     Read More

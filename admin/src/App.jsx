@@ -37,6 +37,7 @@ import AdminSettings from "../components/Settings/AdminSettings";
 import AdvocateSettings from "../components/Settings/AdvocateSettings";
 import AdminDetailsCaseFile from "../pages/Admin/admin_case_file/AdminDetailsCaseFile";
 import CaseDetails from "../components/Advocate/CaseDetails";
+import DetailsBlog from "../pages/blog/DetailsBlog";
 
 export default function App() {
   return (
@@ -57,6 +58,8 @@ export default function App() {
           <Route path="dashboard" element={<AdvocateDashboard />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
+          <Route path="dashboard/edit-blog/:id" element={<EditBlog />} />
+          <Route path="dashboard/details-blog/:id" element={<DetailsBlog />} />
           <Route path="dashboard/request" element={<RequestForAdvocate />} />
           <Route path="dashboard/all-case-file" element={<AllCaseFile />} />
           <Route
@@ -98,7 +101,8 @@ export default function App() {
           <Route path="user-management" element={<UserManagement />} />
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
-          <Route path="dashboard/blogs/edit-blog/:id" element={<EditBlog />} />
+          <Route path="dashboard/edit-blog/:id" element={<EditBlog />} />
+          <Route path="dashboard/details-blog/:id" element={<DetailsBlog />} />
           <Route path="case-file" element={<AdminAllCaseFile />} />
           <Route
             path="detail-case-file/:id"

@@ -131,7 +131,7 @@ export const updateBlog = async (req, res, next) => {
 
     // If an image was uploaded
     if (req.file) {
-      updatePayload.image = req.file; // or process the file if needed
+      updatePayload.image = `/uploads/${req.file.filename}`; // or process the file if needed
     }
 
     const updated = await Blog.findByIdAndUpdate(id, updatePayload, {
