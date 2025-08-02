@@ -375,38 +375,46 @@ const ServicesDisplay = () => {
       </div>
       {/* modal */}
       {showModal && selectedService && (
-        <div className="fixed inset-0 h-full bg-black/40 backdrop-blur-3xl flex items-center justify-center z-50 p-6 md:p-10">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-5xl p-6 relative">
+        <div className="fixed inset-0  bg-black/40 backdrop-blur-3xl flex items-center justify-center z-50 p-6 md:p-10">
+          <div className="bg-white rounded-lg shadow-lg w-full md:h-10/12 max-w-5xl p-8 py-2  relative">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
               onClick={() => setShowModal(false)}
             >
-              <X className=" w-6 h-6 md:w-8 md:h-8 cursor-pointer" />
+              <X className="w-6 h-6 md:w-8 md:h-8 cursor-pointer" />
             </button>
-            <h2 className="text-xl font-semibold mb-4">
-              {selectedService?.title}
-            </h2>
-            <div className="relative w-full h-48 mb-4 rounded overflow-hidden">
-              <Image
-                src={`${image_url}${selectedService?.serviceImage}`}
-                alt={selectedService?.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <p className="text-gray-700 mb-2">
-              <strong>Category:</strong>{" "}
-              {selectedService?.category?.name || "N/A"}
-            </p>
-            <p className="text-gray-700 mb-2">
-              <strong>Subcategory:</strong>{" "}
-              {selectedService?.subcategory?.name || "N/A"}
-            </p>
-            <p className="text-gray-700 mb-4">
-              <strong>Description:</strong> {selectedService?.description}
-            </p>
-            <div className="text-sm text-gray-500">
-              Created on: {formatDate(selectedService?.created_at)}
+
+            <div className="flex flex-col md:flex-row gap-6 py-6 ">
+              {/* Image First on mobile, right side on md+ */}
+              <div className="relative w-full h-56 md:h-76 lg:h-[370px] md:w-1/2 overflow-hidden rounded">
+                <Image
+                  src={`${image_url}${selectedService?.serviceImage}`}
+                  alt={selectedService?.title}
+                  fill
+                  className="object-cover h-full"
+                />
+              </div>
+
+              {/* Text Content */}
+              <div className="w-full md:w-1/2">
+                <h2 className="text-xl font-semibold mb-4">
+                  {selectedService?.title}
+                </h2>
+                <p className="text-gray-700 mb-2">
+                  <strong>Category:</strong>{" "}
+                  {selectedService?.category?.name || "N/A"}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <strong>Subcategory:</strong>{" "}
+                  {selectedService?.subcategory?.name || "N/A"}
+                </p>
+                <p className="text-gray-700 mb-4">
+                  <strong>Description:</strong> {selectedService?.description}
+                </p>
+                <div className="text-sm text-gray-500">
+                  Created on: {formatDate(selectedService?.created_at)}
+                </div>
+              </div>
             </div>
           </div>
         </div>

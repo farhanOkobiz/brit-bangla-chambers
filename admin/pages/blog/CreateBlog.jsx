@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import { toast } from "react-toastify";
+import { UseAuth } from "../../auth/AuthContext";
 
 function CreateBlog() {
+  const { role } = UseAuth();
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     tags: "",
     status: "draft",
-    author_model: "Advocate",
+    author_model: "",
   });
 
   const [imageFile, setImageFile] = useState(null);
@@ -144,20 +146,22 @@ function CreateBlog() {
         </div>
 
         {/* Status */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
-        </div>
+        {role === "admin" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+        )}
 
         {/* Author Model */}
         <div>
@@ -170,8 +174,8 @@ function CreateBlog() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-md"
           >
-            <option value="Admin">Admin</option>
-            <option value="Advocate">Advocate</option>
+            {role === "admin" && <option value="Admin">Admin</option>}
+            {role === "advocate" && <option value="Advocate">Advocate</option>}
           </select>
         </div>
 

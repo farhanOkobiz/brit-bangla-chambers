@@ -225,19 +225,21 @@ export const checkAuth = async (req, res) => {
     const user = await User.findById(decoded.id).select("full_name");
 
     let profilePhoto;
-    if(decoded.role === "client") {
-      profilePhoto = await Client.findOne({ user_id: decoded.id }).select("profile_photo");
-      if(profilePhoto) {
+    if (decoded.role === "client") {
+      profilePhoto = await Client.findOne({ user_id: decoded.id }).select(
+        "profile_photo"
+      );
+      if (profilePhoto) {
         profilePhoto = profilePhoto.profile_photo || null;
       }
-    }
-    else if(req.user.role === "advocate") {
-      profilePhoto = await Advocate.findOne({ user_id: decoded.id }).select("profile_photo_url");
-      if(profilePhoto) {
+    } else if (req.user.role === "advocate") {
+      profilePhoto = await Advocate.findOne({ user_id: decoded.id }).select(
+        "profile_photo_url"
+      );
+      if (profilePhoto) {
         profilePhoto = profilePhoto.profile_photo_url || null;
       }
-    }
-    else{
+    } else {
       profilePhoto = { profile_photo: null }; // Default if no profile found
     }
 
@@ -328,4 +330,4 @@ export const changePassword = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Failed to change password" });
   }
-}
+};

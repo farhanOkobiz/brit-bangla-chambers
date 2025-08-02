@@ -258,7 +258,7 @@ function RequestServiceForm() {
                 {item?.name}
               </option>
             ))}
-            <option value="idonotknow">I do not know</option>
+            <option value="i do not know">I do not know</option>
           </select>
         </div>
 
