@@ -21,7 +21,6 @@ export default function ClientDashboardLayout({
     const checkClientRole = async () => {
       try {
         const res = await apiFetch("/auth/check", { method: "GET" })
-        console.log("Client role check response:", res)
         if (!res.ok || res.data?.role !== "client") {
           toast.warning("Unauthorized access")
           router.replace("/")

@@ -25,7 +25,6 @@ const deleteFile = (filePath) => {
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log("File deleted successfully:", filePath);
       return true;
     } else {
       console.warn("File not found:", filePath);

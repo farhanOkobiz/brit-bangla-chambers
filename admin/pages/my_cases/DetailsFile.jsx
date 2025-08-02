@@ -153,7 +153,6 @@ const handleToggleStatus = async (currentStatus) => {
       try {
         const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
         const data = res.data?.data;
-        console.log("caseFile Data: ", data);
         setFile(data);
       } catch {
         toast.error("Failed to load case file.");

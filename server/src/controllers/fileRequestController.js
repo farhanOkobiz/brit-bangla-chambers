@@ -24,7 +24,6 @@ const deleteFile = (filePath) => {
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log("Deleted file:", filePath);
     }
   } catch (error) {
     console.error("File delete error:", error);
@@ -82,7 +81,6 @@ export const createFileRequest = async (req, res) => {
 };
 
 export const updateFileRequest = async (req, res) => {
-  console.log("hit update file request:", req.body);
   try {
     const { id } = req.params;
     const { client_id, advocate_id, title, description } = req.body;
@@ -185,7 +183,6 @@ export const getFileRequestByClintId = async (req, res) => {
 
     const request = await FileRequest.find({ client_id: _id });
 
-    console.log("request:", request);
     if (!request) {
       return res.status(404).json({ error: "File request not found." });
     }
@@ -248,7 +245,6 @@ export const deleteSingleFileFromRequest = async (req, res) => {
   try {
     const { _id } = req.params;
     const { file_url } = req.body; // ⬅️ GET from query
-    console.log("hit delete single file from request:", _id, file_url);
 
     if (!_id || !file_url) {
       return res
@@ -260,7 +256,6 @@ export const deleteSingleFileFromRequest = async (req, res) => {
     if (!fileRequest) {
       return res.status(404).json({ message: "File request not found." });
     }
-    console.log("fileRequest:", fileRequest);
     const fullPath = `/uploads/${file_url}`;
     if (!fileRequest.file_url.includes(fullPath)) {
       return res

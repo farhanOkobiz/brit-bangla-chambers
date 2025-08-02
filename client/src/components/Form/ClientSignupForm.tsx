@@ -81,7 +81,6 @@ export default function ClientSignupForm() {
             method: "POST",
             body: JSON.stringify({ email: postData.email }),
           });
-          console.log("OTP send response:", resOTP);
           if (resOTP.status === 200) {
             return router.push(`/verify-otp?&email=${postData.email}`);
           }

@@ -89,8 +89,6 @@ const AdvocateSidebar = () => {
   const { setAuthed, setRole, setUserName, setProfilePhoto, userName, profilePhoto } = UseAuth();
   const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
 
-  console.log("AdvocateSidebar rendered with userName:", userName, "profilePhoto:", profilePhoto);
-
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
   };

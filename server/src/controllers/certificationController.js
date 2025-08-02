@@ -21,7 +21,6 @@ const deleteFile = (filePath) => {
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log("Deleted file:", filePath);
     }
   } catch (err) {
     console.error("File delete error:", err);

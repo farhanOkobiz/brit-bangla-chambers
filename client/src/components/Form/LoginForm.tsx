@@ -15,9 +15,8 @@ function LoginForm() {
   const ADVOCATE_URL = process.env.NEXT_PUBLIC_ADVOCATE_URL;
 
   useEffect(() => {
-    console.log(" data:", data?.data);
     if (data?.data && data.data.role === "client") {
-      router.push("/client/dashboard");
+      router.push("/");
     }
   }, [data, router]);
 
@@ -59,8 +58,16 @@ function LoginForm() {
       const user = data.user;
 
       if (user?.role === "client") {
-        router.push("/client/dashboard");
-      } else if (user?.role === "admin" || user?.role === "advocate") {
+  let prevPath = "/";
+  if (typeof window !== "undefined") {
+    const storedPath = localStorage.getItem("client_prev_path");
+    if (storedPath) {
+      prevPath = storedPath;
+      localStorage.removeItem("client_prev_path");
+    }
+    window.location.href = prevPath; // <-- Force full reload
+  }
+} else if (user?.role === "admin" || user?.role === "advocate") {
         const targetUrl =
           user.role === "admin"
             ? `${ADMIN_URL}/admin/dashboard`

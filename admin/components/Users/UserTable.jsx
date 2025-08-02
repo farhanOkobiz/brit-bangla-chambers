@@ -11,7 +11,6 @@ import {
 import { getStatusColor } from "./userUtils";
 
 const UserTable = ({ users, userType, onViewDetails, onEdit, onDelete }) => {
-  console.log("Rendering UserTable with users:", users);
 const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">

@@ -14,15 +14,20 @@ export const customBaseQuery: BaseQueryFn<
     url = args;
   } else {
     url = args.url;
+    // Always set Content-Type for requests with a body
+    const hasBody = !!args.body;
     options = {
       method: args.method,
-      body: args.body,
-      headers:
-        args.headers &&
-        typeof args.headers === "object" &&
-        !Array.isArray(args.headers)
-          ? ({ ...args.headers } as Record<string, string>)
-          : undefined,
+      body:
+        hasBody && typeof args.body === "object"
+          ? JSON.stringify(args.body)
+          : args.body,
+      headers: {
+        ...(hasBody ? { "Content-Type": "application/json" } : {}),
+        ...(args.headers && typeof args.headers === "object" && !Array.isArray(args.headers)
+          ? args.headers
+          : {}),
+      },
     };
   }
 

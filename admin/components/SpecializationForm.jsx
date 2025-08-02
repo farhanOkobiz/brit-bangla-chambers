@@ -48,7 +48,6 @@ const SpecializationForm = () => {
       });
 
       if (res.ok) {
-        console.log("Fetched Specialization:", res.data);
         setSpecialization(res.data || []);
       } else {
         console.error("Failed to fetch Specialization:", res.data);
@@ -65,7 +64,6 @@ const SpecializationForm = () => {
 
     try {
       // Log what we're sending
-      console.log("Submitting form data:");
       for (const pair of formData.entries()) {
         console.log(pair[0] + ": ", pair[1]);
       }

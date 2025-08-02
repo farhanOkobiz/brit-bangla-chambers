@@ -116,7 +116,6 @@ const AdvocateFileRequestForm = () => {
       });
 
       const data = res.data?.data;
-      console.log("Fetched case details:", data);
       setClientId(data.client_id);
       setAdvocateId(data.advocate_id);
       setCaseId(data._id);

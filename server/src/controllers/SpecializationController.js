@@ -24,7 +24,6 @@ const deleteFile = (filePath) => {
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log("File deleted successfully:", filePath);
       return true;
     } else {
       console.warn("File not found:", filePath);
@@ -38,13 +37,10 @@ const deleteFile = (filePath) => {
 
 // Create a new Specialization
 export const createSpecialization = async (req, res) => {
-  console.log("hit createSpecialization");
   let newImageFilename = null;
 
   try {
     const { name, details, link } = req.body;
-
-    console.log("Received data:", { name, details, link });
 
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -78,7 +74,6 @@ export const createSpecialization = async (req, res) => {
       link,
     });
     await newSpecialization.save();
-    console.log("Specialization created successfully:", newSpecialization);
 
     res.status(201).json({
       message: "Specialization created successfully",
@@ -201,12 +196,10 @@ export const updateSpecialization = async (req, res) => {
 // Delete a Specialization
 export const deleteSpecialization = async (req, res) => {
   try {
-    console.log("hit deleteSpecialization");
     const specializationDoc = await Specialization.findById(req.params.id); // <-- fixed
     if (!specializationDoc) {
       return res.status(404).json({ error: "Specialization not found" });
     }
-    console.log("Specialization found:", specializationDoc.image);
 
     // Delete associated image file
     if (specializationDoc.image) {

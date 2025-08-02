@@ -161,7 +161,6 @@ export const addDocumentToCaseFile = async (req, res) => {
   try {
     const { id } = req.params;
     const { documentUrl, documentTitle } = req.body;
-    console.log("hit add document to case file:", documentUrl, documentTitle);
 
     const caseFile = await CaseFile.findById(id);
     if (!caseFile) {
@@ -172,8 +171,6 @@ export const addDocumentToCaseFile = async (req, res) => {
     caseFile.documentTitle = documentTitle;
     await caseFile.save();
     const caseFile2 = await CaseFile.findById(id);
-
-    console.log("caseFile2: ", caseFile2);
 
     res.status(200).json({ success: true, data: caseFile });
   } catch (error) {

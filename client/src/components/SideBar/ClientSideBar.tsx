@@ -7,17 +7,16 @@ import { useRouter, usePathname } from "next/navigation";
 import {
   Home,
   User,
-  Calendar,
   FileText,
   Settings,
   LogOut,
   Menu,
   X,
-  Bell,
   HelpCircle,
 } from "lucide-react";
 import { logout } from "@/api/logout";
 import { toast } from "react-toastify";
+import { useGetAuthQuery } from "@/redux/api/authApi";
 
 interface SidebarItem {
   name: string;
@@ -29,25 +28,23 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   { name: "Dashboard", href: "/client/dashboard", icon: Home },
   { name: "Profile", href: "/client/profile", icon: User },
-  {
-    name: "Appointments",
-    href: "/client/appointments",
-    icon: Calendar,
-    badge: "3",
-  },
+  // {
+  //   name: "Appointments",
+  //   href: "/client/appointments",
+  //   icon: Calendar,
+  //   badge: "3",
+  // },
   {
     name: "My case file",
     href: "/client/my-case-file",
     icon: FileText,
-    badge: "3",
   },
   // { name: "Consultations", href: "/client/consultations", icon: MessageCircle },
-  {
-    name: "Notifications",
-    href: "/client/notifications",
-    icon: Bell,
-    badge: "5",
-  },
+  // {
+  //   name: "Notifications",
+  //   href: "/client/notifications",
+  //   icon: Bell,
+  // },
   // { name: "Billing", href: "/client/billing", icon: CreditCard },
   { name: "Help & Support", href: "/client/support", icon: HelpCircle },
   { name: "Settings", href: "/client/settings", icon: Settings },
@@ -57,7 +54,8 @@ export default function ClientSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-
+  const { data: authData } = useGetAuthQuery(undefined);
+  const user = authData?.data;
   const handleLogout = async () => {
     try {
       await logout();
@@ -163,8 +161,8 @@ export default function ClientSidebar() {
               </div>
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-900">John Doe</p>
-              <p className="text-xs text-gray-500">john@example.com</p>
+              <p className="text-sm font-medium text-gray-900">{user?.userName}</p>
+            
             </div>
           </div>
 

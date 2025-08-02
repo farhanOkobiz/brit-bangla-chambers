@@ -6,6 +6,7 @@ import { authApi } from "./api/authApi";
 import { specializationApi } from "./api/specializationApi";
 import { notificationApi } from "./api/notificationApi";
 import selectedServiceReducer from "./slices/selectedServiceSlice";
+import { helpRequestApi } from "./api/helpRequestApi";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,8 @@ export const store = configureStore({
     [blogApi.reducerPath]: blogApi.reducer,
     [specializationApi.reducerPath]: specializationApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
+    [helpRequestApi.reducerPath]: helpRequestApi.reducer,
+
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
@@ -23,7 +26,8 @@ export const store = configureStore({
       blogApi.middleware,
       authApi.middleware,
       specializationApi.middleware,
-      notificationApi.middleware
+      notificationApi.middleware,
+      helpRequestApi.middleware
     ),
 });
 

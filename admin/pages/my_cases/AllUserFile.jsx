@@ -29,7 +29,6 @@ function AllUserFile() {
       try {
         const res = await UseAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
-        console.log("caseFile:", caseFiles);
       } catch (err) {
         console.error("Error fetching case files:", err);
         setError("Failed to load case files.");
@@ -102,7 +101,6 @@ function AllUserFile() {
       filterStatus === "all" || file.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
-  console.log("filteredCases:", filteredCases);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

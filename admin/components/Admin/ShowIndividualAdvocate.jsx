@@ -12,7 +12,6 @@ export default function ShowIndividualAdvocate() {
   useEffect(() => {
     async function fetchAdvocate() {
       const res = await UseAxios(`/advocate/profile/advocate/${id}`);
-      console.log(res);
       if (res.ok) {
         console.log(res.data);
         setAdvocate(res.data.advocate || res.data);

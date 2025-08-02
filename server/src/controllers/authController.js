@@ -11,7 +11,6 @@ const JWT_REFRESH_SECRET =
 
 export const register = async (req, res) => {
   try {
-    console.log("Registration attempt:", req.body);
     const {
       full_name,
       email,
@@ -35,7 +34,6 @@ export const register = async (req, res) => {
       phone,
       password: hashedPassword,
     });
-    console.log("User created:", user._id);
     // Create client profile (extended info)
     const client = await Client.create({
       user_id: user._id,
@@ -56,7 +54,6 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log("Login attempt:", req.body);
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -214,7 +211,6 @@ export const verifyOtp = async (req, res) => {
 
 //return role
 export const checkAuth = async (req, res) => {
-  console.log("Checking auth...", req.cookies);
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ message: "No token provided" });
 
@@ -249,7 +245,7 @@ export const checkAuth = async (req, res) => {
       profilePhoto: profilePhoto || null,
     });
   } catch (err) {
-    console.log("Auth check error:", err);
+    console.error("Check auth error:", err);
     return res.status(401).json({ message: "Invalid token" });
   }
 };
