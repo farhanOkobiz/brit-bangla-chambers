@@ -27,6 +27,7 @@ const AdvocateFileRequestForm = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [tickedFiles, setTickedFiles] = useState([]);
+  const [title, setTitle] = useState('');
   const image_url = import.meta.env.VITE_API_IMAGE_URL;
 
   const [disabled, setDisabled] = useState(false);
@@ -82,6 +83,7 @@ const AdvocateFileRequestForm = () => {
         method: "get",
       });
       setRequestId(res.data._id);
+      setTitle(res.data.title);
 
       if (res.ok) {
         setFormData({
@@ -179,8 +181,8 @@ const AdvocateFileRequestForm = () => {
         `showOwnCaseFile/caseFile/${id}/add-document`,
         {
           method: "post",
-          data: { documentUrl: filename },
-        }
+          data: { documentUrl: filename, documentTitle: title },
+        } 
       );
       console.log("Add file response:", res.data);
 

@@ -104,6 +104,7 @@ function DetailsFile() {
       try {
         const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
         const data = res.data?.data;
+        console.log("caseFile Data: ", data);
         setFile(data);
       } catch {
         toast.error("Failed to load case file.");
@@ -304,7 +305,7 @@ function DetailsFile() {
               {file.documents?.length > 0 && (
                 <div className="bg-amber-50 rounded-xl p-4 text-sm">
                   <h4 className="font-semibold text-amber-700 mb-3">
-                    Case Documents
+                    Document Title: {file.documentTitle}
                   </h4>
                   <div className="flex overflow-x-auto pb-3 -mx-1 px-1">
                     <div className="flex space-x-4 min-w-max">
