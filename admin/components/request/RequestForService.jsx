@@ -487,7 +487,7 @@ function RequestForService() {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-blue-900 text-base mb-0 leading-tight">
+                        <h3 className="font-bold text-blue-900 text-base mb-0 leading-tight ">
                           No service selected
                         </h3>
                       </div>
@@ -544,7 +544,7 @@ function RequestForService() {
                     </div>
 
                     {/* Issue Details */}
-                    <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-2 border border-orange-100">
+                    <div className="bg-gray-50 rounded-xl p-2 ">
                       <div className="flex items-start gap-3">
                         <div className="p-2 bg-orange-100 rounded-lg">
                           <FiMessageSquare className="w-4 h-4 text-orange-600" />
@@ -566,7 +566,7 @@ function RequestForService() {
                     </div>
 
                     {/* Attachments (always show) */}
-                    <div className="bg-indigo-50 rounded-xl p-2 border border-indigo-100">
+                    <div className="bg-gray-50 rounded-xl p-2  ">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="p-2 bg-indigo-100 rounded-lg">
                           <FiPaperclip className="w-4 h-4 text-indigo-600" />
@@ -635,7 +635,7 @@ function RequestForService() {
                         <button
                           onClick={() => handleSendToAdvocate(item)}
                           disabled={!selectedAdvocates[item._id]}
-                          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center justify-center gap-2"
+                          className="w-full bg-gray-500 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center justify-center gap-2"
                         >
                           <FiSend className="w-4 h-4" />
                           Send to Advocate
@@ -643,7 +643,7 @@ function RequestForService() {
                       </div>
                     ) : (
                       <div className="text-center">
-                        <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
+                        <div className="bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
                           <div className="flex items-center justify-center gap-2">
                             <FiUserCheck className="w-5 h-5" />
                             Successfully Forwarded

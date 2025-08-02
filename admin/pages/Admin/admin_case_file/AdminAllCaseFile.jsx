@@ -16,13 +16,14 @@ function AdminAllCaseFile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("in_progress");
 
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
         const res = await UseAxios("/showOwnCaseFile/allCaseFile/for-admin");
         setCaseFiles(res.data?.data || []);
+        console.log("caseFile:", caseFiles);
       } catch (err) {
         console.error("Error fetching case files:", err);
         setError("Failed to load case files.");
