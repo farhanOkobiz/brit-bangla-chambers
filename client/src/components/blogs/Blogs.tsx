@@ -47,8 +47,7 @@ function Blogs() {
                 />
                 <div className="p-6 text-gray-800">
                   <p className="text-sm text-gray-500 mb-2">
-                    By{" "}
-                    <span className="font-semibold">{blog.author_model}</span> ·{" "}
+                    By <span className="font-semibold">{blog.author}</span> ·
                     {new Date(blog.createdAt).toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "short",
@@ -61,12 +60,6 @@ function Blogs() {
             </Link>
           ))}
         </div>
-
-        <Link href="/blogs" className="inline-block">
-          <button className="bg-[#5e3030] text-white mt-8 px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer uppercase">
-            Read The Blog
-          </button>
-        </Link>
       </div>
     </section>
   );

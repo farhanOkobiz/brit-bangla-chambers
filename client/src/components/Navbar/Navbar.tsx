@@ -28,8 +28,12 @@ function Navbar() {
   const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || "brit-bangla-chambers.com/admin/dashboard";
-  const ADVOCATE_URL = process.env.NEXT_PUBLIC_ADVOCATE_URL || "brit-bangla-chambers.com/advocate/dashboard";
+  const ADMIN_URL =
+    process.env.NEXT_PUBLIC_ADMIN_URL ||
+    "brit-bangla-chambers.com/admin/dashboard";
+  const ADVOCATE_URL =
+    process.env.NEXT_PUBLIC_ADVOCATE_URL ||
+    "brit-bangla-chambers.com/advocate/dashboard";
 
   useEffect(() => {
     setHydrated(true);
@@ -47,6 +51,7 @@ function Navbar() {
     { href: "/services", label: "Services" },
     { href: "/help-center", label: "Help center" },
     { href: "/request-for-service", label: "Request for service" },
+    { href: "/blogs", label: "Blogs" },
   ];
 
   const handleLogout = async () => {
@@ -153,13 +158,11 @@ function Navbar() {
                       <a href={`${ADVOCATE_URL}/advocate/dashboard`}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Advocate Dashboard
-                        </a>
+                      </a>
                     </DropdownMenuItem>
-                          
                   </>
                 )}
-                
-                
+
                 {data?.data?.role === "admin" && (
                   <DropdownMenuItem asChild>
                     <a href={`${ADMIN_URL}/admin/dashboard`}>

@@ -388,7 +388,6 @@ const ServicesDisplay = () => {
             </h2>
             <div className="relative w-full h-48 mb-4 rounded overflow-hidden">
               <Image
-                // src={selectedService.serviceImage}
                 src={`${image_url}${selectedService?.serviceImage}`}
                 alt={selectedService?.title}
                 fill
