@@ -76,13 +76,11 @@ const ServiceForm = () => {
 
   const fetchCategories = async () => {
     try {
-      console.log("Fetching categories...");
       const res = await UseAxiosHook("/specialization/get-all-categories", {
         method: "GET",
       });
 
       if (res.ok) {
-        console.log("Fetched categories:", res.data);
         setCategories(res.data || []);
       } else {
         console.error("Failed to fetch categories:", res.data);
@@ -96,13 +94,11 @@ const ServiceForm = () => {
 
   const fetchSubcategories = async () => {
     try {
-      console.log("Fetching subcategories...");
       const res = await UseAxiosHook("/sub-category/get-all-sub-categories", {
         method: "GET",
       });
 
       if (res.ok) {
-        console.log("Fetched subcategories:", res.data);
         setSubcategories(res.data || []);
       } else {
         console.error("Failed to fetch subcategories:", res.data);
@@ -117,13 +113,11 @@ const ServiceForm = () => {
   const fetchServices = async () => {
     try {
       setLoadingServices(true);
-      console.log("Fetching services...");
       const res = await UseAxiosHook("/service/get-all-service", {
         method: "GET",
       });
 
       if (res.ok) {
-        console.log("Fetched services:", res.data);
         setServices(res.data || []);
       } else {
         console.error("Failed to fetch services:", res.data);
@@ -139,7 +133,6 @@ const ServiceForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Component mounted, fetching initial data...");
       await Promise.all([
         fetchCategories(),
         fetchSubcategories(),
@@ -154,12 +147,6 @@ const ServiceForm = () => {
     setIsLoading(true);
 
     try {
-      console.log("=== SERVICE SUBMISSION DEBUG ===");
-      console.log("Submitting service data:");
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
       // Validate required fields
       const requiredFields = [
         "category",
@@ -186,14 +173,10 @@ const ServiceForm = () => {
         : "/service/create-service";
       const method = editingService ? "PUT" : "POST";
 
-      console.log(`Making ${method} request to ${url}`);
-
       const res = await UseAxiosHook(url, {
         method,
         data: formData,
       });
-
-      console.log("Service submission response:", res);
 
       if (res.ok) {
         alert(
@@ -223,7 +206,6 @@ const ServiceForm = () => {
   };
 
   const handleEdit = (service) => {
-    console.log("Editing service:", service);
 
     // Transform service data for form
     const transformedService = {
@@ -239,7 +221,6 @@ const ServiceForm = () => {
           : service.subcategory,
     };
 
-    console.log("Transformed service for editing:", transformedService);
     setEditingService(transformedService);
     setShowCreateForm(true);
   };
@@ -250,7 +231,6 @@ const ServiceForm = () => {
     }
 
     try {
-      console.log("Deleting service:", serviceId);
       const res = await UseAxiosHook(`/service/delete-service/${serviceId}`, {
         method: "DELETE",
       });
@@ -282,7 +262,6 @@ const ServiceForm = () => {
   };
 
   const renderServiceItem = (item) => {
-    console.log("Rendering service item:", item);
 
     // Handle both populated and non-populated data
     let categoryName = "Unknown Category";

@@ -34,7 +34,6 @@ const deleteFile = (filePath) => {
   try {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log("File deleted:", filePath);
       return true;
     }
     return false;
@@ -158,7 +157,6 @@ export const showAdvocateById = async (req, res) => {
     if (!advocate) {
       return res.status(404).json({ message: "Advocate not found" });
     }
-    console.log(advocate);
 
     res.status(200).json({ advocate });
   } catch (error) {
@@ -174,7 +172,6 @@ export const createAdvocateProfile = async (req, res) => {
   let uploadedFilename = null;
 
   try {
-    console.log("=== CREATE ADVOCATE PROFILE ===");
     const isFormData = req.headers["content-type"]?.includes(
       "multipart/form-data"
     );
@@ -492,7 +489,6 @@ export const updateAdvocateProfile = async (req, res) => {
         }
       }
       advocate.profile_photo_url = `/uploads/${req.file.filename}`;
-      console.log("New profile photo uploaded:", advocate.profile_photo_url);
     }
 
     await advocate.save();

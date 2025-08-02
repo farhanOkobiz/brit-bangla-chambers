@@ -95,7 +95,6 @@ export default function ClientDashboard() {
         const response = await apiFetch(
           "/client-dashboard/some-info-form-case"
         );
-        console.log("Dashboard data:", response.data);
         setData(response?.data ?? null);
       } catch (error) {
         console.error("Failed to load dashboard data:", error);

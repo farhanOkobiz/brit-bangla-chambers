@@ -13,13 +13,14 @@ const createHelpRequest = async (req, res) => {
     await helpRequest.save();
     res.status(201).json({ success: true, data: helpRequest });
   } catch (err) {
+    console.error("Error creating help request:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
 // Get all help and support requests
 const getAllHelpRequests = async (req, res) => {
-  try {
+try {
     const requests = await HelpAndSupport.find().populate("userId", "full_name email");
     res.status(200).json({ success: true, data: requests });
   } catch (err) {

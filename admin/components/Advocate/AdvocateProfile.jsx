@@ -11,7 +11,6 @@ const AdvocateProfile = () => {
       setLoading(true);
       setError(null);
       const res = await UseAxios("/advocate/profile");
-      console.log(res);
       if (res.ok) {
         setProfile(res.data);
       } else {

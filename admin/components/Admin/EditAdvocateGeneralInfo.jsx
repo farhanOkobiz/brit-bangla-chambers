@@ -53,8 +53,6 @@ export default function EditAdvocateGeneralInfo({ id }) {
       if (res.ok) {
         const adv = res.data.advocate || res.data;
         setAdvocate(adv);
-        console.log("Advocate data dd fetched:", adv);
-        console.log("Advocate data fetched:", advocate);
         setForm({
           full_name: adv.user_id?.full_name || "",
           designation: adv.designation || "",

@@ -34,10 +34,8 @@ function RequestServiceForm() {
   // Hydrate Redux from localStorage if empty
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      console.log("Selected service:", selectedService);
       if (!selectedService?.id) {
         const stored = localStorage.getItem("selectedService");
-        console.log("Stored service:", stored);
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
@@ -122,7 +120,6 @@ function RequestServiceForm() {
         toast.warning("Failed to submit");
         return;
       }
-      console.log("Form submitted successfully:", response.data);
       toast.success("Request sent successfully!");
       dispatch(clearSelectedService());
       if (typeof window !== "undefined") {

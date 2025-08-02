@@ -28,7 +28,6 @@ function AllCaseFile() {
       try {
         const res = await UseAxios("/showOwnCaseFile/allCaseFile");
         setCaseFiles(res.data?.data || []);
-        console.log("caseFile:", caseFiles);
       } catch (err) {
         console.error("Error fetching case files:", err);
         setError("Failed to load case files.");

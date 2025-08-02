@@ -21,8 +21,6 @@ export async function apiFetch(
     ...options,
   });
 
-  console.log(`API Fetch: `, res.status, url, options);
-
   // Retry on 401
   if (res.status === 401) {
     const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {

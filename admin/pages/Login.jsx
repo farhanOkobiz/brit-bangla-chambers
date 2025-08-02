@@ -33,7 +33,6 @@ const Login = () => {
 
       if (res.ok) {
         const { role } = res.data.user;
-        console.log("Login successful:", res.data.user);
         setAuthed(true);
         setRole(role);
         setUserName(res.data.user.full_name || email); // Set user name from response

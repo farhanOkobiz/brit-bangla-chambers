@@ -11,7 +11,6 @@ const uploadPath = path.join(__dirname, "..","..", "uploads");
 
 // POST /request-service
 export const createRequestService = async (req, res) => {
-  console.log("Received request to create service request");
 
   const clientId = req.user._id;
   let newAttachmentPaths = [];
@@ -71,7 +70,6 @@ export const createRequestService = async (req, res) => {
 // GET /request-service
 export const getAllRequestServices = async (_req, res) => {
   try {
-    console.log("Fetching all request services...");
     const requests = await RequestService.find()
       .populate("userMessage.serviceId")
       .sort({ createdAt: -1 });
@@ -87,8 +85,6 @@ export const getAllRequestServices = async (_req, res) => {
 export const acceptedRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(`Updating status for message ID: ${id}`);
-
     // Step 1: Update AdvocateMessage status
     const updated = await RequestService.findByIdAndUpdate(
       id,
@@ -114,7 +110,6 @@ export const acceptedRequestStatus = async (req, res) => {
 export const rejectedRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(`Updating status for message ID: ${id}`);
 
     // Step 1: Update AdvocateMessage status
     const updated = await RequestService.findByIdAndUpdate(
@@ -155,13 +150,8 @@ export const rejectedRequestStatus = async (req, res) => {
 export const deleteRequestService = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // FIRST: Check what files exist BEFORE finding the database record
-    console.log("=== BEFORE DATABASE LOOKUP ===");
-    console.log("uploadPath:", uploadPath);
     if (fs.existsSync(uploadPath)) {
       const filesBeforeDB = fs.readdirSync(uploadPath);
-      console.log("Files in uploads directory BEFORE DB lookup:", filesBeforeDB);
     }
 
     // Find the request first to get the attachment paths
@@ -173,25 +163,15 @@ export const deleteRequestService = async (req, res) => {
         .json({ success: false, message: "Request not found" });
     }
 
-    console.log("=== AFTER DATABASE LOOKUP ===");
-    console.log("Found record to delete:", {
-      id: deleted._id,
-      attachments: deleted.userMessage?.attachments,
-      createdAt: deleted.createdAt
-    });
-
     // Check files again after database lookup
     if (fs.existsSync(uploadPath)) {
       const filesAfterDB = fs.readdirSync(uploadPath);
-      console.log("Files in uploads directory AFTER DB lookup:", filesAfterDB);
     }
 
     // Remove uploaded attachments from filesystem
     const attachments = deleted.userMessage?.attachments || [];
-    console.log("Attempting to delete attachments:", attachments);
     
     if (attachments.length === 0) {
-      console.log("No attachments to delete");
       return res.status(200).json({ 
         success: true, 
         message: "Request deleted (no attachments to remove)" 
@@ -202,9 +182,7 @@ export const deleteRequestService = async (req, res) => {
     let failedFiles = [];
 
     attachments.forEach((filePath) => {
-      console.log("=== PROCESSING FILE ===");
-      console.log("Original filePath from DB:", filePath);
-      
+  
       // Handle different possible formats
       let filename;
       if (filePath.startsWith('/uploads/')) {
@@ -215,48 +193,35 @@ export const deleteRequestService = async (req, res) => {
         filename = filePath; // Assume it's just the filename
       }
       
-      console.log("Extracted filename:", filename);
       
       const fullPath = path.join(uploadPath, filename);
-      console.log("Full path to delete:", fullPath);
       
       // Normalize the path for Windows
       const normalizedPath = path.normalize(fullPath);
-      console.log("Normalized path:", normalizedPath);
-      
-      console.log("File exists check:", fs.existsSync(normalizedPath));
       
       if (fs.existsSync(normalizedPath)) {
         try {
           fs.unlinkSync(normalizedPath);
-          console.log("✅ Successfully deleted:", normalizedPath);
           deletedFiles.push(filename);
         } catch (unlinkError) {
           console.error("❌ Error deleting file:", unlinkError);
           failedFiles.push({ filename, error: unlinkError.message });
         }
       } else {
-        console.log("❌ File not found:", normalizedPath);
         failedFiles.push({ filename, error: "File not found" });
         
         // Show what files ARE in the directory
         if (fs.existsSync(uploadPath)) {
           const currentFiles = fs.readdirSync(uploadPath);
-          console.log("Current files in directory:", currentFiles);
           
           // Check for partial matches
           const partialMatches = currentFiles.filter(file => 
             file.includes(filename.split('-')[0]) || // Check prefix
             filename.includes(file.split('-')[0])     // Reverse check
           );
-          console.log("Partial filename matches:", partialMatches);
         }
       }
     });
-
-    console.log("=== DELETION SUMMARY ===");
-    console.log("Successfully deleted:", deletedFiles);
-    console.log("Failed to delete:", failedFiles);
 
     res.status(200).json({ 
       success: true, 

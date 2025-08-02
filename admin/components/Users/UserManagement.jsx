@@ -22,7 +22,6 @@ const UserManagement = () => {
       setLoading(true);
       const endpoint = userType === "client" ? "/client/all" : "/advocate/all";
       const res = await UseAxios(endpoint, { method: "GET" });
-      console.log(`Fetched ${userType}s:`, res.data);
 
       if (res.ok) {
         setUsers(res.data || []);

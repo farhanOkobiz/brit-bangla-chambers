@@ -27,7 +27,6 @@ function Page() {
         const res = await apiFetch("/showOwnCaseFile/allCaseFile/for-client");
 
         setCaseFiles(res.data?.data || []);
-        console.log("caseFile:", caseFiles);
       } catch {
         toast.error("Error fetching case files");
       } finally {

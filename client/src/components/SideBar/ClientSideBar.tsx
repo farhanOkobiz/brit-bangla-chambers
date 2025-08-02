@@ -56,7 +56,6 @@ export default function ClientSidebar() {
   const pathname = usePathname();
   const { data: authData } = useGetAuthQuery(undefined);
   const user = authData?.data;
-  console.log("User data:", user);
   const handleLogout = async () => {
     try {
       await logout();

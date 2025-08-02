@@ -40,7 +40,6 @@ const deleteImage = (imageURL) => {
     const imagePath = getUploadPath(filename);
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
-      console.log("Deleted image:", imagePath);
       return true;
     } else {
       console.warn("Image file not found:", imagePath);
@@ -56,11 +55,6 @@ const deleteImage = (imageURL) => {
 export const createService = async (req, res) => {
   try {
     ensureUploadDirExists();
-
-    console.log("=== CREATE SERVICE DEBUG ===");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
-    console.log("Authenticated user:", req.user);
 
     const { category, subcategory, title, description, status } = req.body;
 
@@ -102,8 +96,6 @@ export const createService = async (req, res) => {
       status: status || "active",
     });
 
-    console.log("Service created successfully:", service);
-
     res.status(201).json({
       message: "Service created successfully",
       data: service,
@@ -128,15 +120,12 @@ export const createService = async (req, res) => {
 // Get All Services
 export const getAllServices = async (req, res) => {
   try {
-    console.log("=== GET ALL SERVICES DEBUG ===");
 
     const services = await Service.find()
       .populate("created_by", "full_name email role")
       .populate("category", "name")
       .populate("subcategory", "name")
       .sort({ createdAt: -1 });
-
-    console.log("Services fetched successfully:", services.length);
 
     res.status(200).json(services);
   } catch (err) {
@@ -176,10 +165,6 @@ export const updateService = async (req, res) => {
 
   try {
     ensureUploadDirExists();
-
-    console.log("=== UPDATE SERVICE DEBUG ===");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
 
     const { category, subcategory, title, description, status } = req.body;
 
@@ -231,8 +216,6 @@ export const updateService = async (req, res) => {
       deleteImage(oldImageURL);
     }
 
-    console.log("Service updated successfully:", updated);
-
     res.status(200).json({
       message: "Service updated successfully",
       data: updated,
@@ -272,8 +255,6 @@ export const deleteService = async (req, res) => {
     }
 
     await Service.findByIdAndDelete(req.params.id);
-
-    console.log("Service deleted successfully:", req.params.id);
 
     res.status(200).json({ message: "Service deleted successfully" });
   } catch (err) {

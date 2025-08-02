@@ -9,7 +9,6 @@ const FormBuilder = ({
   disabled = false,
   initialData = null,
 }) => {
-  console.log("initialData:", initialData);
 
   const initialFormState = fields.reduce((acc, field) => {
     acc[field.name] = field.type === "file" ? null : "";
@@ -34,7 +33,6 @@ const FormBuilder = ({
         }
       });
       setFormData(populatedData);
-      console.log("Form populated with initial data:", populatedData);
     } else {
       setFormData(initialFormState);
     }
@@ -48,10 +46,6 @@ const FormBuilder = ({
       [name]: type === "file" ? files?.[0] : value,
     }));
 
-    console.log(
-      `Field ${name} changed to:`,
-      type === "file" ? files?.[0] : value
-    );
   };
 
   const handleSubmit = async (e) => {
@@ -79,7 +73,6 @@ const FormBuilder = ({
       });
 
       // ✅ Log to confirm FormData includes all fields
-      console.log("Form Data being sent:");
       for (const pair of data.entries()) {
         console.log(pair[0] + ": ", pair[1]);
       }

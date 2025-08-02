@@ -61,8 +61,7 @@ const ServicesDisplay = () => {
         setLoading(true);
         const response = await apiFetch("/service/get-all-service");
 
-        const data: IServicesDisplay[] = response.data || [];
-        console.log("Fetched services:", data);
+        const data: IServicesDisplay[] = response.data || []
         const activeServices = data.filter(
           (service: IServicesDisplay) => service.status === "active"
         );
@@ -112,7 +111,6 @@ const ServicesDisplay = () => {
           service.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    console.log("Filtered services:", filtered);
     setFilteredServices(filtered);
   }, [services, selectedCategory, selectedSubcategory, searchTerm]);
 

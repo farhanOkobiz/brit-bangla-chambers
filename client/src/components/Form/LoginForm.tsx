@@ -15,7 +15,6 @@ function LoginForm() {
   const ADVOCATE_URL = process.env.NEXT_PUBLIC_ADVOCATE_URL;
 
   useEffect(() => {
-    console.log(" data:", data?.data);
     if (data?.data && data.data.role === "client") {
       router.push("/");
     }

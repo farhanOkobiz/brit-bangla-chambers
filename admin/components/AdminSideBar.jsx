@@ -14,6 +14,8 @@ import {
   FaTags,
   FaEnvelope,
   FaCog,
+  FaQq,
+  FaQuestion,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -59,6 +61,11 @@ const menuItems = [
     label: "Contact Messages",
     path: "/admin/messages/contact",
     icon: <FaEnvelope />,
+  },
+  {
+    label: "Help & Support",
+    path: "/admin/help-and-support",
+    icon: <FaQuestion />,
   },
   { label: "Settings", path: "/admin/settings", icon: <FaCog /> },
 ];

@@ -52,9 +52,6 @@ requestServiceSchema.post("findOneAndDelete", async function (doc) {
 
     if (count === 0) {
       await RequestForAdvocate.findByIdAndDelete(doc.userMessageId);
-      console.log(
-        "No more services left, so related RequestForAdvocate deleted"
-      );
     }
   }
 });
