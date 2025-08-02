@@ -1,12 +1,12 @@
 "use client";
-import { useGetBlogsQuery } from "@/redux/api/blogApi";
+import { useGetBlogPublishedQuery } from "@/redux/api/blogApi";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import { Blog } from "@/types/blog.interface";
 
 export default function BlogPage() {
-  const { data: blogs } = useGetBlogsQuery(undefined);
+  const { data: blogs } = useGetBlogPublishedQuery(undefined);
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   return (
