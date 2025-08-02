@@ -1,10 +1,11 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/api/apiFetch";
 
-export default function VerifyOtpPage() {
+function VerifyOtpPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email");
@@ -138,5 +139,13 @@ export default function VerifyOtpPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <VerifyOtpPageInner />
+    </Suspense>
   );
 }

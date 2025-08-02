@@ -33,18 +33,20 @@ function RequestServiceForm() {
 
   // Hydrate Redux from localStorage if empty
   React.useEffect(() => {
-    console.log("Selected service:", selectedService);
-    if (!selectedService?.id) {
-      const stored = localStorage.getItem("selectedService");
-      console.log("Stored service:", stored);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          dispatch({
-            type: "selectedService/setSelectedService",
-            payload: parsed,
-          });
-        } catch {}
+    if (typeof window !== "undefined") {
+      console.log("Selected service:", selectedService);
+      if (!selectedService?.id) {
+        const stored = localStorage.getItem("selectedService");
+        console.log("Stored service:", stored);
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            dispatch({
+              type: "selectedService/setSelectedService",
+              payload: parsed,
+            });
+          } catch {}
+        }
       }
     }
   }, [selectedService, dispatch]);
@@ -52,12 +54,14 @@ function RequestServiceForm() {
   // Use localStorage for initial form state if Redux is empty
   const getInitialIssueType = () => {
     if (selectedService?.name) return selectedService.name;
-    const stored = localStorage.getItem("selectedService");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed.name || "";
-      } catch {}
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("selectedService");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.name || "";
+        } catch {}
+      }
     }
     return "";
   };
@@ -90,7 +94,7 @@ function RequestServiceForm() {
       formData.append("userMessage", JSON.stringify(form));
 
       let serviceId = selectedService?.id;
-      if (!serviceId) {
+      if (!serviceId && typeof window !== "undefined") {
         const stored = localStorage.getItem("selectedService");
         if (stored) {
           try {
@@ -121,7 +125,9 @@ function RequestServiceForm() {
       console.log("Form submitted successfully:", response.data);
       toast.success("Request sent successfully!");
       dispatch(clearSelectedService());
-      localStorage.removeItem("selectedService");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("selectedService");
+      }
       setForm({
         name: "",
         email: "",
@@ -216,6 +222,22 @@ function RequestServiceForm() {
         </div>
 
         <div>
+          {/* Change Service Button */}
+          {selectedService?.name && (
+            <button
+              type="button"
+              className="mb-2 px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
+              onClick={() => {
+                dispatch(clearSelectedService());
+                if (typeof window !== "undefined") {
+                  localStorage.removeItem("selectedService");
+                }
+                setForm((prev) => ({ ...prev, issueType: "" }));
+              }}
+            >
+              Change Service
+            </button>
+          )}
           <label
             htmlFor="issueType"
             className="block text-sm font-medium text-gray-700 mb-1"
