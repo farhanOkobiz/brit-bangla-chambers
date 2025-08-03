@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useGetAuthQuery } from "@/redux/api/authApi";
 import {
   useCreateHelpRequestMutation,
   useGetMyHelpRequestsQuery,
@@ -27,8 +28,11 @@ export default function ClientSupportPage() {
   const [createHelpRequest, { isLoading }] = useCreateHelpRequestMutation();
   const { data, isFetching } = useGetMyHelpRequestsQuery({});
   const [numberOfRequests, setNumberOfRequests] = useState(0);
+  const { data: authData } = useGetAuthQuery(undefined);
 
+  console.log("Auth Data:", authData);
 
+ 
   useEffect(() => {
     if (data?.data?.data) {
       setNumberOfRequests(data.data.data.length);
@@ -86,7 +90,13 @@ export default function ClientSupportPage() {
   const requests = data?.data?.data || data?.data || [];
 
 
-  return (
+  return (<>
+      { authData && authData.data && authData.data.accountStatus !== "active" ? (
+        <div className="text-red-600 text-center mb-4">
+          Your account is not active. Please contact support.
+        </div>
+      ) : (
+      
     <div className="max-w-8xl mx-auto py-10 px-6">
       <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
         Help & Support Center
@@ -97,7 +107,7 @@ export default function ClientSupportPage() {
           onSubmit={handleSubmit}
           className="bg-white rounded-xl shadow-sm border border-gray-200 p-8"
         >
-          <h3 className="text-xl font-semibold text-gray-700 mb-6">Submit a Request</h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-6">Submit your problem</h3>
           <div className="space-y-5">
             <input
               name="name"
@@ -206,5 +216,7 @@ export default function ClientSupportPage() {
     {/* Closing tag for the outermost div */}
     </div>
     </div>
+      )}
+      </>
   );
 }

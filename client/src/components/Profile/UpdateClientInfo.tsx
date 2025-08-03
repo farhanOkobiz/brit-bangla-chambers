@@ -39,7 +39,7 @@ export default function UpdateClientInfo({
     gender: clientData.gender,
     presentAddress: clientData.present_address,
     permanentAddress: clientData.permanent_address,
-    status: clientData.status,
+    // status: clientData.status,
   });
 
   const handleInputChange = (
@@ -145,7 +145,7 @@ export default function UpdateClientInfo({
       gender: clientData.gender,
       presentAddress: clientData.present_address,
       permanentAddress: clientData.permanent_address,
-      status: clientData.status,
+      // status: clientData.status,
     });
     setSelectedFile(null);
     setPreviewUrl(null);
@@ -392,7 +392,7 @@ export default function UpdateClientInfo({
                 </p>
               </div>
 
-              <div>
+              {/* <div>
                 <label
                   htmlFor="status"
                   className="block text-sm font-medium text-gray-700 mb-1"
@@ -411,7 +411,7 @@ export default function UpdateClientInfo({
                   <option value="inactive">Inactive</option>
                   <option value="suspended">Suspended</option>
                 </select>
-              </div>
+              </div> */}
 
               <div className="flex items-center gap-2 mb-4 mt-8">
                 <MapPin className="h-5 w-5 text-gray-600" />

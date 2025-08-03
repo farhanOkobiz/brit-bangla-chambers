@@ -6,12 +6,14 @@ const AuthContext = createContext({
   loading: true,
   role: null, // 'admin' | 'advocate' | null
   userName: null,
-  profilePhoto: null,          
+  profilePhoto: null,
+  accountStatus: null, // 'active' | 'inactive' | 'suspended' | null          
   setAuthed: () => {},
   setLoading: () => {},
   setRole: () => {},
   setUserName: () => {},
   setProfilePhoto: () => {},
+  setAccountStatus: () => {},
 });
 
 export function AuthProvider({ children }) {
@@ -20,6 +22,7 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState(null); // New state
   const [userName, setUserName] = useState(null); // New state for user name
   const [profilePhoto, setProfilePhoto] = useState(null); // New state for profile photo
+  const [accountStatus, setAccountStatus] = useState(null); // New state for account status
 
   useEffect(() => {
     let isMounted = true;
@@ -32,6 +35,7 @@ export function AuthProvider({ children }) {
         setUserName(res.userName || null); // Set user name from API"
         setProfilePhoto(res.profilePhoto || null); // Set profile photo from API
         setLoading(false);
+        setAccountStatus(res.accountStatus || null); // Set account status from API
       }
     });
 
@@ -41,7 +45,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authed, loading, role, userName, profilePhoto, setAuthed, setLoading, setRole , setUserName, setProfilePhoto}}>
+    <AuthContext.Provider value={{ authed, loading, role, userName, profilePhoto, accountStatus, setAuthed, setLoading, setRole , setUserName, setProfilePhoto, setAccountStatus }}>
       {children}
     </AuthContext.Provider>
   );
