@@ -8,11 +8,17 @@ import {
   updateBlog,
 } from "../../controllers/blogController.js";
 import upload from "../../middleware/multerMiddleware.js";
+import { protect } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/create-blog", upload.single("image"), createBlog);
-router.get("/get-all-blog", getAllBlogs);
+router.post(
+  "/create-blog",
+  upload.single("image"),
+  protect(["admin", "advocate"]),
+  createBlog
+);
+router.get("/get-all-blog", protect(["admin", "advocate"]), getAllBlogs);
 router.get("/get-blog-published", getBlogsPublished);
 router.get("/get-single-blog/:id", getBlogById);
 router.put("/edit-blog/:id", upload.single("image"), updateBlog);

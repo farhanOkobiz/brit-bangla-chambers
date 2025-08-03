@@ -57,7 +57,7 @@ function Page() {
                   {advocate?.designation}
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                  <span>Bar Enroll: {advocate?.bar_council_enroll_num}</span>
+                  {/* <span>Bar Enroll: {advocate?.bar_council_enroll_num}</span> */}
                   <span>Experience: {advocate?.experience_years} years</span>
                 </div>
               </div>
