@@ -20,6 +20,7 @@ const BlogSchema = new Schema(
       default: "draft",
     },
     author: { type: String, required: true, enum: ["Admin", "Advocate"] },
+    author_id: { type: String, required: true },
   },
   {
     timestamps: true,
