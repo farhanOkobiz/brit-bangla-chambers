@@ -4,12 +4,15 @@ import { toast } from "react-toastify";
 import {
   FaCalendarAlt,
   FaEdit,
+  FaFileContract,
   FaGavel,
   FaRegFileAlt,
   FaTrash,
   FaUser,
 } from "react-icons/fa";
 import { UseAxios } from "../../../services/UseAxios";
+import Swal from "sweetalert2";
+  const image_url = import.meta.env.VITE_API_IMAGE_URL;
 
 function AdminDetailsCaseFile() {
   const { id } = useParams();
@@ -27,6 +30,44 @@ function AdminDetailsCaseFile() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
+
+    const handleDeleteDocument = async (index) => {
+      const result = await Swal.fire({
+        title: "Delete Document?",
+        text: "This document will be permanently removed from the case file!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+      });
+  
+      if (result.isConfirmed) {
+        try {
+          // Create a new array without the deleted document
+          const updatedDocuments = [...file.documents];
+          updatedDocuments.splice(index, 1);
+  
+          // Update the file state
+          setFile((prev) => ({
+            ...prev,
+            documents: updatedDocuments,
+          }));
+  
+          // API call to update the case file on the server
+          await UseAxios(`/showOwnCaseFile/updateCaseFile/${id}`, {
+            method: "PUT",
+            data: { documents: updatedDocuments },
+          });
+  
+          toast.success("Document deleted successfully!");
+        } catch (error) {
+          toast.error("Failed to delete document.");
+          console.error(error);
+        }
+      }
+    };
 
   useEffect(() => {
     const fetchCase = async () => {
@@ -179,7 +220,50 @@ function AdminDetailsCaseFile() {
                   </span>
                 </div>
               )}
-
+                            {/* Documents */}
+                            {file.documents?.length > 0 && (
+                              <div className="bg-amber-50 rounded-xl p-4 text-sm">
+                                <h4 className="font-semibold text-amber-700 mb-3">
+                                  Document Title: {file.documentTitle}
+                                </h4>
+                                <div className="flex overflow-x-auto pb-3 -mx-1 px-1">
+                                  <div className="flex space-x-4 min-w-max">
+                                    {file.documents.map((doc, index) => (
+                                      <div
+                                        key={index}
+                                        className="group relative flex flex-col items-center w-32"
+                                      >
+                                        <div className="flex flex-col items-center bg-white border border-amber-200 rounded-lg p-3 w-full hover:shadow-md transition-all duration-200">
+                                          <a
+                                            href={`${image_url}${doc}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex flex-col items-center w-full"
+                                          >
+                                            <div className="bg-amber-100 p-3 rounded-full mb-2">
+                                              <FaFileContract className="text-amber-600 text-xl" />
+                                            </div>
+                                            <span className="text-xs font-medium text-center text-gray-700 truncate w-full">
+                                              Document {index + 1}
+                                            </span>
+                                          </a>
+              
+                                          {/* Delete Button - positioned at bottom, visible on hover */}
+                                          <button
+                                            onClick={() => handleDeleteDocument(index)}
+                                            className="absolute bottom-0 left-0 right-0 w-full py-1.5 bg-red-500 text-white rounded-b-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-1 hover:bg-red-600 focus:outline-none"
+                                            title="Delete document"
+                                          >
+                                            <FaTrash className="text-xs" />
+                                            <span className="text-xs">Delete</span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
               {/* Judgment */}
               {file.judgment?.decision_summary && (
                 <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
