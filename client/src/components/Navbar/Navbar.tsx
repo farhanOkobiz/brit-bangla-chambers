@@ -75,6 +75,9 @@ function Navbar() {
   useEffect(() => {
     // ✅ Only redirect on specific route
     if (pathname === "/request-for-service" && !data?.data?.ok) {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("client_prev_path", pathname);
+      }
       router.push("/login");
     }
   }, [pathname, data, router]);

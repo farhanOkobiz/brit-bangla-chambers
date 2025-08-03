@@ -1,14 +1,9 @@
 "use client";
 
 import RequestServiceForm from "@/components/Form/RequestServiceForm";
-import { useEffect } from "react";
 
 export default function ContactPage() {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("client_prev_path", "/request-for-service");
-    }
-  }, []);
+
 
   return (
     <section className="min-h-screen py-16 px-6 md:px-12 bg-gray-100">
