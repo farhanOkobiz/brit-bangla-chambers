@@ -160,22 +160,55 @@ export const deleteCaseFile = async (req, res) => {
 export const addDocumentToCaseFile = async (req, res) => {
   try {
     const { id } = req.params;
-    const { documentUrl, documentTitle } = req.body;
+    const { documentTitle, documentUrls } = req.body;
 
-    const caseFile = await CaseFile.findById(id);
-    if (!caseFile) {
-      return res.status(404).json({ error: "Case file not found" });
+    // Validate input
+    if (!documentTitle || !documentUrls || !Array.isArray(documentUrls)) {
+      return res.status(400).json({
+        success: false,
+        message: "Document title and URLs array are required",
+      });
     }
 
-    caseFile.documents.push(documentUrl);
-    caseFile.documentTitle = documentTitle;
-    await caseFile.save();
-    const caseFile2 = await CaseFile.findById(id);
+    // Find case file
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({
+        success: false,
+        message: "Case file not found",
+      });
+    }
 
-    res.status(200).json({ success: true, data: caseFile });
+    // Find existing document group with same title
+    const existingDocGroup = caseFile.documents.find(
+      (doc) => doc.documentTitle === documentTitle
+    );
+
+    if (existingDocGroup) {
+      // Add to existing group
+      existingDocGroup.documentUrl.push(...documentUrls);
+    } else {
+      // Create new document group
+      caseFile.documents.push({
+        documentTitle,
+        documentUrl: documentUrls,
+      });
+    }
+
+    // Save updates
+    const updatedCaseFile = await caseFile.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Document added successfully",
+      caseFile: updatedCaseFile,
+    });
   } catch (error) {
-    console.error("Error adding document to case file:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error adding document:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while adding document",
+    });
   }
 };
 

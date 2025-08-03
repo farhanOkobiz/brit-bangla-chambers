@@ -1,4 +1,3 @@
-// src/pages/AdvocateFileRequestForm.jsx
 import React, { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import { useParams } from "react-router-dom";
@@ -8,7 +7,6 @@ import {
   FaFileAlt,
   FaExclamationCircle,
   FaCheckCircle,
-  FaAlignRight,
 } from "react-icons/fa";
 
 const AdvocateFileRequestForm = () => {
@@ -19,18 +17,17 @@ const AdvocateFileRequestForm = () => {
   const [advocateId, setAdvocateId] = useState("");
   const [caseId, setCaseId] = useState("");
   const [caseNumber, setCaseNumber] = useState("");
-  const [files, setFiles] = useState([]);
-  const [showFiles, setShowFiles] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [showDocuments, setShowDocuments] = useState(false);
   const [requestId, setRequestId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [tickedFiles, setTickedFiles] = useState([]);
-  const [title, setTitle] = useState('');
   const image_url = import.meta.env.VITE_API_IMAGE_URL;
-
   const [disabled, setDisabled] = useState(false);
+  const [fileGroups, setFileGroups] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +62,7 @@ const AdvocateFileRequestForm = () => {
       if (res?.data?._id) {
         setSuccessMsg("File request submitted successfully!");
         setFormData({ title: "", description: "" });
-        fetchFileRequests(res.data.case_id); // get latest list
+        fetchFileRequests(res.data.case_id);
         setShowDeleteButton(true);
         setDisabled(true);
       }
@@ -82,26 +79,23 @@ const AdvocateFileRequestForm = () => {
       const res = await UseAxios(`/file-request/case/${caseId}`, {
         method: "get",
       });
-      setRequestId(res.data._id);
-      setTitle(res.data.title);
 
-      if (res.ok) {
+      if (res.data) {
+        setRequestId(res.data._id);
         setFormData({
-          title: res.data.title,
-          description: res.data.description,
+          title: res.data.title || "",
+          description: res.data.description || "",
         });
-      }
 
-      if (Array.isArray(res.data?.file_url)) {
-        setFiles(res.data.file_url);
-        setShowFiles(true);
-        if (files.length > 0) {
-          setShowDeleteButton(true);
-        }
+        // Store document groups
+        setDocuments(res.data.documents || []);
+        setShowDocuments(res.data.documents?.length > 0);
         setShowDeleteButton(true);
         setDisabled(true);
       } else {
-        setShowFiles(false);
+        setShowDocuments(false);
+        setShowDeleteButton(false);
+        setDisabled(false);
       }
     } catch (err) {
       console.error(err);
@@ -115,14 +109,22 @@ const AdvocateFileRequestForm = () => {
         method: "get",
       });
 
-      const data = res.data?.data;
-      setClientId(data.client_id);
-      setAdvocateId(data.advocate_id);
-      setCaseId(data._id);
-      setCaseNumber(data.case_number);
-      fetchFileRequests(data._id);
-      setTickedFiles((prev) => [...prev, ...(data.documents || [])]);
- // here document is an array how to fix this problem
+      if (res.data?.data) {
+        const data = res.data.data;
+        setClientId(data.client_id);
+        setAdvocateId(data.advocate_id);
+        setCaseId(data._id);
+        setCaseNumber(data.case_number);
+        fetchFileRequests(data._id);
+
+        // Safely get files from case documents
+        const caseFiles =
+          (data.documents || [])
+            .filter((doc) => doc && doc.documentUrl)
+            .flatMap((doc) => doc.documentUrl) || [];
+
+        setTickedFiles(caseFiles);
+      }
     } catch (err) {
       console.error(err);
       setError("Failed to load case details.");
@@ -130,7 +132,8 @@ const AdvocateFileRequestForm = () => {
   };
 
   const handleDeleteFileRequest = async () => {
-    if (!window.confirm("Are you sure you want to delete this file?")) return;
+    if (!window.confirm("Are you sure you want to delete this file request?"))
+      return;
     try {
       const res = await UseAxios(`/file-request/${requestId}`, {
         method: "DELETE",
@@ -140,12 +143,12 @@ const AdvocateFileRequestForm = () => {
         setDisabled(false);
         fetchFileRequests(caseId);
         setFormData({ title: "", description: "" });
-
-        setSuccessMsg("Requested File deleted successfully.");
+        setDocuments([]);
+        setSuccessMsg("File request deleted successfully.");
       }
     } catch (error) {
-      console.error("Error deleting file:", error);
-      setError("Failed to delete file.");
+      console.error("Error deleting file request:", error);
+      setError("Failed to delete file request.");
     }
   };
 
@@ -155,14 +158,11 @@ const AdvocateFileRequestForm = () => {
     try {
       const res = await UseAxios(`/file-request/${requestId}/file`, {
         method: "delete",
-        data: { file_url: fileUrl }, // ✅ This is the correct way
+        params: { file_url: fileUrl }, // Send as query parameter
       });
 
-      if (res?.data?.fileRequest) {
-        setFiles((prevFiles) => prevFiles.filter((file) => file !== fileUrl));
+      if (res?.ok) {
         setSuccessMsg("File deleted successfully.");
-      }
-      if (res.ok) {
         fetchFileRequests(caseId);
       } else {
         setError("Failed to delete file.");
@@ -173,30 +173,53 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
-  const handleAddFileToCaseFile = async (filename) =>{
-    console.log("Adding file to case file:", filename);
+  // When preparing to add files
+  const prepareFileGroup = (fileUrl, documentTitle) => {
+    setFileGroups((prev) => ({
+      ...prev,
+      [documentTitle]: [...(prev[documentTitle] || []), fileUrl],
+    }));
+  };
+  
+  const handleAddFileToCaseFile = async (documentTitle) => {
     try {
+      const fileUrls = fileGroups[documentTitle] || [];
+
+      if (fileUrls.length === 0) {
+        setError("Please select files to add");
+        return;
+      }
+
       const res = await UseAxios(
-        `showOwnCaseFile/caseFile/${id}/add-document`,
+        `/showOwnCaseFile/caseFile/${id}/add-document`,
         {
           method: "post",
-          data: { documentUrl: filename, documentTitle: title },
-        } 
+          data: {
+            documentTitle: documentTitle,
+            documentUrls: fileUrls,
+          },
+        }
       );
-      console.log("Add file response:", res.data);
 
       if (res?.data?.success) {
-        setTickedFiles((prev) => [...prev, filename]);
-        setSuccessMsg("File added to case file successfully.");
-        fetchCaseDetails(); // Refresh case details
+        setTickedFiles((prev) => [...prev, ...fileUrls]);
+        setSuccessMsg(
+          `${fileUrls.length} files added to case file successfully.`
+        );
+        setFileGroups((prev) => {
+          const newGroups = { ...prev };
+          delete newGroups[documentTitle];
+          return newGroups;
+        });
+        fetchCaseDetails();
       } else {
-        setError("Failed to add file to case file.");
+        setError("Failed to add files to case file.");
       }
     } catch (error) {
-      console.error("Error adding file to case file:", error);
-      setError("Failed to add file to case file.");
+      console.error("Error adding files to case file:", error);
+      setError("Failed to add files to case file.");
     }
-  }
+  };
 
   useEffect(() => {
     if (id) fetchCaseDetails();
@@ -266,6 +289,7 @@ const AdvocateFileRequestForm = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-sm sm:text-base"
                       placeholder="Enter a descriptive title for your request"
                       required
+                      disabled={disabled}
                     />
                   </div>
 
@@ -286,6 +310,7 @@ const AdvocateFileRequestForm = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none transition-all duration-200 text-sm sm:text-base"
                       placeholder="Provide detailed information about the files you need..."
                       required
+                      disabled={disabled}
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Be specific about what files you need and why they're
@@ -316,6 +341,8 @@ const AdvocateFileRequestForm = () => {
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                           Submitting...
                         </>
+                      ) : disabled ? (
+                        "Request Submitted"
                       ) : (
                         "Submit Request"
                       )}
@@ -328,81 +355,116 @@ const AdvocateFileRequestForm = () => {
 
           {/* Files Sidebar */}
           <div className="lg:col-span-1">
-            {showFiles && files.length > 0 && (
+            {showDocuments && documents.length > 0 ? (
               <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden sticky top-6">
                 <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
                   <h3 className="text-white font-semibold text-lg flex items-center">
                     <FaFileAlt className="mr-2" />
-                    Uploaded Files ({files.length})
+                    Requested Files (
+                    {documents.reduce(
+                      (total, group) =>
+                        total + (group.documentUrl?.length || 0),
+                      0
+                    )}
+                    )
                   </h3>
                 </div>
 
-                <div className="p-4 max-h-96 overflow-y-auto">
-                  <div className="space-y-3">
-                    {files.map((file, index) => {
-                      const filename = file.split("/").pop();
-
-                      return (
-                        <div
-                          key={index}
-                          className="group bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl p-4 transition-all duration-200"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1 min-w-0">
-                              <a
-                                href={`${image_url}${file}`}
-                                download
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block text-blue-600 hover:text-blue-800 font-medium text-sm break-all line-clamp-2 transition-colors duration-200"
-                                title={filename}
-                              >
-                                {filename}
-                              </a>
-                              <p className="text-xs text-gray-500 mt-1">
-                                Click to view
-                              </p>
-                            </div>
-
-                            <div className="flex items-center space-x-2 gap-0">
-                              <button
-                                onClick={() => handleDeleteFile(filename)}
-                                className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
-                                title="Delete file"
-                              >
-                                <FaTrashAlt className="text-sm" />
-                              </button>
-
-                              {!tickedFiles.includes(file) && (
-                                <button
-                                  onClick={() => handleAddFileToCaseFile(file)}
-                                  className="flex-shrink-0 p-2 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-lg transition-all duration-200 group-hover:opacity-100 opacity-70"
-                                  title="Add to case file"
-                                >
-                                  <TiTick className="text-lg" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
+                <div className="p-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+                  {documents
+                    .filter((group) => group.documentUrl?.length > 0)
+                    .map((docGroup, groupIndex) => (
+                      <div
+                        key={groupIndex}
+                        className="mb-5 last:mb-0 bg-gray-50 rounded-xl p-3 border border-gray-200"
+                      >
+                        {/* Document Title Header */}
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-gray-700 text-sm flex items-center">
+                            <span className="bg-blue-100 text-blue-800 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2">
+                              {docGroup.documentUrl?.length || 0}
+                            </span>
+                            {docGroup.documentTitle}
+                          </h4>
                         </div>
-                      );
-                    })}
-                  </div>
+
+                        {/* Files List */}
+                        <div className="space-y-2">
+                          {docGroup.documentUrl?.map((fileUrl, fileIndex) => {
+                            const filename = fileUrl.split("/").pop();
+                            const isAdded = tickedFiles.includes(fileUrl);
+
+                            return (
+                              <div
+                                key={fileIndex}
+                                className="group bg-white hover:bg-gray-50 border border-gray-200 rounded-lg p-3 transition-all duration-200"
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <a
+                                      href={`${image_url}${fileUrl}`}
+                                      download
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="block text-blue-600 hover:text-blue-800 font-medium text-sm truncate transition-colors duration-200"
+                                      title={filename}
+                                    >
+                                      {filename}
+                                    </a>
+                                  </div>
+
+                                  <div className="flex items-center gap-1">
+                                    <button
+                                      onClick={() => handleDeleteFile(fileUrl)}
+                                      className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+                                      title="Delete file"
+                                    >
+                                      <FaTrashAlt className="text-xs" />
+                                    </button>
+
+                                    {!isAdded ? (
+                                      <button
+                                        onClick={() =>
+                                          handleAddFileToCaseFile(
+                                            fileUrl,
+                                            docGroup.documentTitle
+                                          )
+                                        }
+                                        className="flex-shrink-0 p-1.5 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-lg transition-all duration-200"
+                                        title="Add to case file"
+                                      >
+                                        <TiTick className="text-base" />
+                                      </button>
+                                    ) : (
+                                      <span
+                                        className="text-green-500 p-1.5"
+                                        title="Added to case"
+                                      >
+                                        <TiTick className="text-base" />
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
-            )}
-
-            {/* Empty State */}
-            {showFiles && files.length === 0 && (
+            ) : (
               <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FaFileAlt className="text-gray-400 text-xl" />
                 </div>
                 <h3 className="text-gray-700 font-semibold mb-2">
-                  No Files Yet
+                  {showDeleteButton ? "No Files Uploaded" : "No Files Yet"}
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Files will appear here once uploaded
+                  {showDeleteButton
+                    ? "Files will appear here once uploaded"
+                    : "Submit a request to see files here"}
                 </p>
               </div>
             )}

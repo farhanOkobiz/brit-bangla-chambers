@@ -1,5 +1,3 @@
-// models/fileRequestSchema.js
-
 import mongoose, { Schema } from "mongoose";
 
 const FileRequestSchema = new Schema(
@@ -26,20 +24,27 @@ const FileRequestSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-     
     },
     description: {
       type: String,
       trim: true,
       default: "",
     },
-    file_url: [
+    // Updated documents structure to match caseFileSchema
+    documents: [
       {
-        type: String, // e.g. "/uploads/file1.pdf"
-        default: [],
+        documentTitle: {
+          type: String,
+          required: true,
+          trim: true,
+          maxlength: 100,
+        },
+        documentUrl: {
+          type: String,
+          required: true,
+        },
       },
     ],
-    
   },
   { timestamps: true }
 );

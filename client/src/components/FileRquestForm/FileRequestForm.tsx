@@ -3,19 +3,34 @@
 import { apiFetch } from "@/api/apiFetch";
 import { useEffect, useState } from "react";
 
+interface DocumentGroup {
+  documentTitle: string;
+  documentUrl: string[];
+}
+
 interface FileRequest {
   _id: string;
   title?: string;
   description?: string;
+  documents?: DocumentGroup[];
 }
 
 const FileRequestForm = () => {
   const [fileRequests, setFileRequests] = useState<FileRequest[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>({});
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>(
+    {}
+  );
+  const [documentTitles, setDocumentTitles] = useState<Record<string, string>>(
+    {}
+  );
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
-  const [messages, setMessages] = useState<Record<string, { error?: string; success?: string }>>({});
+  const [messages, setMessages] = useState<
+    Record<string, { error?: string; success?: string }>
+  >({});
   const [dragActive, setDragActive] = useState<Record<string, boolean>>({});
-  const [uploadedRequests, setUploadedRequests] = useState<Record<string, boolean>>({}); // Track uploaded requests
+  const [uploadedRequests, setUploadedRequests] = useState<
+    Record<string, boolean>
+  >({});
 
   const fetchRequests = async () => {
     try {
@@ -24,6 +39,17 @@ const FileRequestForm = () => {
       });
       if (!response.ok) throw new Error("Failed to fetch requests.");
       setFileRequests(response.data || []);
+
+      // Initialize document titles
+      const titles: Record<string, string> = {};
+      response.data.forEach((req) => {
+        if (req.documents && req.documents.length > 0) {
+          titles[req._id] = req.documents[0].documentTitle;
+        } else {
+          titles[req._id] = "Client Uploads";
+        }
+      });
+      setDocumentTitles(titles);
     } catch (err) {
       console.error(err);
     }
@@ -33,7 +59,10 @@ const FileRequestForm = () => {
     fetchRequests();
   }, []);
 
-  const handleFileChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    id: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(e.target.files || []).filter(
       (file) => file.type === "application/pdf"
     );
@@ -80,22 +109,35 @@ const FileRequestForm = () => {
     const files = selectedFiles[id];
     if (!files || !files.length) return;
 
+    // Validate document title
+    if (!documentTitles[id] || documentTitles[id].trim() === "") {
+      setMessages((prev) => ({
+        ...prev,
+        [id]: { error: "Document title is required" },
+      }));
+      return;
+    }
+
     setUploading((prev) => ({ ...prev, [id]: true }));
     setMessages((prev) => ({ ...prev, [id]: {} }));
 
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
+    formData.append("documentTitle", documentTitles[id]);
 
     try {
       const response = await apiFetch(`/file-request/${id}/upload`, {
         method: "PUT",
         body: formData,
       });
-
+      console.log("upload successfully",response.data);
       if (!response.ok) throw new Error("Upload failed");
 
       // Mark this request as successfully uploaded
-      setUploadedRequests(prev => ({ ...prev, [id]: true }));
+      setUploadedRequests((prev) => ({ ...prev, [id]: true }));
+
+      // Clear selected files
+      setSelectedFiles((prev) => ({ ...prev, [id]: [] }));
     } catch (err) {
       console.error(err);
       setMessages((prev) => ({
@@ -107,26 +149,6 @@ const FileRequestForm = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this request?"
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const response = await apiFetch(`/file-request/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Failed to delete");
-
-      setFileRequests((prev) => prev.filter((req) => req._id !== id));
-    } catch (err) {
-      console.error("Delete error:", err);
-      alert("Something went wrong while deleting the request.");
-    }
-  };
-
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -135,13 +157,19 @@ const FileRequestForm = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  // Reset uploaded state for a specific request
   const resetUploadedState = (id: string) => {
-    setUploadedRequests(prev => {
-      const newState = {...prev};
+    setUploadedRequests((prev) => {
+      const newState = { ...prev };
       delete newState[id];
       return newState;
     });
+  };
+
+  const handleTitleChange = (id: string, value: string) => {
+    setDocumentTitles((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
   };
 
   return (
@@ -173,10 +201,16 @@ const FileRequestForm = () => {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg
                 className="w-12 h-12 text-gray-400"
-                fill="currentColor"
+                fill="none"
                 viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
@@ -191,11 +225,10 @@ const FileRequestForm = () => {
         {/* File Requests Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
           {fileRequests.map((req) => {
-            // If this request has been uploaded, show success message instead
             if (uploadedRequests[req._id]) {
               return (
-                <div 
-                  key={req._id} 
+                <div
+                  key={req._id}
                   className="bg-white rounded-2xl shadow-lg border border-emerald-100 overflow-hidden"
                 >
                   <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
@@ -203,7 +236,7 @@ const FileRequestForm = () => {
                       {req.title || "Untitled Request"}
                     </h2>
                   </div>
-                  
+
                   <div className="p-6 flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
                       <svg
@@ -214,15 +247,16 @@ const FileRequestForm = () => {
                         <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
                       </svg>
                     </div>
-                    
+
                     <h3 className="text-xl font-semibold text-gray-800 mb-2">
                       Upload Successful!
                     </h3>
-                    
+
                     <p className="text-gray-600 mb-6">
-                      Your files for "{req.title || "this request"}" have been successfully uploaded.
+                      Your files for {req.title || "this request"} have been
+                      successfully uploaded.
                     </p>
-                    
+
                     <button
                       onClick={() => resetUploadedState(req._id)}
                       className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-colors"
@@ -246,7 +280,7 @@ const FileRequestForm = () => {
                 </div>
               );
             }
-            
+
             return (
               <div
                 key={req._id}
@@ -268,6 +302,26 @@ const FileRequestForm = () => {
                     </h4>
                     <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
                       {req.description || "No description provided."}
+                    </p>
+                  </div>
+
+                  {/* Document Title */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                      Document Title <span className="text-red-500">*</span>
+                    </h4>
+                    <input
+                      type="text"
+                      value={documentTitles[req._id] || ""}
+                      onChange={(e) =>
+                        handleTitleChange(req._id, e.target.value)
+                      }
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-sm sm:text-base"
+                      placeholder="Enter a title for these documents"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Provide a descriptive title for this group of documents
                     </p>
                   </div>
 
@@ -421,7 +475,8 @@ const FileRequestForm = () => {
                       onClick={() => handleUpload(req._id)}
                       disabled={
                         uploading[req._id] ||
-                        !(selectedFiles[req._id]?.length > 0)
+                        !(selectedFiles[req._id]?.length > 0) ||
+                        !documentTitles[req._id]?.trim()
                       }
                       className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-700 focus:ring-4 focus:ring-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm sm:text-base"
                     >
@@ -448,26 +503,6 @@ const FileRequestForm = () => {
                           Upload Files
                         </>
                       )}
-                    </button>
-
-                    <button
-                      onClick={() => handleDelete(req._id)}
-                      className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 focus:ring-4 focus:ring-red-200 transition-all duration-200 text-sm sm:text-base"
-                    >
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                      Delete Request
                     </button>
                   </div>
                 </div>

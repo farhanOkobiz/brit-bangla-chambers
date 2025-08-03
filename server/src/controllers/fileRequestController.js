@@ -30,13 +30,19 @@ const deleteFile = (filePath) => {
   }
 };
 
-// ✅ Controller: Creates a new file/documentation request
-// controllers/fileRequestController.js
-
+// CREATE
 export const createFileRequest = async (req, res) => {
+  console.log("hit api create file request", req.body);
   try {
-    const { client_id, advocate_id, case_id, title, description, case_number } =
-      req.body;
+    const {
+      client_id,
+      advocate_id,
+      case_id,
+      title,
+      description,
+      case_number,
+      documentTitle,
+    } = req.body;
     const files = req.files;
 
     if (!client_id || !advocate_id || !case_number) {
@@ -48,9 +54,16 @@ export const createFileRequest = async (req, res) => {
         .json({ error: "Client and Advocate IDs are required." });
     }
 
-    const file_urls = files?.length
-      ? files.map((file) => `/uploads/${file.filename}`)
-      : [];
+    // Prepare documents array
+    let documents = [];
+    if (files?.length) {
+      files.forEach((file) => {
+        documents.push({
+          documentTitle: documentTitle || "Documents",
+          documentUrl: `/uploads/${file.filename}`,
+        });
+      });
+    }
 
     const newRequest = await FileRequest.create({
       client_id,
@@ -59,7 +72,7 @@ export const createFileRequest = async (req, res) => {
       case_id,
       case_number,
       description,
-      file_url: file_urls,
+      documents,
     });
 
     // 🔔
@@ -80,10 +93,12 @@ export const createFileRequest = async (req, res) => {
   }
 };
 
+// UPDATE
 export const updateFileRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const { client_id, advocate_id, title, description } = req.body;
+    const { client_id, advocate_id, title, description, documentTitle } =
+      req.body;
     const files = req.files;
 
     const existing = await FileRequest.findById(id);
@@ -91,35 +106,25 @@ export const updateFileRequest = async (req, res) => {
       return res.status(404).json({ error: "File request not found." });
     }
 
-    // 🔥 Delete old files if new ones uploaded
-    if (files?.length && existing.file_url?.length) {
-      existing.file_url.forEach((url) => {
-        const filename = getFilenameFromUrl(url);
-        if (filename) {
-          deleteFile(getUploadPath(filename));
-        }
+    // If new files uploaded, add as new document groups
+    if (files?.length) {
+      files.forEach((file) => {
+        existing.documents.push({
+          documentTitle: documentTitle || "Documents",
+          documentUrl: `/uploads/${file.filename}`,
+        });
       });
     }
 
-    const updatedData = {
-      client_id: client_id || existing.client_id,
-      advocate_id: advocate_id || existing.advocate_id,
-      title: title || existing.title,
-      description: description || existing.description,
-      file_url: files?.length
-        ? files.map((file) => `/uploads/${file.filename}`)
-        : existing.file_url,
-    };
+    // Update other fields
+    existing.client_id = client_id || existing.client_id;
+    existing.advocate_id = advocate_id || existing.advocate_id;
+    existing.title = title || existing.title;
+    existing.description = description || existing.description;
 
-    const updatedRequest = await FileRequest.findByIdAndUpdate(
-      id,
-      updatedData,
-      {
-        new: true,
-      }
-    );
+    await existing.save();
 
-    res.status(200).json(updatedRequest);
+    res.status(200).json(existing);
   } catch (error) {
     console.error("Error updating file request:", error);
     if (req.files?.length) {
@@ -132,28 +137,60 @@ export const updateFileRequest = async (req, res) => {
 // For client: upload file(s) to existing request
 export const uploadFilesToRequest = async (req, res) => {
   try {
-    const { id } = req.params; // file request id from URL
+    const { id } = req.params;
     const files = req.files;
+    const { documentTitle } = req.body;
 
     if (!files?.length) {
-      return res.status(400).json({ error: "No files uploaded." });
+      return res.status(400).json({
+        success: false,
+        message: "No files uploaded",
+      });
+    }
+
+    if (!documentTitle || documentTitle.trim() === "") {
+      files.forEach((file) => deleteFile(getUploadPath(file.filename)));
+      return res.status(400).json({
+        success: false,
+        message: "Document title is required",
+      });
     }
 
     const existing = await FileRequest.findById(id);
     if (!existing) {
-      return res.status(404).json({ error: "File request not found." });
+      files.forEach((file) => deleteFile(getUploadPath(file.filename)));
+      return res.status(404).json({
+        success: false,
+        message: "File request not found",
+      });
     }
 
-    // Append new files to the array (do not overwrite)
-    const newFileUrls = files.map((file) => `/uploads/${file.filename}`);
-    existing.file_url = [...existing.file_url, ...newFileUrls];
+    // Add each file as a separate document group
+    files.forEach((file) => {
+      existing.documents.push({
+        documentTitle: documentTitle.trim(),
+        documentUrl: `/uploads/${file.filename}`,
+      });
+    });
+
     await existing.save();
 
-    res.status(200).json(existing);
+    res.status(200).json({
+      success: true,
+      message: "Files uploaded successfully",
+      data: existing,
+    });
   } catch (error) {
     console.error("Client file upload error:", error);
-    req.files?.forEach((file) => deleteFile(getUploadPath(file.filename)));
-    res.status(500).json({ error: "Internal server error" });
+
+    if (req.files?.length) {
+      req.files.forEach((file) => deleteFile(getUploadPath(file.filename)));
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
   }
 };
 
@@ -201,6 +238,8 @@ export const getFileRequestByCaseId = async (req, res) => {
       .populate("client_id", "full_name email")
       .populate("advocate_id", "full_name email");
 
+    console.log("reques: ", request);
+
     if (!request) {
       return res.status(404).json({ error: "File request not found." });
     }
@@ -241,38 +280,43 @@ export const deleteFileRequest = async (req, res) => {
 };
 
 // DELETE a specific file from file_url array
+
 export const deleteSingleFileFromRequest = async (req, res) => {
   try {
-    const { _id } = req.params;
-    const { file_url } = req.body; // ⬅️ GET from query
+    const { id } = req.params;
+    const { file_url } = req.query;
 
-    if (!_id || !file_url) {
-      return res
-        .status(400)
-        .json({ message: "Request ID and file URL are required." });
+    if (!id || !file_url) {
+      return res.status(400).json({
+        message: "Request ID and file URL are required.",
+      });
     }
 
-    const fileRequest = await FileRequest.findById(_id);
+    const fileRequest = await FileRequest.findById(id);
     if (!fileRequest) {
-      return res.status(404).json({ message: "File request not found." });
-    }
-    const fullPath = `/uploads/${file_url}`;
-    if (!fileRequest.file_url.includes(fullPath)) {
-      return res
-        .status(404)
-        .json({ message: "File URL not found in this request." });
+      return res.status(404).json({
+        message: "File request not found.",
+      });
     }
 
-    // Remove file from DB
-    fileRequest.file_url = fileRequest.file_url.filter(
-      (url) => url !== fullPath
+    // Find and remove the document group with the matching file_url
+    const initialLength = fileRequest.documents.length;
+    fileRequest.documents = fileRequest.documents.filter(
+      (docGroup) => docGroup.documentUrl !== file_url
     );
+
+    if (fileRequest.documents.length === initialLength) {
+      return res.status(404).json({
+        message: "File URL not found in this request.",
+      });
+    }
+
     await fileRequest.save();
 
-    // Remove physical file
-    const filename = getFilenameFromUrl(fullPath);
-    const filePath = getUploadPath(fullPath);
-    deleteFile(fullPath);
+    // Delete physical file
+    const filename = getFilenameFromUrl(file_url);
+    const filePath = getUploadPath(filename);
+    deleteFile(filePath);
 
     res.status(200).json({
       message: "File deleted successfully.",
@@ -281,6 +325,8 @@ export const deleteSingleFileFromRequest = async (req, res) => {
     });
   } catch (err) {
     console.error("Error deleting file:", err);
-    res.status(500).json({ message: "Server error while deleting file." });
+    res.status(500).json({
+      message: "Server error while deleting file.",
+    });
   }
 };
