@@ -221,6 +221,7 @@ export const checkAuth = async (req, res) => {
     const user = await User.findById(decoded.id).select("full_name");
 
     let profilePhoto;
+    let accountStatus = null; // Default to null
     if (decoded.role === "client") {
       profilePhoto = await Client.findOne({ user_id: decoded.id }).select(
         "profile_photo"
@@ -228,12 +229,24 @@ export const checkAuth = async (req, res) => {
       if (profilePhoto) {
         profilePhoto = profilePhoto.profile_photo || null;
       }
+      accountStatus = await Client.findOne({ user_id: decoded.id }).select(
+        "status"
+      );
+      if (accountStatus) {
+        accountStatus = accountStatus.status || null;
+      }
     } else if (req.user.role === "advocate") {
       profilePhoto = await Advocate.findOne({ user_id: decoded.id }).select(
         "profile_photo_url"
       );
       if (profilePhoto) {
         profilePhoto = profilePhoto.profile_photo_url || null;
+      }
+      accountStatus = await Advocate.findOne({ user_id: decoded.id }).select(
+        "status"
+      );
+      if (accountStatus) {
+        accountStatus = accountStatus.status || null;
       }
     } else {
       profilePhoto = { profile_photo: null }; // Default if no profile found
@@ -245,6 +258,8 @@ export const checkAuth = async (req, res) => {
       userName: user?.full_name || "",
       userId: decoded.id,
       profilePhoto: profilePhoto || null,
+      accountStatus: accountStatus || null, // Include account status
+      message: "Checked successfully",
     });
   } catch (err) {
     console.error("Check auth error:", err);

@@ -238,6 +238,7 @@ function RequestServiceForm() {
           <label
             htmlFor="issueType"
             className="block text-sm font-medium text-gray-700 mb-1"
+            hidden={!!selectedService?.name}
           >
             Specilization
           </label>
@@ -248,6 +249,7 @@ function RequestServiceForm() {
             required
             className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
             disabled={!!selectedService?.name}
+            hidden={!!selectedService?.name}
           >
             <option value="">Select Specialization</option>
             {specialization?.map((item: item) => (

@@ -44,5 +44,4 @@ export default interface UpdateFormData {
   gender: string;
   presentAddress: string;
   permanentAddress: string;
-  status: string;
 }
