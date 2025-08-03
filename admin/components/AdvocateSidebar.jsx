@@ -7,8 +7,6 @@ import {
   FaTachometerAlt,
   FaClipboardList,
   FaFolderOpen,
-  FaCalendarCheck,
-  FaUsers,
   FaBlogger,
   FaCogs,
   FaBars,
@@ -85,7 +83,6 @@ const AdvocateSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
-  const CLIENT_URL = import.meta.env.VITE_API_CLIENT_URL;
   const { setAuthed, setRole, setUserName, setProfilePhoto, userName, profilePhoto } = UseAuth();
   const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
 
@@ -105,7 +102,6 @@ const AdvocateSidebar = () => {
         setRole(null);
         setUserName(null);
         setProfilePhoto(null);
-        window.location.href = `${CLIENT_URL}`; // Redirect to login page
       }
     } catch (error) {
       console.error("Logout failed:", error);
