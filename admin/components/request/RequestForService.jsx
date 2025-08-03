@@ -80,24 +80,26 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const StatsCard = ({ icon: Icon, title, value, color, bgColor }) => (
-  <div className={`${bgColor} rounded-xl p-6 border border-opacity-20`}>
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className={`text-3xl font-bold ${color} mt-1`}>{value}</p>
-      </div>
-      <div
-        className={`p-3 rounded-lg ${color
-          .replace("text-", "bg-")
-          .replace("-600", "-100")}`}
-      >
-        <Icon className={`w-6 h-6 ${color}`} />
+const StatsCard = ({ icon, title, value, color, bgColor }) => {
+  const IconComponent = icon;
+  return (
+    <div className={`${bgColor} rounded-xl p-6 border border-opacity-20`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className={`text-3xl font-bold ${color} mt-1`}>{value}</p>
+        </div>
+        <div
+          className={`p-3 rounded-lg ${color
+            .replace("text-", "bg-")
+            .replace("-600", "-100")}`}
+        >
+          <IconComponent className={`w-6 h-6 ${color}`} />
+        </div>
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 function RequestForService() {
   const [requestsMessage, setRequestsMessage] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);

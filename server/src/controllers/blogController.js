@@ -64,7 +64,7 @@ export const getBlogsPublished = async (req, res, next) => {
     const { page = 1, limit = 10, search = "" } = req.query;
 
     const query = {
-      status: "published", // শুধু published ব্লগ
+      status: "published",
       ...(search && {
         $or: [
           { title: { $regex: search, $options: "i" } },

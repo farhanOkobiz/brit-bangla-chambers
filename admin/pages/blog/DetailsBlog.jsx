@@ -31,7 +31,7 @@ function DetailsBlog() {
 
   return (
     <section
-      className="relative mt-10 lg:mt-6 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative py-2 md:p-10 bg-center bg-cover overflow-hidden text-white flex items-center justify-center mt-4"
       style={{
         backgroundImage: `url('/images/blogs/blog.jpg')`,
       }}
@@ -41,15 +41,15 @@ function DetailsBlog() {
       <div className="relative z-10 w-full px-4 mx-auto text-center">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 flex flex-col lg:flex-row-reverse justify-between gap-6">
-            <div className=" flex-1">
+            <div className=" flex-1 w-[90%] h-[200px] sm:w-[500px] sm:h-[300px] md:w-[600px] md:h-[300px]">
               <img
                 src={fullImageUrl}
                 alt={blog.title || "Blog Image"}
                 className="object-cover w-full"
-                style={{ width: 700, height: 224 }}
+                // style={{ width: 700, height: 424 }}
               />
             </div>
-            <div className=" flex-2 pb-6 text-gray-800 ">
+            <div className=" flex-1 pb-6 text-gray-800 ">
               <h2 className="text-x3l md:text-4xl font-bold mb-4 text-gray-700 uppercase">
                 {blog.title}
               </h2>

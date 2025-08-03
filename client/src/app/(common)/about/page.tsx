@@ -9,8 +9,8 @@ export default function AboutBritBanglaChamber() {
         </h2>
         <p className="mt-2 text-base md:text-lg text-center text-gray-600">
           We are a cross-border legal and consultancy firm bridging Bangladesh
-          and the United Kingdom with trusted expertise in law, business, and
-          immigration .
+          and the United Kingdom with <br className=" hidden md:block" />{" "}
+          trusted expertise in law, business, and immigration .
         </p>
       </div>
 

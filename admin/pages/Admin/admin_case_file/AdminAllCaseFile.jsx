@@ -164,104 +164,106 @@ function AdminAllCaseFile() {
         {/* Case Files Grid */}
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-2">
           {filteredCases.map((file) => (
-            <div
-              key={file._id}
-              className=" bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 pb-6"
-            >
-              {/* Card Header */}
-              <div className="p-6 relative">
-                <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
-                  <Link
-                    to={`/admin/detail-case-file/${file._id}`}
-                    className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
-                    title="View Details"
-                  >
-                    <FaEye className="text-sm" />
-                  </Link>
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <FaUser className="text-orange-500 mt-0.5" />
-                  <div>
-                    <span className="text-gray-600">Client Name:</span>
-                    <span className="font-medium text-gray-800 ml-1">
-                      {file.client_name}
-                    </span>
+            <Link to={`/admin/detail-case-file/${file._id}`}>
+              <div
+                key={file._id}
+                className=" bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 pb-6"
+              >
+                {/* Card Header */}
+                <div className="p-6 relative">
+                  <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
+                    <Link
+                      to={`/admin/detail-case-file/${file._id}`}
+                      className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
+                      title="View Details"
+                    >
+                      <FaEye className="text-sm" />
+                    </Link>
                   </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2 mt-3 lg:mt-6 leading-tight">
-                  {file.title || "Untitled Case"}
-                </h3>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium">
-                    {file.case_number}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                      file.status
-                    )}`}
-                  >
-                    {file.status.replace("_", " ").toUpperCase()}
-                  </span>
-                </div>
-              </div>
 
-              {/* Card Body */}
-              <div className="px-6 space-y-4">
-                {/* Key Information */}
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex items-center gap-2">
-                    <FaGavel className="text-blue-500" />
-                    <span className="text-gray-600"> Case type:</span>
-                    <span className="font-medium text-gray-800">
-                      {file.case_type || "-"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FaCalendarAlt className="text-green-500" />
-                    <span className="text-gray-600">Filed:</span>
-                    <span className="font-medium text-gray-800">
-                      {new Date(file.filing_date).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Court and Client */}
-                <div className="space-y-4">
                   <div className="flex items-start gap-2">
-                    <FaGavel className="text-purple-500 mt-0.5" />
+                    <FaUser className="text-orange-500 mt-0.5" />
                     <div>
-                      <span className="text-gray-600">Court:</span>
+                      <span className="text-gray-600">Client Name:</span>
                       <span className="font-medium text-gray-800 ml-1">
-                        {file.court_name || "-"}
+                        {file.client_name}
                       </span>
                     </div>
                   </div>
+                  <h3 className="text-xl font-bold mb-2 mt-3 lg:mt-6 leading-tight">
+                    {file.title || "Untitled Case"}
+                  </h3>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-medium">
+                      {file.case_number}
+                    </span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                        file.status
+                      )}`}
+                    >
+                      {file.status.replace("_", " ").toUpperCase()}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Next Hearing Date */}
-                {file.next_hearing_date && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaCalendarAlt className="text-blue-600" />
-                    <span>Next Hearing:</span>
-                    <span className="font-medium">
-                      {new Date(file.next_hearing_date).toLocaleDateString()}
-                    </span>
+                {/* Card Body */}
+                <div className="px-6 space-y-4">
+                  {/* Key Information */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="flex items-center gap-2">
+                      <FaGavel className="text-blue-500" />
+                      <span className="text-gray-600"> Case type:</span>
+                      <span className="font-medium text-gray-800">
+                        {file.case_type || "-"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FaCalendarAlt className="text-green-500" />
+                      <span className="text-gray-600">Filed:</span>
+                      <span className="font-medium text-gray-800">
+                        {new Date(file.filing_date).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                )}
 
-                {/* Verdict Date */}
-                {file.verdict_date && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaGavel className="text-green-600" />
-                    <span>Verdict Date:</span>
-                    <span className="font-medium">
-                      {new Date(file.verdict_date).toLocaleDateString()}
-                    </span>
+                  {/* Court and Client */}
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-2">
+                      <FaGavel className="text-purple-500 mt-0.5" />
+                      <div>
+                        <span className="text-gray-600">Court:</span>
+                        <span className="font-medium text-gray-800 ml-1">
+                          {file.court_name || "-"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                )}
+
+                  {/* Next Hearing Date */}
+                  {file.next_hearing_date && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <FaCalendarAlt className="text-blue-600" />
+                      <span>Next Hearing:</span>
+                      <span className="font-medium">
+                        {new Date(file.next_hearing_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Verdict Date */}
+                  {file.verdict_date && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <FaGavel className="text-green-600" />
+                      <span>Verdict Date:</span>
+                      <span className="font-medium">
+                        {new Date(file.verdict_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

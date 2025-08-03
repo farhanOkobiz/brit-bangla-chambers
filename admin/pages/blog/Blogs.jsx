@@ -64,7 +64,7 @@ function Blogs() {
 
   return (
     <section
-      className="relative py-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative py-2 md:p-10 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
       style={{ backgroundImage: `url('/images/blogs/blog.jpg')` }}
     >
       <div className="absolute inset-0 bg-white/90 bg-opacity-60" />
@@ -130,13 +130,36 @@ function Blogs() {
                 </p>
                 <h3 className="text-xl font-semibold">{blog.title}</h3>
 
+                {/* ✅ Status show here */}
+                <p
+                  className={`mt-2 text-sm font-medium ${
+                    blog.status === "published"
+                      ? "text-green-600"
+                      : blog.status === "draft"
+                      ? "text-yellow-600"
+                      : "text-gray-600"
+                  }`}
+                >
+                  Status: {blog.status || "N/A"}
+                </p>
+
                 <div className="mt-4 flex justify-between items-center">
-                  <Link
-                    to={`/advocate/dashboard/details-blog/${blog._id}`}
-                    className="text-blue-600 hover:underline text-sm"
-                  >
-                    Read More
-                  </Link>
+                  {role === "admin" && (
+                    <Link
+                      to={`/admin/dashboard/details-blog/${blog._id}`}
+                      className="text-blue-600 hover:underline text-sm"
+                    >
+                      Read More
+                    </Link>
+                  )}
+                  {role === "advocate" && (
+                    <Link
+                      to={`/advocate/dashboard/details-blog/${blog._id}`}
+                      className="text-blue-600 hover:underline text-sm"
+                    >
+                      Read More
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
