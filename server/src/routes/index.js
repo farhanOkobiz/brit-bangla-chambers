@@ -6,15 +6,15 @@ import specializationRoutes from "./api/specializationRoutes.js";
 import subCategoryRoutes from "./api/subCategoryRoutes.js";
 import blogRoutes from "./api/blogRoutes.js";
 import contactUsRoutes from "./api/contactUsRoutes.js";
-import requestServiceRoutes from "./api/requestServiceRoutes.js";
+import requestForServiceRoutes from "./api/requestForServiceRoutes.js";
 import requestForAdvocateRoutes from "./api/requestForAdvocateRoutes.js";
 import clientRoutes from "./api/clientRoutes.js";
 import advocateRoutes from "./api/advocateRoutes.js";
 import caseFileRoutes from "./api/caseFileRoutes.js";
 import educationRoutes from "./api/educationRoutes.js";
-import certicationRoutes from "./api/certificationRoutes.js"; 
+import certicationRoutes from "./api/certificationRoutes.js";
 import documentRoutes from "./api/documentRoutes.js";
-import fileRequestRoutes from "./api/fileRequestRoutes.js"; 
+import fileRequestRoutes from "./api/fileRequestRoutes.js";
 import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
 import notificationsRoutes from "./api/notificationsRoutes.js";
 import advocateDashboardRoutes from "./api/adocateDashboardRoutes.js";
@@ -31,7 +31,7 @@ router.use("/sub-category", subCategoryRoutes);
 router.use("/blog", blogRoutes);
 router.use("/service", serviceRoutes);
 router.use("/contact", contactUsRoutes);
-router.use("/request-service", requestServiceRoutes);
+router.use("/request-service", requestForServiceRoutes);
 router.use("/request-for-advocate", requestForAdvocateRoutes);
 router.use("/client", clientRoutes);
 router.use("/advocate", advocateRoutes);
@@ -44,6 +44,6 @@ router.use("/client-dashboard", clientDashboardRoutes);
 router.use("/notifications", notificationsRoutes);
 router.use("/advocate-dashboard", advocateDashboardRoutes); // Ensure this is imported correctly
 router.use("/admin-dashboard", adminDashboardRoutes); // Ensure this is imported correctly
-router.use("/support", helpAndSupportRoutes)
+router.use("/support", helpAndSupportRoutes);
 
 export default router;

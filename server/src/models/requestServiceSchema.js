@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-const requestServiceSchema = new Schema(
+const requestForServiceSchema = new Schema(
   {
     clientId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -10,9 +10,6 @@ const requestServiceSchema = new Schema(
     },
     userMessage: {
       name: String,
-      email: String,
-      phone: String,
-      nid: String,
       presentAddress: String,
       permanentAddress: String,
       issueType: String,
@@ -44,9 +41,9 @@ const requestServiceSchema = new Schema(
   }
 );
 
-requestServiceSchema.post("findOneAndDelete", async function (doc) {
+requestForServiceSchema.post("findOneAndDelete", async function (doc) {
   if (doc?.userMessageId) {
-    const count = await RequestService.countDocuments({
+    const count = await requestForServiceSchema.countDocuments({
       userMessageId: doc.userMessageId,
     });
 
@@ -56,4 +53,4 @@ requestServiceSchema.post("findOneAndDelete", async function (doc) {
   }
 });
 
-export default model("RequestService", requestServiceSchema);
+export default model("RequestForService", requestForServiceSchema);

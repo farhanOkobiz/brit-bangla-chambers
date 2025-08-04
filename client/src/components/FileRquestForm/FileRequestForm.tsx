@@ -11,11 +11,17 @@ interface FileRequest {
 
 const FileRequestForm = () => {
   const [fileRequests, setFileRequests] = useState<FileRequest[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>({});
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>(
+    {}
+  );
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
-  const [messages, setMessages] = useState<Record<string, { error?: string; success?: string }>>({});
+  const [messages, setMessages] = useState<
+    Record<string, { error?: string; success?: string }>
+  >({});
   const [dragActive, setDragActive] = useState<Record<string, boolean>>({});
-  const [uploadedRequests, setUploadedRequests] = useState<Record<string, boolean>>({}); // Track uploaded requests
+  const [uploadedRequests, setUploadedRequests] = useState<
+    Record<string, boolean>
+  >({}); // Track uploaded requests
 
   const fetchRequests = async () => {
     try {
@@ -33,7 +39,10 @@ const FileRequestForm = () => {
     fetchRequests();
   }, []);
 
-  const handleFileChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    id: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(e.target.files || []).filter(
       (file) => file.type === "application/pdf"
     );
@@ -95,7 +104,7 @@ const FileRequestForm = () => {
       if (!response.ok) throw new Error("Upload failed");
 
       // Mark this request as successfully uploaded
-      setUploadedRequests(prev => ({ ...prev, [id]: true }));
+      setUploadedRequests((prev) => ({ ...prev, [id]: true }));
     } catch (err) {
       console.error(err);
       setMessages((prev) => ({
@@ -137,8 +146,8 @@ const FileRequestForm = () => {
 
   // Reset uploaded state for a specific request
   const resetUploadedState = (id: string) => {
-    setUploadedRequests(prev => {
-      const newState = {...prev};
+    setUploadedRequests((prev) => {
+      const newState = { ...prev };
       delete newState[id];
       return newState;
     });
@@ -194,8 +203,8 @@ const FileRequestForm = () => {
             // If this request has been uploaded, show success message instead
             if (uploadedRequests[req._id]) {
               return (
-                <div 
-                  key={req._id} 
+                <div
+                  key={req._id}
                   className="bg-white rounded-2xl shadow-lg border border-emerald-100 overflow-hidden"
                 >
                   <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
@@ -203,7 +212,7 @@ const FileRequestForm = () => {
                       {req.title || "Untitled Request"}
                     </h2>
                   </div>
-                  
+
                   <div className="p-6 flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
                       <svg
@@ -214,15 +223,16 @@ const FileRequestForm = () => {
                         <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
                       </svg>
                     </div>
-                    
+
                     <h3 className="text-xl font-semibold text-gray-800 mb-2">
                       Upload Successful!
                     </h3>
-                    
+
                     <p className="text-gray-600 mb-6">
-                      Your files for "{req.title || "this request"}" have been successfully uploaded.
+                      Your files for {req.title || "this request"} have been
+                      successfully uploaded.
                     </p>
-                    
+
                     <button
                       onClick={() => resetUploadedState(req._id)}
                       className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-colors"
@@ -246,7 +256,7 @@ const FileRequestForm = () => {
                 </div>
               );
             }
-            
+
             return (
               <div
                 key={req._id}
