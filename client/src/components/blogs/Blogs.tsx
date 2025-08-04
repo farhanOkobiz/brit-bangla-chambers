@@ -22,7 +22,10 @@ function Blogs() {
       {/* Content */}
       <div className="relative z-10 w-full px-4 mx-auto text-center">
         <div className="text-center mb-14">
-          <p className="text-lg text-gray-600 uppercase"> our blog </p>
+          <Link href={"/blogs"} className="text-lg text-gray-600 uppercase">
+            {" "}
+            our blog{" "}
+          </Link>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Recent Articles
           </h2>

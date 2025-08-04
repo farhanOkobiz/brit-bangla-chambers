@@ -5,24 +5,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { clearSelectedService } from "@/redux/slices/selectedServiceSlice";
 import { toast } from "react-toastify";
 import { RootState } from "@/redux/store";
-
-type FormData = {
-  name: string;
-  email: string;
-  phone: string;
-  nid: string;
-  presentAddress: string;
-  permanentAddress: string;
-  issueType: string;
-  message: string;
-};
+import FormDataForRequestService from "@/types/requestForService";
 
 interface item {
   _id: number;
   name: string;
 }
 
-function RequestServiceForm() {
+function RequestForServiceForm() {
   const [specialization, setSpecialization] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -64,13 +54,7 @@ function RequestServiceForm() {
     return "";
   };
 
-  const [form, setForm] = useState<FormData>({
-    name: "",
-    email: "",
-    phone: "",
-    nid: "",
-    presentAddress: "",
-    permanentAddress: "",
+  const [form, setForm] = useState<FormDataForRequestService>({
     issueType: getInitialIssueType(),
     message: "",
   });
@@ -126,12 +110,6 @@ function RequestServiceForm() {
         localStorage.removeItem("selectedService");
       }
       setForm({
-        name: "",
-        email: "",
-        phone: "",
-        nid: "",
-        presentAddress: "",
-        permanentAddress: "",
         issueType: "",
         message: "",
       });
@@ -159,66 +137,8 @@ function RequestServiceForm() {
     <div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name & Email */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Input
-            name="name"
-            type="text"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Your Full Name"
-            required
-          />
-          <Input
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Email Address"
-            required
-          />
-        </div>
 
-        {/* Phone & NID */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Input
-            name="phone"
-            type="tel"
-            value={form.phone}
-            onChange={handleChange}
-            placeholder="Phone Number"
-            required
-          />
-          <Input
-            name="nid"
-            type="text"
-            value={form.nid}
-            onChange={handleChange}
-            placeholder="NID Card Number"
-            required
-          />
-        </div>
-
-        {/* Addresses */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Input
-            name="presentAddress"
-            type="text"
-            value={form.presentAddress}
-            onChange={handleChange}
-            placeholder="Present Address"
-            required
-          />
-          <Input
-            name="permanentAddress"
-            type="text"
-            value={form.permanentAddress}
-            onChange={handleChange}
-            placeholder="Permanent Address"
-            required
-          />
-        </div>
-
-        <div>
+        <div className="w-full">
           {/* Change Service Button */}
           {selectedService?.name && (
             <button
@@ -306,41 +226,4 @@ function RequestServiceForm() {
   );
 }
 
-function Input({
-  name,
-  type = "text",
-  value,
-  onChange,
-  placeholder,
-  required = false,
-}: {
-  name: string;
-  type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  required?: boolean;
-}) {
-  return (
-    <div>
-      <label
-        htmlFor={name}
-        className="block text-sm font-medium text-gray-700 mb-1 capitalize"
-      >
-        {name.replace(/([A-Z])/g, " $1")}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full border border-gray-300 p-3 rounded-md text-gray-800"
-      />
-    </div>
-  );
-}
-
-export default RequestServiceForm;
+export default RequestForServiceForm;

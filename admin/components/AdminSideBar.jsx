@@ -91,7 +91,6 @@ const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
-  const CLIENT_URL = import.meta.env.VITE_API_CLIENT_URL;
   const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -118,7 +117,6 @@ const AdminSidebar = () => {
         setRole(null);
         setUserName(null);
         setProfilePhoto(null);
-        window.location.href = `${CLIENT_URL}/login`;
       }
     } catch (error) {
       console.error("Logout failed:", error);

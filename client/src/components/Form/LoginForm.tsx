@@ -16,7 +16,13 @@ function LoginForm() {
 
   useEffect(() => {
     if (data?.data && data.data.role === "client") {
-      router.push("/");
+      if(typeof window !== "undefined") {
+        const storedPath = localStorage.getItem("client_prev_path");
+        if (storedPath) {
+          router.push(storedPath);
+          localStorage.removeItem("client_prev_path");
+        }
+      }
     }
   }, [data, router]);
 

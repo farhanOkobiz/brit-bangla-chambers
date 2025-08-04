@@ -177,7 +177,6 @@ const RequestForAdvocate = () => {
                 <option value="pending">Pending</option>
                 <option value="accepted">Accepted</option>
                 <option value="rejected">Rejected</option>
-                <option value="sent_to_advocate">Sent to Advocate</option>
               </select>
             </div>
           </div>

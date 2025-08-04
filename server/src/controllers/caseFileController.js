@@ -25,9 +25,9 @@ export const getAllCaseFilesForAdvocate = async (req, res) => {
   try {
     const id = req?.user?.id;
 
-    const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
-      "advocate_id"
-    );
+    const caseFiles = await CaseFile.find({ advocate_id: id })
+      .populate("advocate_id")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
@@ -42,7 +42,9 @@ export const getAllCaseFilesForAdvocate = async (req, res) => {
 // ✅ Get All Case Files
 export const getAllCaseFilesForAdmin = async (req, res) => {
   try {
-    const caseFiles = await CaseFile.find().populate("advocate_id");
+    const caseFiles = await CaseFile.find()
+      .populate("advocate_id")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
@@ -59,9 +61,9 @@ export const getCaseFileForClient = async (req, res) => {
   try {
     const client_id = req?.user?.id;
 
-    const caseFile = await CaseFile.find({ client_id: client_id }).populate(
-      "advocate_id client_id"
-    );
+    const caseFile = await CaseFile.find({ client_id: client_id })
+      .populate("advocate_id client_id")
+      .sort({ createdAt: -1 });
     if (!caseFile) {
       return res
         .status(404)
@@ -213,12 +215,12 @@ export const addDocumentToCaseFile = async (req, res) => {
 };
 
 export const changeCaseFileStatus = async (req, res) => {
-  console.log("hit api change case file status")
+  console.log("hit api change case file status");
   try {
     const { id } = req.params;
-    const { status } = req.body  // Handle undefined req.body
+    const { status } = req.body; // Handle undefined req.body
 
-    console.log("id: ", id)
+    console.log("id: ", id);
 
     // Check if status exists
     if (status === undefined || status === null) {
