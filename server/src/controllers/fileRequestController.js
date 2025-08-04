@@ -134,19 +134,29 @@ export const uploadFilesToRequest = async (req, res) => {
   try {
     const { id } = req.params; // file request id from URL
     const files = req.files;
+    const { documentTitle } = req.body;
 
     if (!files?.length) {
       return res.status(400).json({ error: "No files uploaded." });
     }
 
+    if (!documentTitle || documentTitle.trim() === "") {
+      files.forEach((file) => deleteFile(getUploadPath(file.filename)));
+      return res.status(400).json({ error: "Document title is required." });
+    }
+
     const existing = await FileRequest.findById(id);
     if (!existing) {
+      files.forEach((file) => deleteFile(getUploadPath(file.filename)));
       return res.status(404).json({ error: "File request not found." });
     }
 
-    // Append new files to the array (do not overwrite)
-    const newFileUrls = files.map((file) => `/uploads/${file.filename}`);
-    existing.file_url = [...existing.file_url, ...newFileUrls];
+    // Add new document group with all uploaded files
+    existing.documents.push({
+      documentTitle: documentTitle.trim(),
+      documentUrl: files.map((file) => `/uploads/${file.filename}`),
+    });
+
     await existing.save();
 
     res.status(200).json(existing);
@@ -241,10 +251,11 @@ export const deleteFileRequest = async (req, res) => {
 };
 
 // DELETE a specific file from file_url array
-export const deleteSingleFileFromRequest = async (req, res) => {
+export const deleteSingleDocumentsFromRequest = async (req, res) => {
+  console.log("Deleting single document from request...");
   try {
     const { _id } = req.params;
-    const { file_url } = req.body; // ⬅️ GET from query
+    const { file_url } = req.body; // The file URL to delete
 
     if (!_id || !file_url) {
       return res
@@ -256,23 +267,37 @@ export const deleteSingleFileFromRequest = async (req, res) => {
     if (!fileRequest) {
       return res.status(404).json({ message: "File request not found." });
     }
-    const fullPath = `/uploads/${file_url}`;
-    if (!fileRequest.file_url.includes(fullPath)) {
+
+    let fileFound = false;
+
+    // Loop through document groups to find and remove the file
+    fileRequest.documents.forEach((docGroup) => {
+      const initialLength = docGroup.documentUrl.length;
+      docGroup.documentUrl = docGroup.documentUrl.filter(
+        (url) => url !== file_url
+      );
+      if (docGroup.documentUrl.length < initialLength) {
+        fileFound = true;
+        // Delete the physical file
+        const filename = getFilenameFromUrl(file_url);
+        if (filename) {
+          deleteFile(getUploadPath(filename));
+        }
+      }
+    });
+
+    // Remove document groups that now have no files
+    fileRequest.documents = fileRequest.documents.filter(
+      (docGroup) => docGroup.documentUrl.length > 0
+    );
+
+    if (!fileFound) {
       return res
         .status(404)
         .json({ message: "File URL not found in this request." });
     }
 
-    // Remove file from DB
-    fileRequest.file_url = fileRequest.file_url.filter(
-      (url) => url !== fullPath
-    );
     await fileRequest.save();
-
-    // Remove physical file
-    const filename = getFilenameFromUrl(fullPath);
-    const filePath = getUploadPath(fullPath);
-    deleteFile(fullPath);
 
     res.status(200).json({
       message: "File deleted successfully.",
