@@ -30,7 +30,7 @@ const FileRequestSchema = new Schema(
       trim: true,
       default: "",
     },
-    // Updated documents structure to match caseFileSchema
+    // Each document group can have multiple files
     documents: [
       {
         documentTitle: {
@@ -39,10 +39,12 @@ const FileRequestSchema = new Schema(
           trim: true,
           maxlength: 100,
         },
-        documentUrl: {
-          type: String,
-          required: true,
-        },
+        documentUrl: [
+          {
+            type: String,
+            required: true,
+          },
+        ],
       },
     ],
   },

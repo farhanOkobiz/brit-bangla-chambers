@@ -8,7 +8,7 @@ import {
   getAllFileRequests,
   getFileRequestByClintId,
   getFileRequestByCaseId,
-  deleteSingleFileFromRequest,
+  deleteSingleDocumentsFromRequest,
 } from "../../controllers/fileRequestController.js";
 import { checkClient } from "../../middleware/authMiddleware.js";
 
@@ -29,6 +29,6 @@ router.get("/", getAllFileRequests);
 router.get("/clientId", checkClient, getFileRequestByClintId);
 router.put("/:id", upload.array("files"), updateFileRequest);
 router.delete("/:id", deleteFileRequest);
-router.delete("/:id/file", deleteSingleFileFromRequest);
+router.delete("/:_id/file", deleteSingleDocumentsFromRequest);
 
 export default router;

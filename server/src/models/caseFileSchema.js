@@ -52,18 +52,8 @@ const CaseFileSchema = new Schema(
     },
     documents: [
       {
-        documentTitle: {
-          type: String,
-          required: true,
-          trim: true,
-          maxlength: 100,
-        },
-        documentUrl: [
-          {
-            type: String,
-            required: true,
-          },
-        ],
+        documentTitle: String,
+        documentUrl: String, // URL to the document file
       },
     ],
     related_laws: [String], // e.g. ["Section 420 IPC", "Civil Procedure Code"]

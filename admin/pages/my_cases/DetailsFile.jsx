@@ -20,6 +20,8 @@ function DetailsFile() {
   const [file, setFile] = useState("");
   const navigate = useNavigate();
   const image_url = import.meta.env.VITE_API_IMAGE_URL;
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -62,6 +64,7 @@ function DetailsFile() {
   };
 
   const handleDeleteDocument = async (index) => {
+    const docId = file.documents[index]._id;
     const result = await Swal.fire({
       title: "Delete Document?",
       text: "This document will be permanently removed from the case file!",
@@ -75,21 +78,17 @@ function DetailsFile() {
 
     if (result.isConfirmed) {
       try {
-        // Create a new array without the deleted document
-        const updatedDocuments = [...file.documents];
-        updatedDocuments.splice(index, 1);
+        await UseAxios(
+          `/showOwnCaseFile/deleteDocument/${id}/documents/${docId}`,
+          {
+            method: "DELETE",
+          }
+        );
 
-        // Update the file state
         setFile((prev) => ({
           ...prev,
-          documents: updatedDocuments,
+          documents: prev.documents.filter((doc) => doc._id !== docId),
         }));
-
-        // API call to update the case file on the server
-        await UseAxios(`/showOwnCaseFile/updateCaseFile/${id}`, {
-          method: "PUT",
-          data: { documents: updatedDocuments },
-        });
 
         toast.success("Document deleted successfully!");
       } catch (error) {
@@ -99,60 +98,92 @@ function DetailsFile() {
     }
   };
 
-const handleToggleStatus = async (currentStatus) => {
-  const newStatus = currentStatus === "closed" ? "in_progress" : "closed";
-  const actionText = newStatus === "closed" ? "close" : "activate";
-  const successText = newStatus === "closed" ? "closed" : "activated";
+  const handleEditDocument = (index, currentTitle) => {
+    setEditingIndex(index);
+    setNewTitle(currentTitle);
+  };
 
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: `This case file will be ${successText}`,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: `Yes, ${actionText} it!`,
-    cancelButtonText: "Cancel",
-  });
+  const handleSaveDocumentTitle = async (docId) => {
+    try {
+      await UseAxios(
+        `/showOwnCaseFile/updateDocument/${id}/documents/${docId}`,
+        {
+          method: "PUT",
+          data: { documentTitle: newTitle },
+        }
+      );
+      setFile((prev) => {
+        const updatedDocs = prev.documents.map((doc) =>
+          doc._id === docId ? { ...doc, documentTitle: newTitle } : doc
+        );
+        return { ...prev, documents: updatedDocs };
+      });
+      setEditingIndex(null);
+      toast.success("Document title updated!");
+    } catch (error) {
+      toast.error("Failed to update document title.");
+    }
+  };
 
-  if (!result.isConfirmed) return;
+  const handleToggleStatus = async (currentStatus) => {
+    const newStatus = currentStatus === "closed" ? "in_progress" : "closed";
+    const actionText = newStatus === "closed" ? "close" : "activate";
+    const successText = newStatus === "closed" ? "closed" : "activated";
 
-  try {
-    // Optimistic UI update for single file
-    setFile((prev) => ({ ...prev, status: newStatus }));
-
-    const res = await UseAxios(`/showOwnCaseFile/changeStatus/${id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: JSON.stringify({ status: newStatus }),
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `This case file will be ${successText}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: `Yes, ${actionText} it!`,
+      cancelButtonText: "Cancel",
     });
 
-    if (res.data?.success) {
-      toast.success(`Case file ${successText} successfully!`);
-      Swal.fire({
-        title: `${successText.charAt(0).toUpperCase() + successText.slice(1)}!`,
-        text: `Your case file has been ${successText}.`,
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } else {
-      throw new Error(res.data?.message || `Failed to ${actionText} case file`);
-    }
-  } catch (error) {
-    // Revert on error
-    setFile((prev) => ({ ...prev, status: currentStatus }));
+    if (!result.isConfirmed) return;
 
-    console.error(`Error ${actionText}ing case file:`, error);
-    toast.error(error.message || `Failed to ${actionText} the case file.`);
-  }
-};
+    try {
+      // Optimistic UI update for single file
+      setFile((prev) => ({ ...prev, status: newStatus }));
+
+      const res = await UseAxios(`/showOwnCaseFile/changeStatus/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.data?.success) {
+        toast.success(`Case file ${successText} successfully!`);
+        Swal.fire({
+          title: `${
+            successText.charAt(0).toUpperCase() + successText.slice(1)
+          }!`,
+          text: `Your case file has been ${successText}.`,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        throw new Error(
+          res.data?.message || `Failed to ${actionText} case file`
+        );
+      }
+    } catch (error) {
+      // Revert on error
+      setFile((prev) => ({ ...prev, status: currentStatus }));
+
+      console.error(`Error ${actionText}ing case file:`, error);
+      toast.error(error.message || `Failed to ${actionText} the case file.`);
+    }
+  };
 
   useEffect(() => {
     const fetchCase = async () => {
       try {
         const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`);
         const data = res.data?.data;
+        console.log("Fetched case file:", data);
         setFile(data);
       } catch {
         toast.error("Failed to load case file.");
@@ -373,39 +404,87 @@ const handleToggleStatus = async (currentStatus) => {
               {file.documents?.length > 0 && (
                 <div className="bg-amber-50 rounded-xl p-4 text-sm">
                   <h4 className="font-semibold text-amber-700 mb-3">
-                    Document Title: {file.documentTitle}
+                    Documents
                   </h4>
                   <div className="flex overflow-x-auto pb-3 -mx-1 px-1">
                     <div className="flex space-x-4 min-w-max">
                       {file.documents.map((doc, index) => (
                         <div
-                          key={index}
-                          className="group relative flex flex-col items-center w-32"
+                          key={doc._id || index}
+                          className="relative flex flex-col items-center w-32"
                         >
                           <div className="flex flex-col items-center bg-white border border-amber-200 rounded-lg p-3 w-full hover:shadow-md transition-all duration-200">
-                            <a
-                              href={`${image_url}${doc}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex flex-col items-center w-full"
-                            >
-                              <div className="bg-amber-100 p-3 rounded-full mb-2">
-                                <FaFileContract className="text-amber-600 text-xl" />
+                            {/* Action buttons: always visible, top-right */}
+                            <div className="absolute top-0 right-0 mt-1 mr-1 flex space-x-1 z-10">
+                              {editingIndex !== index && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleEditDocument(index, doc.documentTitle)
+                                  }
+                                  className="text-blue-500 text-xs bg-white rounded p-1 hover:bg-blue-50"
+                                  title="Edit document title"
+                                  aria-label="Edit document title"
+                                >
+                                  <FaEdit />
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteDocument(index)}
+                                className="text-red-500 text-xs bg-white rounded p-1 hover:bg-red-50"
+                                title="Delete document"
+                                aria-label="Delete document"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                            {editingIndex === index ? (
+                              <div className="w-full flex flex-col items-center">
+                                <div className="bg-amber-100 p-3 rounded-full mb-2">
+                                  <FaFileContract className="text-amber-600 text-xl" />
+                                </div>
+                                <input
+                                  className="text-xs font-medium text-center text-gray-700 truncate w-full border rounded px-1"
+                                  value={newTitle}
+                                  onChange={(e) => setNewTitle(e.target.value)}
+                                  autoFocus
+                                  aria-label="Edit document title"
+                                />
+                                <div className="flex justify-center gap-1 mt-1">
+                                  <button
+                                    type="button"
+                                    className="text-green-600 text-xs font-bold"
+                                    onClick={() =>
+                                      handleSaveDocumentTitle(doc._id)
+                                    }
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="text-gray-400 text-xs"
+                                    onClick={() => setEditingIndex(null)}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
                               </div>
-                              <span className="text-xs font-medium text-center text-gray-700 truncate w-full">
-                                Document {index + 1}
-                              </span>
-                            </a>
-
-                            {/* Delete Button - positioned at bottom, visible on hover */}
-                            <button
-                              onClick={() => handleDeleteDocument(index)}
-                              className="absolute bottom-0 left-0 right-0 w-full py-1.5 bg-red-500 text-white rounded-b-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-1 hover:bg-red-600 focus:outline-none"
-                              title="Delete document"
-                            >
-                              <FaTrash className="text-xs" />
-                              <span className="text-xs">Delete</span>
-                            </button>
+                            ) : (
+                              <a
+                                href={`${image_url}${doc.documentUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex flex-col items-center w-full"
+                              >
+                                <div className="bg-amber-100 p-3 rounded-full mb-2">
+                                  <FaFileContract className="text-amber-600 text-xl" />
+                                </div>
+                                <span className="text-xs font-medium text-center text-gray-700 truncate w-full">
+                                  {doc.documentTitle}
+                                </span>
+                              </a>
+                            )}
                           </div>
                         </div>
                       ))}
