@@ -286,13 +286,13 @@ export const deleteSingleDocumentsFromRequest = async (req, res) => {
     const { _id } = req.params;
     const { file_url } = req.body; // The file URL to delete
 
-    if (!id || !file_url) {
+    if (!_id || !file_url) {
       return res.status(400).json({
         message: "Request ID and file URL are required.",
       });
     }
 
-    const fileRequest = await FileRequest.findById(id);
+    const fileRequest = await FileRequest.findById(_id);
     if (!fileRequest) {
       return res.status(404).json({ message: "File request not found." });
     }

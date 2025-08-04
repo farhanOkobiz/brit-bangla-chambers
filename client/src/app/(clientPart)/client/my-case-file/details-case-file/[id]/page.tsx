@@ -3,7 +3,7 @@ import { apiFetch } from "@/api/apiFetch";
 import ClientDetailsCaseFile from "@/types/clientDetailsCaseFile.interface";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { FaCalendarAlt, FaGavel, FaUser } from "react-icons/fa";
+import { FaCalendarAlt, FaFileContract, FaGavel, FaUser } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 function Page() {
@@ -212,7 +212,39 @@ function Page() {
                   </div>
                 )}
 
-                
+              {/* Documents */}
+              {file.documents?.length > 0 && (
+                <div className="bg-amber-50 rounded-xl p-4 text-sm">
+                  <h4 className="font-semibold text-amber-700 mb-3">
+                    Documents
+                  </h4>
+                  <div className="flex overflow-x-auto pb-3 -mx-1 px-1">
+                    <div className="flex space-x-4 min-w-max">
+                      {file.documents.map((doc, index) => (
+                        <div
+                          key={doc._id || index}
+                          className="relative flex flex-col items-center w-32"
+                        >
+                          <a
+                            href={doc.documentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex flex-col items-center bg-white border border-amber-200 rounded-lg p-3 w-full hover:shadow-md transition-all duration-200"
+                            title={doc.documentTitle}
+                          >
+                            <div className="bg-amber-100 p-3 rounded-full mb-2">
+                              <FaFileContract className="text-amber-600 text-xl" />
+                            </div>
+                            <span className="text-xs font-medium text-center text-gray-700 truncate w-full">
+                              {doc.documentTitle}
+                            </span>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

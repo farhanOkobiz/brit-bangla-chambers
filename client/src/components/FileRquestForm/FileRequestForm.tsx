@@ -2,513 +2,341 @@
 
 import { apiFetch } from "@/api/apiFetch";
 import { useEffect, useState } from "react";
-
-interface DocumentGroup {
-  documentTitle: string;
-  documentUrl: string[];
-}
+import {
+  FiUploadCloud,
+  FiX,
+  FiPlus,
+  FiFile,
+  FiInfo,
+  FiCheckCircle,
+  FiAlertCircle,
+} from "react-icons/fi";
 
 interface FileRequest {
   _id: string;
   title?: string;
   description?: string;
-  documents?: DocumentGroup[];
+}
+
+interface DocumentGroup {
+  documentTitle: string;
+  files: File[];
 }
 
 const FileRequestForm = () => {
   const [fileRequests, setFileRequests] = useState<FileRequest[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>(
+  const [documentGroups, setDocumentGroups] = useState<DocumentGroup[]>([
+    { documentTitle: "", files: [] },
+  ]);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ error?: string; success?: string }>(
     {}
   );
-  const [documentTitles, setDocumentTitles] = useState<Record<string, string>>(
-    {}
-  );
-  const [uploading, setUploading] = useState<Record<string, boolean>>({});
-  const [messages, setMessages] = useState<
-    Record<string, { error?: string; success?: string }>
-  >({});
-  const [dragActive, setDragActive] = useState<Record<string, boolean>>({});
-  const [uploadedRequests, setUploadedRequests] = useState<
-    Record<string, boolean>
-  >({});
 
-
-  const fetchRequests = async () => {
-    try {
-      const response = await apiFetch(`/file-request/clientId`, {
-        method: "GET",
-      });
-      if (!response.ok) throw new Error("Failed to fetch requests.");
-      setFileRequests(response.data || []);
-
-      // Initialize document titles
-      const titles: Record<string, string> = {};
-      response.data.forEach((req) => {
-        if (req.documents && req.documents.length > 0) {
-          titles[req._id] = req.documents[0].documentTitle;
-        } else {
-          titles[req._id] = "Client Uploads";
-        }
-      });
-      setDocumentTitles(titles);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+  // Fetch file requests
   useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await apiFetch(`/file-request/clientId`, {
+          method: "GET",
+        });
+        console.log("Fetched file requests:", response.data);
+        if (!response.ok) throw new Error("Failed to fetch requests.");
+        setFileRequests(response.data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
     fetchRequests();
   }, []);
 
-  const handleFileChange = (
-    id: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = Array.from(e.target.files || []).filter(
-      (file) => file.type === "application/pdf"
+  // Add a new document group
+  const handleAddGroup = () => {
+    setDocumentGroups((prev) => [...prev, { documentTitle: "", files: [] }]);
+  };
+
+  // Remove a document group
+  const handleRemoveGroup = (idx: number) => {
+    if (documentGroups.length <= 1) return;
+    setDocumentGroups((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // Update title
+  const handleTitleChange = (idx: number, value: string) => {
+    setDocumentGroups((prev) =>
+      prev.map((doc, i) => (i === idx ? { ...doc, documentTitle: value } : doc))
     );
-    setSelectedFiles((prev) => ({ ...prev, [id]: files }));
-    setMessages((prev) => ({ ...prev, [id]: {} }));
   };
 
-  const handleDrag = (e: React.DragEvent, id: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive((prev) => ({ ...prev, [id]: true }));
-    } else if (e.type === "dragleave") {
-      setDragActive((prev) => ({ ...prev, [id]: false }));
-    }
+  // Update files
+  const handleFileChange = (idx: number, files: FileList | null) => {
+    if (!files) return;
+    const pdfFiles = Array.from(files).filter(
+      (f) => f.type === "application/pdf"
+    );
+    setDocumentGroups((prev) =>
+      prev.map((doc, i) => (i === idx ? { ...doc, files: pdfFiles } : doc))
+    );
   };
 
-  const handleDrop = (e: React.DragEvent, id: string) => {
+  // Submit all document groups
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    setDragActive((prev) => ({ ...prev, [id]: false }));
+    setMessage({});
+    setSubmitting(true);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const files = Array.from(e.dataTransfer.files).filter(
-        (file) => file.type === "application/pdf"
-      );
-
-      if (files.length !== e.dataTransfer.files.length) {
-        setMessages((prev) => ({
-          ...prev,
-          [id]: {
-            error: "Only PDF files are allowed. Some files were filtered out.",
-          },
-        }));
-      } else {
-        setMessages((prev) => ({ ...prev, [id]: {} }));
+    // Validation
+    for (const doc of documentGroups) {
+      if (!doc.documentTitle.trim()) {
+        setMessage({ error: "All document titles are required." });
+        setSubmitting(false);
+        return;
       }
-
-      setSelectedFiles((prev) => ({ ...prev, [id]: files }));
+      if (!doc.files.length) {
+        setMessage({
+          error: "All document groups must have at least one PDF file.",
+        });
+        setSubmitting(false);
+        return;
+      }
     }
-  };
 
-  const handleUpload = async (id: string) => {
-    const files = selectedFiles[id];
-    if (!files || !files.length) return;
-
-    // Validate document title
-    if (!documentTitles[id] || documentTitles[id].trim() === "") {
-      setMessages((prev) => ({
-        ...prev,
-        [id]: { error: "Document title is required" },
-      }));
+    // Use the first file request for upload
+    const requestId = fileRequests[0]?._id;
+    if (!requestId) {
+      setMessage({ error: "No file request found to upload documents." });
+      setSubmitting(false);
       return;
     }
 
-    setUploading((prev) => ({ ...prev, [id]: true }));
-    setMessages((prev) => ({ ...prev, [id]: {} }));
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-    formData.append("documentTitle", documentTitles[id]);
-
     try {
-      const response = await apiFetch(`/file-request/${id}/upload`, {
-        method: "PUT",
-        body: formData,
-      });
-      console.log("upload successfully",response.data);
-      if (!response.ok) throw new Error("Upload failed");
-
-      // Mark this request as successfully uploaded
-      setUploadedRequests((prev) => ({ ...prev, [id]: true }));
-
-      // Clear selected files
-      setSelectedFiles((prev) => ({ ...prev, [id]: [] }));
-    } catch (err) {
-      console.error(err);
-      setMessages((prev) => ({
-        ...prev,
-        [id]: { error: "Something went wrong while uploading." },
-      }));
+      for (const doc of documentGroups) {
+        const formData = new FormData();
+        formData.append("documentTitle", doc.documentTitle);
+        doc.files.forEach((file) => formData.append("files", file));
+        const response = await apiFetch(`/file-request/${requestId}/upload`, {
+          method: "PUT",
+          body: formData,
+        });
+        if (!response.ok) throw new Error("Upload failed for one group.");
+      }
+      setMessage({ success: "All documents uploaded successfully!" });
+      setDocumentGroups([{ documentTitle: "", files: [] }]);
+    } catch (err: any) {
+      setMessage({ error: err.message || "Upload failed." });
     } finally {
-      setUploading((prev) => ({ ...prev, [id]: false }));
+      setSubmitting(false);
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
-  const resetUploadedState = (id: string) => {
-    setUploadedRequests((prev) => {
-      const newState = { ...prev };
-      delete newState[id];
-      return newState;
-    });
-  };
-
-  const handleTitleChange = (id: string, value: string) => {
-    setDocumentTitles((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-6 sm:py-12">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mb-4 shadow-lg">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-            </svg>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 sm:p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-lg">
+            <FiUploadCloud className="text-white text-2xl" />
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
-            File Upload Center
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+            {fileRequests[0]?.title}
           </h1>
-          <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
-            Upload your PDF documents for each file request. Track your uploads
-            and manage your submissions easily.
+          <p className="text-gray-600 max-w-lg mx-auto">
+            {fileRequests[0]?.description}
           </p>
         </div>
 
-        {/* No Requests State */}
-        {fileRequests.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg
-                className="w-12 h-12 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              No File Requests Found
-            </h3>
-            <p className="text-gray-500">
-              There are no file requests available at the moment.
-            </p>
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+            <h2 className="text-white text-xl font-semibold flex items-center">
+              <FiFile className="mr-2" />
+              Upload Document Groups
+            </h2>
           </div>
-        )}
 
-        {/* File Requests Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          {fileRequests.map((req) => {
-            if (uploadedRequests[req._id]) {
-              return (
-                <div
-                  key={req._id}
-                  className="bg-white rounded-2xl shadow-lg border border-emerald-100 overflow-hidden"
-                >
-                  <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
-                    <h2 className="text-lg sm:text-xl font-bold text-white truncate">
-                      {req.title || "Untitled Request"}
-                    </h2>
-                  </div>
-
-                  <div className="p-6 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                      <svg
-                        className="w-8 h-8 text-emerald-500"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-                      </svg>
+          <div className="p-6">
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-6">
+                {documentGroups.map((doc, idx) => (
+                  <div
+                    key={idx}
+                    className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm relative"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-semibold text-gray-700">
+                        Document Group #{idx + 1}
+                      </h3>
+                      {documentGroups.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveGroup(idx)}
+                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          aria-label="Remove group"
+                        >
+                          <FiX size={20} />
+                        </button>
+                      )}
                     </div>
 
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                      Upload Successful!
-                    </h3>
-
-                    <p className="text-gray-600 mb-6">
-                      Your files for {req.title || "this request"} have been successfully uploaded.
-                    </p>
-
-                    <button
-                      onClick={() => resetUploadedState(req._id)}
-                      className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-colors"
-                    >
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Document Title <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={doc.documentTitle}
+                          onChange={(e) =>
+                            handleTitleChange(idx, e.target.value)
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                          placeholder="e.g., Contracts, Financial Records"
+                          required
                         />
-                      </svg>
-                      Upload Again
-                    </button>
-                  </div>
-                </div>
-              );
-            }
+                      </div>
 
-            return (
-              <div
-                key={req._id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group"
-              >
-                {/* Card Header */}
-                <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
-                  <h2 className="text-lg sm:text-xl font-bold text-white truncate">
-                    {req.title || "Untitled Request"}
-                  </h2>
-                </div>
-
-                {/* Card Content */}
-                <div className="p-6 space-y-5">
-                  {/* Description */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                      Description
-                    </h4>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
-                      {req.description || "No description provided."}
-                    </p>
-                  </div>
-
-                  {/* Document Title */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                      Document Title <span className="text-red-500">*</span>
-                    </h4>
-                    <input
-                      type="text"
-                      value={documentTitles[req._id] || ""}
-                      onChange={(e) =>
-                        handleTitleChange(req._id, e.target.value)
-                      }
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-sm sm:text-base"
-                      placeholder="Enter a title for these documents"
-                      required
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Provide a descriptive title for this group of documents
-                    </p>
-                  </div>
-
-                  {/* File Upload Section */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                      Upload PDF Files
-                    </h4>
-
-                    {/* Drag & Drop File Input */}
-                    <div className="relative">
-                      <input
-                        type="file"
-                        accept="application/pdf"
-                        multiple
-                        onChange={(e) => handleFileChange(req._id, e)}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        id={`file-${req._id}`}
-                      />
-                      <div
-                        onDragEnter={(e) => handleDrag(e, req._id)}
-                        onDragLeave={(e) => handleDrag(e, req._id)}
-                        onDragOver={(e) => handleDrag(e, req._id)}
-                        onDrop={(e) => handleDrop(e, req._id)}
-                        className={`flex items-center justify-center w-full px-4 py-8 border-2 border-dashed rounded-xl transition-all duration-200 cursor-pointer group ${
-                          dragActive[req._id]
-                            ? "border-emerald-500 bg-emerald-100 scale-105"
-                            : "border-gray-300 hover:border-emerald-400 hover:bg-emerald-50"
-                        }`}
-                      >
-                        <div className="text-center pointer-events-none">
-                          {dragActive[req._id] ? (
-                            <>
-                              <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 animate-bounce">
-                                <svg
-                                  className="w-6 h-6 text-white"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                  />
-                                </svg>
-                              </div>
-                              <p className="text-emerald-700 font-semibold text-sm">
-                                Drop your PDF files here!
-                              </p>
-                              <p className="text-emerald-600 text-xs mt-1">
-                                Release to upload
-                              </p>
-                            </>
-                          ) : (
-                            <>
-                              <svg
-                                className="w-10 h-10 text-gray-400 group-hover:text-emerald-500 mx-auto mb-3 transition-colors"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                />
-                              </svg>
-                              <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition-colors">
-                                <span className="font-semibold">
-                                  Click to browse
-                                </span>{" "}
-                                or drag & drop files
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                PDF files only • Max 10MB per file
-                              </p>
-                              <div className="flex items-center justify-center mt-3 space-x-2">
-                                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                              </div>
-                            </>
-                          )}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Upload PDF(s) <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="application/pdf"
+                            multiple
+                            onChange={(e) =>
+                              handleFileChange(idx, e.target.files)
+                            }
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            id={`file-upload-${idx}`}
+                            required
+                          />
+                          <label
+                            htmlFor={`file-upload-${idx}`}
+                            className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                          >
+                            <FiUploadCloud className="text-gray-400 text-2xl mb-2" />
+                            <p className="text-sm text-gray-600 font-medium mb-1">
+                              Click to upload files
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              PDF files only (max 10MB each)
+                            </p>
+                          </label>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Selected Files Preview */}
-                  {selectedFiles[req._id]?.length > 0 && (
-                    <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
-                      <h4 className="text-sm font-semibold text-emerald-800 mb-3 flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                        </svg>
-                        Selected Files ({selectedFiles[req._id].length})
-                      </h4>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
-                        {selectedFiles[req._id].map((file, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between bg-white rounded-lg px-3 py-2 text-sm"
-                          >
-                            <div className="flex items-center space-x-2 flex-1 min-w-0">
-                              <svg
-                                className="w-4 h-4 text-red-500 flex-shrink-0"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                              </svg>
-                              <span className="truncate text-gray-700 font-medium">
+                    {/* File previews */}
+                    {doc.files.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Selected files:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {doc.files.map((file, fileIdx) => (
+                            <div
+                              key={fileIdx}
+                              className="flex items-center bg-blue-50 rounded-lg px-3 py-2"
+                            >
+                              <FiFile className="text-blue-500 mr-2 flex-shrink-0" />
+                              <span className="text-xs text-gray-700 truncate max-w-[150px]">
                                 {file.name}
                               </span>
                             </div>
-                            <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
-                              {formatFileSize(file.size)}
-                            </span>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Success & Error Messages */}
-                  {messages[req._id]?.error && (
-                    <div className="flex items-start space-x-3 bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
-                      <svg
-                        className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2Z" />
-                      </svg>
-                      <p className="text-red-700 text-sm font-medium">
-                        {messages[req._id].error}
+                    <div className="mt-4 flex items-center text-xs text-gray-500">
+                      <FiInfo className="mr-1.5 flex-shrink-0" />
+                      <p>
+                        Group documents under a common title for better
+                        organization
                       </p>
                     </div>
-                  )}
+                  </div>
+                ))}
 
-                  {/* Action Buttons */}
-                  <div className="space-y-3 pt-2">
-                    <button
-                      onClick={() => handleUpload(req._id)}
-                      disabled={
-                        uploading[req._id] ||
-                        !(selectedFiles[req._id]?.length > 0) ||
-                        !documentTitles[req._id]?.trim()
-                      }
-                      className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-700 focus:ring-4 focus:ring-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm sm:text-base"
-                    >
-                      {uploading[req._id] ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Uploading...
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="w-4 h-4 mr-2"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          Upload Files
-                        </>
-                      )}
-                    </button>
+                <div className="flex justify-between items-center">
+                  <button
+                    type="button"
+                    onClick={handleAddGroup}
+                    className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    <FiPlus className="mr-1" />
+                    Add Another Group
+                  </button>
+
+                  <div className="flex items-center text-sm text-gray-500">
+                    <FiInfo className="mr-1.5" />
+                    <span>{documentGroups.length} document groups</span>
                   </div>
                 </div>
               </div>
-            );
-          })}
+
+              {/* Status messages */}
+              {message.error && (
+                <div className="mt-6 flex items-start bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                  <FiAlertCircle className="text-red-500 text-xl mt-0.5 mr-3 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-red-700">Upload Error</p>
+                    <p className="text-sm text-red-600">{message.error}</p>
+                  </div>
+                </div>
+              )}
+
+              {message.success && (
+                <div className="mt-6 flex items-start bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                  <FiCheckCircle className="text-green-500 text-xl mt-0.5 mr-3 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-green-700">Success!</p>
+                    <p className="text-sm text-green-600">{message.success}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-8">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={`w-full py-3.5 px-6 rounded-xl font-semibold text-white shadow-md transition-all
+                    ${
+                      submitting
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
+                    }`}
+                >
+                  {submitting ? (
+                    <div className="flex items-center justify-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Processing Uploads...
+                    </div>
+                  ) : (
+                    "Submit All Document Groups"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

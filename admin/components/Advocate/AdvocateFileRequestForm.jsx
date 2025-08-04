@@ -27,7 +27,6 @@ const AdvocateFileRequestForm = () => {
   const [tickedFiles, setTickedFiles] = useState([]);
   const image_url = import.meta.env.VITE_API_IMAGE_URL;
   const [disabled, setDisabled] = useState(false);
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +77,22 @@ const AdvocateFileRequestForm = () => {
     try {
       const res = await UseAxios(`/file-request/case/${caseId}`, {
         method: "get",
+        validateStatus: () => true, // Always resolve, handle status manually
       });
+
+      if (
+        res.status === 404 ||
+        res?.data?.error === "File request not found."
+      ) {
+        // No request exists for this case yet
+        setRequestId("");
+        setDocuments([]);
+        setShowDocuments(false);
+        setShowDeleteButton(false);
+        setDisabled(false);
+        setFormData({ title: "", description: "" });
+        return;
+      }
 
       if (res.data) {
         setRequestId(res.data._id);
@@ -86,16 +100,10 @@ const AdvocateFileRequestForm = () => {
           title: res.data.title || "",
           description: res.data.description || "",
         });
-
-        // Store document groups
         setDocuments(res.data.documents || []);
         setShowDocuments(res.data.documents?.length > 0);
         setShowDeleteButton(true);
         setDisabled(true);
-      } else {
-        setShowDocuments(false);
-        setShowDeleteButton(false);
-        setDisabled(false);
       }
     } catch (err) {
       console.error(err);
@@ -155,7 +163,7 @@ const AdvocateFileRequestForm = () => {
   const handleAddFileToCaseFile = async (fileUrl, documentTitle) => {
     try {
       const res = await UseAxios(
-        `/showOwnCaseFile/caseFile/${id}/add-document`,
+        `/showOwnCaseFile/document/${id}/add-document`,
         {
           method: "post",
           data: {
@@ -164,6 +172,7 @@ const AdvocateFileRequestForm = () => {
           },
         }
       );
+      console.log("Response from adding file to case file:", res.data);
 
       if (res?.data?.success) {
         setTickedFiles((prev) => [...prev, fileUrl]);
@@ -178,13 +187,14 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
-  const handleDeleteFile = async (fileUrl) => {
+  const handleDeleteSingleFile = async (fileUrl) => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
+    console.log("Deleting file:", fileUrl);
 
     try {
       const res = await UseAxios(`/file-request/${requestId}/file`, {
         method: "delete",
-        params: { file_url: fileUrl },
+        data: { file_url: fileUrl },
       });
 
       if (res?.data?.success) {
@@ -401,7 +411,9 @@ const AdvocateFileRequestForm = () => {
 
                                   <div className="flex items-center gap-1">
                                     <button
-                                      onClick={() => handleDeleteFile(fileUrl)}
+                                      onClick={() =>
+                                        handleDeleteSingleFile(fileUrl)
+                                      }
                                       className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
                                       title="Delete file"
                                     >
