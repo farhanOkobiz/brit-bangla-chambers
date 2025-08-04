@@ -121,6 +121,7 @@ function DetailsFile() {
       setEditingIndex(null);
       toast.success("Document title updated!");
     } catch (error) {
+      console.error("Error updating document title:", error);
       toast.error("Failed to update document title.");
     }
   };

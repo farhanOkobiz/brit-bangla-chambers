@@ -254,12 +254,7 @@ const FileRequestForm = () => {
                     </h3>
 
                     <p className="text-gray-600 mb-6">
-<<<<<<< HEAD
-                      Your files for {req.title || "this request"} have been
-                      successfully uploaded.
-=======
                       Your files for {req.title || "this request"} have been successfully uploaded.
->>>>>>> riyad
                     </p>
 
                     <button

@@ -27,7 +27,7 @@ const AdvocateFileRequestForm = () => {
   const [tickedFiles, setTickedFiles] = useState([]);
   const image_url = import.meta.env.VITE_API_IMAGE_URL;
   const [disabled, setDisabled] = useState(false);
-  const [fileGroups, setFileGroups] = useState({});
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -152,16 +152,42 @@ const AdvocateFileRequestForm = () => {
     }
   };
 
+  const handleAddFileToCaseFile = async (fileUrl, documentTitle) => {
+    try {
+      const res = await UseAxios(
+        `/showOwnCaseFile/caseFile/${id}/add-document`,
+        {
+          method: "post",
+          data: {
+            documentTitle,
+            documentUrl: fileUrl, // single file URL
+          },
+        }
+      );
+
+      if (res?.data?.success) {
+        setTickedFiles((prev) => [...prev, fileUrl]);
+        setSuccessMsg(`File added to case file successfully.`);
+        fetchCaseDetails();
+      } else {
+        setError("Failed to add file to case file.");
+      }
+    } catch (error) {
+      console.error("Error adding file to case file:", error);
+      setError("Failed to add file to case file.");
+    }
+  };
+
   const handleDeleteFile = async (fileUrl) => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
 
     try {
       const res = await UseAxios(`/file-request/${requestId}/file`, {
         method: "delete",
-        params: { file_url: fileUrl }, // Send as query parameter
+        params: { file_url: fileUrl },
       });
 
-      if (res?.ok) {
+      if (res?.data?.success) {
         setSuccessMsg("File deleted successfully.");
         fetchFileRequests(caseId);
       } else {
@@ -174,52 +200,12 @@ const AdvocateFileRequestForm = () => {
   };
 
   // When preparing to add files
-  const prepareFileGroup = (fileUrl, documentTitle) => {
-    setFileGroups((prev) => ({
-      ...prev,
-      [documentTitle]: [...(prev[documentTitle] || []), fileUrl],
-    }));
-  };
-  
-  const handleAddFileToCaseFile = async (documentTitle) => {
-    try {
-      const fileUrls = fileGroups[documentTitle] || [];
-
-      if (fileUrls.length === 0) {
-        setError("Please select files to add");
-        return;
-      }
-
-      const res = await UseAxios(
-        `/showOwnCaseFile/caseFile/${id}/add-document`,
-        {
-          method: "post",
-          data: {
-            documentTitle: documentTitle,
-            documentUrls: fileUrls,
-          },
-        }
-      );
-
-      if (res?.data?.success) {
-        setTickedFiles((prev) => [...prev, ...fileUrls]);
-        setSuccessMsg(
-          `${fileUrls.length} files added to case file successfully.`
-        );
-        setFileGroups((prev) => {
-          const newGroups = { ...prev };
-          delete newGroups[documentTitle];
-          return newGroups;
-        });
-        fetchCaseDetails();
-      } else {
-        setError("Failed to add files to case file.");
-      }
-    } catch (error) {
-      console.error("Error adding files to case file:", error);
-      setError("Failed to add files to case file.");
-    }
-  };
+  // const prepareFileGroup = (fileUrl, documentTitle) => {
+  //   setFileGroups((prev) => ({
+  //     ...prev,
+  //     [documentTitle]: [...(prev[documentTitle] || []), fileUrl],
+  //   }));
+  // };
 
   useEffect(() => {
     if (id) fetchCaseDetails();
