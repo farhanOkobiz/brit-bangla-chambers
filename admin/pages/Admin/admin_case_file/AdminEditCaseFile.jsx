@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { Form, Input, Button, Select, Upload, message, Spin } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { UseAxios } from "../../services/UseAxios";
 import { DatePicker } from "antd";
+import { UseAxios } from "../../../services/UseAxios";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-export default function EditCaseFile() {
+export default function AdminEditCaseFile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -77,7 +77,7 @@ export default function EditCaseFile() {
       });
 
       message.success("Case updated successfully!");
-      navigate("/advocate/dashboard/all-case-file");
+      navigate("/admin/case-file");
     } catch (err) {
       console.error(err);
       message.error("Failed to update case.");
@@ -86,7 +86,7 @@ export default function EditCaseFile() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl md:text-3xl text-gray-900 font-bold mb-6 text-center">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-900">
         Edit Case File
       </h2>
 

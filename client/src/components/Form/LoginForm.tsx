@@ -16,7 +16,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (data?.data && data.data.role === "client") {
-      if(typeof window !== "undefined") {
+      if (typeof window !== "undefined") {
         const storedPath = localStorage.getItem("client_prev_path");
         if (storedPath) {
           router.push(storedPath);
@@ -64,16 +64,16 @@ function LoginForm() {
       const user = data.user;
 
       if (user?.role === "client") {
-  let prevPath = "/";
-  if (typeof window !== "undefined") {
-    const storedPath = localStorage.getItem("client_prev_path");
-    if (storedPath) {
-      prevPath = storedPath;
-      localStorage.removeItem("client_prev_path");
-    }
-    window.location.href = prevPath; // <-- Force full reload
-  }
-} else if (user?.role === "admin" || user?.role === "advocate") {
+        let prevPath = "/";
+        if (typeof window !== "undefined") {
+          const storedPath = localStorage.getItem("client_prev_path");
+          if (storedPath) {
+            prevPath = storedPath;
+            localStorage.removeItem("client_prev_path");
+          }
+          window.location.href = prevPath; // <-- Force full reload
+        }
+      } else if (user?.role === "admin" || user?.role === "advocate") {
         const targetUrl =
           user.role === "admin"
             ? `${ADMIN_URL}/admin/dashboard`

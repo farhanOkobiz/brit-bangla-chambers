@@ -11,6 +11,7 @@ import {
   getOwnProfile,
   logout,
   changePassword,
+  resetPassword,
 } from "../../controllers/authController.js";
 import {
   checkAdmin,
@@ -31,6 +32,11 @@ router.post("/refresh", refresh);
 router.get("/check", checkAuth);
 router.get("/users", protect(["admin", "client"]), showAllUsers);
 router.get("/user/:id", getUserById);
-router.put("/change-password", protect(["admin", "advocate", "client"]), changePassword);
+router.put(
+  "/change-password",
+  protect(["admin", "advocate", "client"]),
+  changePassword
+);
+router.patch("/reset-password", resetPassword);
 
 export default router;
