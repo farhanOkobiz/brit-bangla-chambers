@@ -39,6 +39,7 @@ import AdminDetailsCaseFile from "../pages/Admin/admin_case_file/AdminDetailsCas
 import CaseDetails from "../components/Advocate/CaseDetails";
 import DetailsBlog from "../pages/blog/DetailsBlog";
 import HelpAndSupport from "../components/Client/HelpAndSupport";
+import AdminEditCaseFile from "../pages/Admin/admin_case_file/AdminEditCaseFile";
 
 export default function App() {
   return (
@@ -109,6 +110,7 @@ export default function App() {
             path="detail-case-file/:id"
             element={<AdminDetailsCaseFile />}
           />
+          <Route path="edit-case-file/:id" element={<AdminEditCaseFile />} />
           <Route path="/admin/advocates/create" element={<CreateAdvocate />} />
           <Route path="/admin/help-and-support" element={<HelpAndSupport />} />
           <Route path="/admin/Settings" element={<AdminSettings />} />

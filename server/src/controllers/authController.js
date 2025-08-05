@@ -152,6 +152,8 @@ export const refresh = async (req, res) => {
 
 export const sendOtp = async (req, res) => {
   const { email } = req.body;
+  console.log(email);
+
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -173,6 +175,7 @@ export const sendOtp = async (req, res) => {
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
   const user = await User.findOne({ email });
+
   if (!user) return res.status(404).json({ message: "User not found" });
 
   if (user.otp === otp && user.otp_expiry > Date.now()) {
@@ -325,5 +328,40 @@ export const changePassword = async (req, res) => {
     res.json({ message: "Password changed successfully" });
   } catch (err) {
     res.status(500).json({ message: "Failed to change password" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    // Find user by ID
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    console.error("Password reset error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error during password reset",
+    });
   }
 };
