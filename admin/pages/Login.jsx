@@ -17,7 +17,9 @@ const Login = () => {
         navigate("/admin/dashboard");
       } else if (role === "advocate") {
         navigate("/advocate/dashboard");
-      }
+      }else if (role === "staff") {
+      navigate("/staff/dashboard");
+    }
     }
   }, [authed, role, navigate]);
 

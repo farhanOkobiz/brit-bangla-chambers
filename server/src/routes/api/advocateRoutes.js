@@ -22,7 +22,7 @@ const router = Router();
 router.get("/profile", checkAdvocate, showAdvocate);
 
 // Get all advocates
-router.get("/all", checkAdmin, showAllAdvocates);
+router.get("/all", protect(["admin", "staff"]), showAllAdvocates);
 
 // Get advocates by featured
 router.get(
@@ -31,15 +31,15 @@ router.get(
 );
 
 // Get advocate by user id
-router.get("/profile/:id", checkAdmin, showAdvocateByUserId);
+router.get("/profile/:id", protect(["admin", "staff"]), showAdvocateByUserId);
 
 // Get advocate by advocate id
-router.get("/profile/advocate/:id", showAdvocateById);
+router.get("/profile/advocate/:id",protect(["admin", "staff"]), showAdvocateById);
 
 // Create advocate profile (with photo upload support)
 router.post(
   "/create",
-  checkAdmin,
+  protect(["admin", "staff"]),
   upload.single("profilePhoto"),
   createAdvocateProfile
 );
@@ -47,13 +47,13 @@ router.post(
 // Update advocate profile (with photo upload)
 router.put(
   "/update/:id",
-  protect(["admin", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   upload.single("profilePhoto"),
   updateAdvocateProfile
 );
 
 // Delete advocate profile
-router.delete("/profile/:id", checkAdmin, deleteAdvocateProfile);
+router.delete("/profile/:id", protect(["admin", "staff"]), deleteAdvocateProfile);
 
 // Add certification to advocate
 router.post("/certification/:advocateId", updateOrCreateCertifications);

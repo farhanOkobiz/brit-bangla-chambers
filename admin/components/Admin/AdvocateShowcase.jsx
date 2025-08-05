@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UseAxios } from "../../services/UseAxios";
+import { UseAuth } from "../../auth/AuthContext";
 
 export default function AdvocateShowcase() {
   const [advocates, setAdvocates] = useState([]);
@@ -8,6 +9,8 @@ export default function AdvocateShowcase() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_API_IMAGE_URL;
+  const { role } = UseAuth()
+ 
 
   useEffect(() => {
     async function fetchAdvocates() {
@@ -49,7 +52,10 @@ export default function AdvocateShowcase() {
             <div
               key={adv._id}
               className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group border border-gray-100 overflow-hidden"
-              onClick={() => navigate(`/admin/advocates/${adv._id}`)}
+              onClick={() => {
+              const base = role === "admin" ? "/admin" : "/staff";
+              navigate(`${base}/advocates/${adv._id}`);
+            }}
             >
               {/* Image Container */}
               <div className="relative overflow-hidden">

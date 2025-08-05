@@ -4,6 +4,7 @@ import Client from "../models/clientSchema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Advocate from "../models/advocateSchema.js";
+import Staff from "../models/staffSchema.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "BritBangla_jwt_secret";
 const JWT_REFRESH_SECRET =
@@ -238,7 +239,11 @@ export const checkAuth = async (req, res) => {
       if (profilePhoto) {
         profilePhoto = profilePhoto.profile_photo_url || null;
       }
-    } else {
+    } else if (decoded.role === "staff") {
+      const staff = await Staff.findById(decoded.id).select("profilePhoto");
+      profilePhoto = staff?.profilePhoto || null;
+    }
+    else {
       profilePhoto = { profile_photo: null }; // Default if no profile found
     }
 

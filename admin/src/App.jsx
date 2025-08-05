@@ -40,6 +40,11 @@ import CaseDetails from "../components/Advocate/CaseDetails";
 import DetailsBlog from "../pages/blog/DetailsBlog";
 import HelpAndSupport from "../components/Client/HelpAndSupport";
 import AdminEditCaseFile from "../pages/Admin/admin_case_file/AdminEditCaseFile";
+import StaffPanel from "../pages/StaffPanel";
+import StaffDashboard from "../components/StaffDashboard";
+import StaffCreate from "../pages/Staff/StaffCreate";
+import ManageStaff from "../pages/Staff/ManageStaff";
+import StaffEdit from "../pages/Staff/StaffEdit";
 
 export default function App() {
   return (
@@ -92,29 +97,62 @@ export default function App() {
           <Route path="specialization" element={<SpecializationForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
           <Route path="services" element={<ServiceForm />} />
+          {/* advocate  */}
           <Route path="advocates" element={<AdvocateForm />} />
           <Route path="advocates/showcase" element={<AdvocateShowcase />} />
           <Route path="advocates/:id" element={<ShowIndividualAdvocate />} />
           <Route path="advocates/:id/edit" element={<AdvocateUpdate />} />
           <Route path="advocates/management" element={<AdvocateManagement />} />
+          <Route path="/admin/advocates/create" element={<CreateAdvocate />} />
           <Route path="messages/contact" element={<ContactMessage />} />
           <Route path="messages/service" element={<RequestForService />} />
           <Route path="users" element={<Users />} />
           <Route path="user-management" element={<UserManagement />} />
+          {/* blog  */}
           <Route path="dashboard/blogs" element={<Blogs />} />
           <Route path="dashboard/create-blog" element={<CreateBlog />} />
           <Route path="dashboard/edit-blog/:id" element={<EditBlog />} />
           <Route path="dashboard/details-blog/:id" element={<DetailsBlog />} />
+          {/* case file */}
           <Route path="case-file" element={<AdminAllCaseFile />} />
           <Route
             path="detail-case-file/:id"
             element={<AdminDetailsCaseFile />}
           />
           <Route path="edit-case-file/:id" element={<AdminEditCaseFile />} />
-          <Route path="/admin/advocates/create" element={<CreateAdvocate />} />
           <Route path="/admin/help-and-support" element={<HelpAndSupport />} />
           <Route path="/admin/Settings" element={<AdminSettings />} />
+          {/* staff  */}
+          <Route path="staff/create" element={<StaffCreate />} />
+          <Route path="staff/manage" element={<ManageStaff />} />
+          <Route path="staff/edit/:id" element={<StaffEdit />} />
 
+          {/* Add more child routes here as needed */}
+        </Route>
+        {/* Staff Routes  */}
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute requiredRole="staff">
+              <StaffPanel />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<StaffDashboard />} />
+          {/* advocate  */}
+          <Route path="advocates" element={<AdvocateForm />} />
+          <Route path="advocates/showcase" element={<AdvocateShowcase />} />
+          <Route path="advocates/:id" element={<ShowIndividualAdvocate />} />
+          <Route path="advocates/:id/edit" element={<AdvocateUpdate />} />
+          <Route path="advocates/management" element={<AdvocateManagement />} />
+          <Route path="/staff/advocates/create" element={<CreateAdvocate />} />
+          {/* case file  */}
+          <Route path="case-file" element={<AdminAllCaseFile />} />
+          <Route
+            path="detail-case-file/:id"
+            element={<AdminDetailsCaseFile />}
+          />
+          <Route path="edit-case-file/:id" element={<AdminEditCaseFile />} />
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

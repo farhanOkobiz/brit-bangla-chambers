@@ -11,34 +11,76 @@ interface ServiceCardProps {
   link: string;
 }
 
+
+
+interface ServiceCardProps {
+  name: string;
+  image: string;
+  details: string;
+  link: string;
+}
+
 const ServiceCard: React.FC<ServiceCardProps> = ({
   name,
   image,
   details,
-  link,
 }) => {
+  const [isOpen, setIsOpen] = useState(false); // ✅ only one modal state
+
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center text-center border-b-4 border-transparent hover:border-[#d69292] transition-colors duration-300">
-      <div className="relative w-20 h-20 mb-6">
-        <Image
-          src={image}
-          alt={name}
-          fill
-          className="object-cover rounded-full"
-        />
+    <>
+      <div className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center text-center border-b-4 border-transparent hover:border-[#d69292] transition-colors duration-300">
+        <div className="relative w-20 h-20 mb-6">
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-cover rounded-full"
+          />
+        </div>
+        <h3 className="text-xl font-bold text-gray-800 mb-3">{name}</h3>
+
+        {/* show only 5 lines */}
+        <p className="text-gray-600 leading-relaxed mb-6 flex-grow line-clamp-5">
+          {details}
+        </p>
+
+        <button
+          onClick={() => setIsOpen(true)}
+          className="bg-[#5e3030] text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer"
+        >
+          Details
+        </button>
       </div>
-      <h3 className="text-xl font-bold text-gray-800 mb-3">{name}</h3>
-      <p className="text-gray-600 leading-relaxed mb-6 flex-grow">{details}</p>
-      <div className="text-[#d69292] font-semibold flex items-center group">
-        {link}
-      </div>
-    </div>
+
+      {/* Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">{name}</h2>
+            <p className="text-gray-700 whitespace-pre-line">{details}</p>
+            <div className="mt-6 text-right">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="bg-[#5e3030] text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
+
+export default ServiceCard;
+
 
 export function Services() {
   const [services, setServices] = useState([]);
   const { data } = useGetSpecializationQuery(undefined);
+
 
   useEffect(() => {
     if (data?.data) {

@@ -5,18 +5,9 @@ import {
   FaBars,
   FaTimes,
   FaTachometerAlt,
-  FaChartBar,
   FaGavel,
   FaSignOutAlt,
-  FaUsers,
-  FaClipboardList,
-  FaConciergeBell,
-  FaTags,
-  FaEnvelope,
   FaCog,
-  FaBlogger,
-  FaQuestion,
-  FaUserTie,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -24,80 +15,24 @@ import { UseAuth } from "../auth/AuthContext";
 import { logout } from "../auth/api";
 
 const menuItems = [
-  { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
-  {
-    label: "User Management",
-    path: "/admin/user-management",
-    icon: <FaUsers />,
-  },
-  {
-    label: "Specialization",
-    path: "/admin/specialization",
-    icon: <FaClipboardList />,
-  },
-  {
-    label: "Service Requests",
-    path: "/admin/messages/service",
-    icon: <FaConciergeBell />,
-  },
-  { label: "Case file", path: "/admin/case-file", icon: <FaCog /> },
-  {
-    label: "Subcategories",
-    path: "/admin/sub-categories",
-    icon: <FaTags />,
-  },
-  { label: "Services", path: "/admin/services", icon: <FaCog /> },
+  { label: "Dashboard", path: "/staff/dashboard", icon: <FaTachometerAlt /> },
+ 
+  { label: "Case file", path: "/staff/case-file", icon: <FaCog /> },
+
   {
     label: "Advocates",
     isDropdown: true,
     icon: <FaGavel />,
     subItems: [
-      { label: "Manage Advocates", path: "/admin/advocates" },
-      { label: "Advocate Approvals", path: "/admin/advocates/management" },
-      { label: "Create Advocate", path: "/admin/advocates/create" },
+      { label: "Manage Advocates", path: "/staff/advocates" },
+      { label: "Advocate Approvals", path: "/staff/advocates/management" },
+      { label: "Create Advocate", path: "/staff/advocates/create" },
     ],
   },
-    {
-    label: "Staff",
-    isDropdown: true,
-     icon: <FaUserTie />,
-    subItems: [
-      { label: "Manage Staff", path: "/admin/staff/manage" },
-      { label: "Create Staff", path: "/admin/staff/create" },
-    ],
-  },
-  {
-    label: "Blogs",
-    isDropdown: true,
-    icon: <FaBlogger />,
-    subItems: [
-      {
-        label: "All Blogs",
-        path: "/admin/dashboard/blogs",
-        icon: <FaBlogger />,
-      },
-      {
-        label: "Create Blog",
-        path: "/admin/dashboard/create-blog",
-        icon: <FaBlogger />,
-      },
-    ],
-  },
-  // { label: "Analytics", path: "/admin/analytics", icon: <FaChartBar /> },
-  {
-    label: "Contact Messages",
-    path: "/admin/messages/contact",
-    icon: <FaEnvelope />,
-  },
-  {
-    label: "Help & Support",
-    path: "/admin/help-and-support",
-    icon: <FaQuestion />,
-  },
-  { label: "Settings", path: "/admin/settings", icon: <FaCog /> },
+
 ];
 
-const AdminSidebar = () => {
+const StaffSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const { pathname } = useLocation();
@@ -153,7 +88,7 @@ const AdminSidebar = () => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">A</span>
             </div>
-            <h1 className="text-lg font-semibold text-gray-800">Admin Panel</h1>
+            <h1 className="text-lg font-semibold text-gray-800">Staff Panel</h1>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -207,7 +142,7 @@ const AdminSidebar = () => {
                 <span className="text-white font-bold text-lg">A</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
+                <h1 className="text-xl font-bold text-gray-800">Staff Panel</h1>
                 <p className="text-sm text-gray-600">Management System</p>
               </div>
             </div>
@@ -296,7 +231,7 @@ const AdminSidebar = () => {
               <span className="text-white font-bold">A</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
+              <h1 className="text-xl font-bold text-gray-800">Staff Panel</h1>
               <p className="text-xs text-gray-500">Management System</p>
             </div>
           </div>
@@ -394,4 +329,5 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default StaffSidebar;
+
