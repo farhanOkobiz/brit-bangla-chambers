@@ -51,15 +51,18 @@ function AdminAllCaseFile() {
     }
   };
 
-  const filteredCases = caseFiles.filter((file) => {
-    const matchesSearch =
-      file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.case_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.client_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter =
-      filterStatus === "all" || file.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+const filteredCases = caseFiles.filter((file) => {
+  const term = searchTerm.toLowerCase().trim();
+  const matchesSearch =
+    (file.title || "").toLowerCase().includes(term) ||
+    (file.case_number || "").toLowerCase().includes(term) ||
+    (file.client_name || "").toLowerCase().includes(term);
+
+  const matchesFilter =
+    filterStatus === "all" || file.status === filterStatus;
+
+  return matchesSearch && matchesFilter;
+});
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
