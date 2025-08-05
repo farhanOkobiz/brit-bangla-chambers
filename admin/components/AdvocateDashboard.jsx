@@ -45,13 +45,13 @@ const AdvocateDashboard = () => {
     <div className="col-span-1 sm:col-span-3 mt-6">
       <h2 className="text-xl font-semibold mb-4">Recent Requests</h2>
       <ul className="space-y-2">
-        {requests.map((request) => (
+        {requests?.map((request) => (
           <li
             key={request._id}
             className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
           >
             <p className="text-gray-800">
-              Request from: {request.clientId.full_name} 
+              Request from: {request?.clientId?.full_name} 
               <span className="text-sm text-gray-500">{request.service}</span>
               {/* condition color for status */}
               {request.status == "pending" ? (

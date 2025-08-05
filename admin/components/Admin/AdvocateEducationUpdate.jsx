@@ -23,7 +23,7 @@ export default function AdvocateEducationUpdate({ id }) {
           method: "GET",
         });
         setEducations(res.data.educations || []);
-      } catch (err) {
+      } catch  {
         setError("Failed to load education records");
       }
       setLoading(false);

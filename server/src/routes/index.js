@@ -19,6 +19,7 @@ import clientDashboardRoutes from "./api/clientDashboardRoutes.js";
 import notificationsRoutes from "./api/notificationsRoutes.js";
 import advocateDashboardRoutes from "./api/adocateDashboardRoutes.js";
 import adminDashboardRoutes from "./api/adminDashboardRoutes.js";
+import staffRoutes from "./api/staffRoutes.js";
 import helpAndSupportRoutes from "./api/helpAndSupportRoutes.js";
 
 const router = Router();
@@ -44,6 +45,7 @@ router.use("/client-dashboard", clientDashboardRoutes);
 router.use("/notifications", notificationsRoutes);
 router.use("/advocate-dashboard", advocateDashboardRoutes); // Ensure this is imported correctly
 router.use("/admin-dashboard", adminDashboardRoutes); // Ensure this is imported correctly
-router.use("/support", helpAndSupportRoutes);
+router.use("/admin-dashboard", adminDashboardRoutes); // Ensure this is imported correctly
+router.use("/staff",  staffRoutes);
 
 export default router;

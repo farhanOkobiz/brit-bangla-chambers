@@ -13,6 +13,7 @@ import {
   FaCheck,
   FaTimes,
 } from "react-icons/fa";
+import { UseAuth } from "../auth/AuthContext";
 
 const AdvocateManagement = () => {
   const [advocates, setAdvocates] = useState([]);
@@ -20,6 +21,8 @@ const AdvocateManagement = () => {
   const [selectedAdvocate, setSelectedAdvocate] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
+  const { role } = UseAuth()
+  const base = role === "admin" ? "/admin" : "/staff";
 
   const UseAxiosHook = UseAxios;
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { UseAxios } from "../../services/UseAxios";
+import { UseAuth } from "../../auth/AuthContext";
 
 export default function ShowIndividualAdvocate() {
   const { id } = useParams();
@@ -8,6 +9,8 @@ export default function ShowIndividualAdvocate() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const BASE_URL = import.meta.env.VITE_API_IMAGE_URL;
+  const { role } = UseAuth()
+  const base = role === "admin" ? "/admin" : "/staff";
 
   useEffect(() => {
     async function fetchAdvocate() {
@@ -140,7 +143,7 @@ export default function ShowIndividualAdvocate() {
         <div className="flex flex-wrap gap-4 mb-8 justify-center lg:justify-start">
           <button
             onClick={() =>
-              (window.location.href = `/admin/advocates/${id}/edit`)
+              (window.location.href = `${base}/advocates/${id}/edit`)
             }
             className="px-8 py-3 cursor-pointer bg-blue-600 text-white rounded-xl font-semibold shadow-sm hover:bg-blue-700 hover:shadow-sm transform hover:-translate-y-0.5 transition-all duration-200"
           >

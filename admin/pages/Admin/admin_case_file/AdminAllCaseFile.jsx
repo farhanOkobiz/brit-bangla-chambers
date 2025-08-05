@@ -11,6 +11,7 @@ import {
   FaEdit,
 } from "react-icons/fa";
 import { UseAxios } from "../../../services/UseAxios";
+import { UseAuth } from "../../../auth/AuthContext";
 
 function AdminAllCaseFile() {
   const [caseFiles, setCaseFiles] = useState([]);
@@ -18,6 +19,8 @@ function AdminAllCaseFile() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const { role } = UseAuth()
+  const base = role === "admin" ? "/admin" : "/staff";
 
   useEffect(() => {
     const fetchCaseFiles = async () => {
@@ -48,15 +51,18 @@ function AdminAllCaseFile() {
     }
   };
 
-  const filteredCases = caseFiles.filter((file) => {
-    const matchesSearch =
-      file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.case_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.client_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter =
-      filterStatus === "all" || file.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+const filteredCases = caseFiles.filter((file) => {
+  const term = searchTerm.toLowerCase().trim();
+  const matchesSearch =
+    (file.title || "").toLowerCase().includes(term) ||
+    (file.case_number || "").toLowerCase().includes(term) ||
+    (file.client_name || "").toLowerCase().includes(term);
+
+  const matchesFilter =
+    filterStatus === "all" || file.status === filterStatus;
+
+  return matchesSearch && matchesFilter;
+});
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
@@ -173,14 +179,14 @@ function AdminAllCaseFile() {
               <div className="p-6 relative">
                 <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
                   <Link
-                    to={`/admin/detail-case-file/${file._id}`}
+                    to={`${base}/detail-case-file/${file._id}`}
                     className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
                     title="View Details"
                   >
                     <FaEye className="text-sm" />
                   </Link>
                   <Link
-                    to={`/admin/edit-case-file/${file._id}`}
+                    to={`${base}/edit-case-file/${file._id}`}
                     className="p-2 bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-700 rounded-lg transition-colors duration-200"
                     title="Edit Case"
                   >
