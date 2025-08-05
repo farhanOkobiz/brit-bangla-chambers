@@ -100,11 +100,7 @@ const AdminDashboard = () => {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Recent Notifications</h2>
-              {data.notifications?.length > 0 && (
-                <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
-                  {data.notifications.length} unread
-                </span>
-              )}
+              
             </div>
           </div>
 

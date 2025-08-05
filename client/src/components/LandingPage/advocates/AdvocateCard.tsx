@@ -23,6 +23,17 @@ const Advocates: React.FC = () => {
     fetchAdvocates();
   }, []);
 
+  if (!advocates || advocates.length === 0) {
+    return (
+      <section className="py-8 px-4 md:px-8 lg:px-16 text-center">
+        <h2 className="text-2xl font-bold mb-4">No Advocates Found</h2>
+        <p className="text-gray-600">Please check back later.</p>
+      </section>
+    );
+  }
+
+  console.log("Advocates data:", advocates);
+
   return (
     <section
       className="relative py-4 md:py-8 lg:py-16 px-4 md:px-8 lg:px-16 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"

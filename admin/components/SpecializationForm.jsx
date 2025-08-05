@@ -26,12 +26,6 @@ const SpecializationForm = () => {
       placeholder: "Enter Specialization description...",
     },
     {
-      name: "link",
-      label: "Website Link",
-      type: "text",
-      placeholder: "https://xyz.com/...",
-    },
-    {
       name: "image",
       label: "Image",
       type: "file",
@@ -176,16 +170,7 @@ const SpecializationForm = () => {
             {item.details}
           </p>
         )}
-        {item.link && (
-          <a
-            href={item.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-700 text-sm mt-1 inline-block"
-          >
-            View Link →
-          </a>
-        )}
+
         <p className="text-xs text-gray-400 mt-2">
           Created: {new Date(item.createdAt).toLocaleDateString()}
         </p>

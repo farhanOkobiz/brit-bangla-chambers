@@ -84,7 +84,7 @@ const DataList = ({
       </div>
 
       {/* List with Fixed Height and Scrollbar */}
-      <div className="h-80 lg:h-96 overflow-y-auto">
+      <div className="h-96 lg:h-3/4 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
