@@ -123,8 +123,8 @@ const FileRequestForm = () => {
       }
       setMessage({ success: "All documents uploaded successfully!" });
       setDocumentGroups([{ documentTitle: "", files: [] }]);
-    } catch (err: any) {
-      setMessage({ error: err.message || "Upload failed." });
+    } catch {
+      setMessage({ error: "Upload failed." });
     } finally {
       setSubmitting(false);
     }
