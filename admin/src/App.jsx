@@ -45,6 +45,7 @@ import StaffDashboard from "../components/StaffDashboard";
 import StaffCreate from "../pages/Staff/StaffCreate";
 import ManageStaff from "../pages/Staff/ManageStaff";
 import StaffEdit from "../pages/Staff/StaffEdit";
+import StaffProfile from "../pages/Staff/StaffProfile";
 
 export default function App() {
   return (
@@ -139,6 +140,7 @@ export default function App() {
           }
         >
           <Route path="dashboard" element={<StaffDashboard />} />
+          <Route path="profile" element={<StaffProfile />} />
           {/* advocate  */}
           <Route path="advocates" element={<AdvocateForm />} />
           <Route path="advocates/showcase" element={<AdvocateShowcase />} />

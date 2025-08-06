@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const staffSchema = new Schema({
+    user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   fullName: {
     type: String,
     required: true,

@@ -49,7 +49,6 @@ export const createRequestService = async (req, res) => {
       userMessage.serviceId = req.body.serviceId;
     }
 
-    console.log(userMessage);
     
 
     const newRequest = await RequestForService.create({

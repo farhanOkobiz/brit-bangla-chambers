@@ -16,7 +16,9 @@ export const protect = (roles = []) => {
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
+      console.log("Decoded token:", decoded.role);
       req.user = await User.findById(decoded.id).select("-password");
+      console.log("User from token:", req.user);
       if (!req.user) {
         const roleMsg = roles.length === 1 ? roles[0] : "user";
         return res.status(401).json({
@@ -25,6 +27,7 @@ export const protect = (roles = []) => {
       }
       if (roles.length && !roles.includes(req.user.role)) {
         const roleMsg = roles.length === 1 ? roles[0] : "user";
+        console.log(`Forbidden: ${req.user.role} access only`);
         return res
           .status(403)
           .json({ message: `Forbidden: ${roleMsg} access only` });
@@ -39,3 +42,4 @@ export const protect = (roles = []) => {
 export const checkClient = protect("client");
 export const checkAdmin = protect("admin");
 export const checkAdvocate = protect("advocate");
+export const checkStaff = protect("staff");
