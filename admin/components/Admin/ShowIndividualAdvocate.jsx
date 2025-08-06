@@ -59,7 +59,7 @@ export default function ShowIndividualAdvocate() {
     const res = await UseAxios(`/advocate/profile/${id}`, { method: "DELETE" });
     if (res.ok) {
       alert("Advocate deleted successfully.");
-      window.location.href = "/admin/advocates";
+      window.location.href = `${base}/advocates`;
     } else {
       alert(res.data?.message || "Failed to delete advocate.");
     }

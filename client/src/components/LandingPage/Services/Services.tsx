@@ -55,20 +55,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
       {/* Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">{name}</h2>
-            <p className="text-gray-700 whitespace-pre-line">{details}</p>
-            <div className="mt-6 text-right">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="bg-[#5e3030] text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xl p-4 overflow-auto">
+        <div className="bg-white rounded-lg p-6 lg:max-w-3/5 w-full shadow-lg max-h-[70vh] overflow-y-auto">
+          <h2 className="text-2xl font-bold mb-4">{name}</h2>
+          <p className="text-gray-700 whitespace-pre-line">{details}</p>
+          <div className="mt-6 text-right">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="bg-[#5e3030] text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-200 hover:text-gray-900 transition cursor-pointer"
+            >
+              Close
+            </button>
           </div>
         </div>
+      </div>
       )}
     </>
   );

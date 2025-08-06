@@ -10,6 +10,9 @@ const requestForServiceSchema = new Schema(
     },
     userMessage: {
       name: String,
+      email: String,
+      phone: String,
+      nid: String,
       presentAddress: String,
       permanentAddress: String,
       issueType: String,

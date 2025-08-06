@@ -21,8 +21,8 @@ const AdvocateManagement = () => {
   const [selectedAdvocate, setSelectedAdvocate] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
-  const { role } = UseAuth()
-  const base = role === "admin" ? "/admin" : "/staff";
+  // const { role } = UseAuth()
+  // const base = role === "admin" ? "/admin" : "/staff";
 
   const UseAxiosHook = UseAxios;
 

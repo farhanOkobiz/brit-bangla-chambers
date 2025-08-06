@@ -10,13 +10,7 @@ export default function resetPage() {
           Reset password
         </h2>
         <ResetForm />
-        <p className="mt-6 text-center text-gray-600 text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-        </p>
       </div>
     </section>
-  );
+  )
 }

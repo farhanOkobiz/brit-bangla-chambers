@@ -47,7 +47,7 @@ const sidebarItems: SidebarItem[] = [
   // },
   // { name: "Billing", href: "/client/billing", icon: CreditCard },
   { name: "Help & Support", href: "/client/support", icon: HelpCircle },
-  { name: "Settings", href: "/client/settings", icon: Settings },
+  // { name: "Settings", href: "/client/settings", icon: Settings },
 ];
 
 export default function ClientSidebar() {
