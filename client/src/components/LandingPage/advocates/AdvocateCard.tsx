@@ -72,7 +72,7 @@ const Advocates: React.FC = () => {
                     /^\/+/,
                     ""
                   )}`}
-                  alt={advocate?.user_id?.full_name}
+                  alt="Profile of Advocate"
                   fill
                   style={{ objectFit: "cover" }}
                   className="rounded"

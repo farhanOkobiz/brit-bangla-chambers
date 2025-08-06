@@ -8,7 +8,6 @@ import {
   Home,
   User,
   FileText,
-  Settings,
   LogOut,
   Menu,
   X,
