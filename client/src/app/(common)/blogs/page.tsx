@@ -44,7 +44,8 @@ export default function BlogPage() {
               key={idx}
               className="cursor-pointer"
             >
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
+              <div className="bg-white  rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
+                <div className="max-h-60 overflow-hidden">
                 <Image
                   src={`${imageUrl}${blog?.image}`}
                   alt={blog?.title}
@@ -52,6 +53,7 @@ export default function BlogPage() {
                   height={150}
                   className="object-cover w-full"
                 />
+                </div>
 
                 <div className="p-6 text-gray-800">
                   <p className="text-sm text-gray-500 mb-2">
