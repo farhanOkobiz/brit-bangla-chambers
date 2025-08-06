@@ -116,7 +116,7 @@ const AdvocateFileRequestForm = () => {
       const res = await UseAxios(`/showOwnCaseFile/singleCaseFile/${id}`, {
         method: "get",
       });
-
+      console.log('Case details response:', res.data);
       if (res.data?.data) {
         const data = res.data.data;
         setClientId(data.client_id);
