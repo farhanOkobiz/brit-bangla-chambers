@@ -3,7 +3,7 @@ import HeroComponent from "@/components/LandingPage/Hero/HeroComponent";
 import OurExpertise from "@/components/LandingPage/ourExpertise/OurExpertise";
 import { Services } from "@/components/LandingPage/Services/Services";
 import StatsAndGrowth from "@/components/LandingPage/statsAndGrowth/StatsAndGrowth";
-// import Advocates from "@/components/LandingPage/advocates/AdvocateCard";
+ import Advocates from "@/components/LandingPage/advocates/AdvocateCard";
 //import Blogs from "@/components/blogs/Blogs";
 import WhyChooseUs from "@/components/WhyChooseUs/WhyChooseUs";
 import ContactUs from "@/components/LandingPage/ContactUs/ContactUs";
@@ -16,7 +16,7 @@ export default function Home() {
       <AboutUs />
       <Services></Services>
       <OurExpertise />
-      {/* <Advocates /> */}
+      <Advocates />
       <WhyChooseUs />
       <StatsAndGrowth />
       <Blogs />

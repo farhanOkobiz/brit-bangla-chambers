@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Home,
@@ -17,6 +17,8 @@ import {
 import { logout } from "@/api/logout";
 import { toast } from "react-toastify";
 import { useGetAuthQuery } from "@/redux/api/authApi";
+import { apiFetch } from "@/api/apiFetch";
+import Link from "next/link";
 
 interface SidebarItem {
   name: string;
@@ -40,11 +42,11 @@ const sidebarItems: SidebarItem[] = [
     icon: FileText,
   },
   // { name: "Consultations", href: "/client/consultations", icon: MessageCircle },
-  // {
-  //   name: "Notifications",
-  //   href: "/client/notifications",
-  //   icon: Bell,
-  // },
+  {
+    name: "File Requests",
+    href: "/client/file-request",
+    icon: FileText,
+  },
   // { name: "Billing", href: "/client/billing", icon: CreditCard },
   { name: "Help & Support", href: "/client/support", icon: HelpCircle },
   // { name: "Settings", href: "/client/settings", icon: Settings },
@@ -52,6 +54,7 @@ const sidebarItems: SidebarItem[] = [
 
 export default function ClientSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [file, setFile] = useState<number>(0);
   const router = useRouter();
   const pathname = usePathname();
   const { data: authData } = useGetAuthQuery(undefined);
@@ -65,10 +68,27 @@ export default function ClientSidebar() {
     }
   };
 
+
+
+  const fetchRequests = async () => {
+    try {
+      const response = await apiFetch(`/file-request/clientId`, {
+        method: "GET",
+      });
+      if (!response.ok) throw new Error("Failed to fetch requests.");
+      setFile(response.data.length || 0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const isActive = (href: string) => {
     return pathname === href;
   };
 
+  useEffect(() => {
+    fetchRequests();
+  }, []);
   return (
     <>
       {/* Mobile menu button */}
@@ -103,9 +123,11 @@ export default function ClientSidebar() {
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">C</span>
-              </div>
+              <Link href="/">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">C</span>
+                </div>
+              </Link>
             </div>
             <div className="ml-3">
               <h2 className="text-lg font-semibold text-gray-900">
@@ -140,7 +162,12 @@ export default function ClientSidebar() {
                       active ? "text-blue-700" : "text-gray-400"
                     }`}
                   />
-                  {item.name}
+                  {item.name}{" "}
+                  {item.name === "File Requests" && file > 0 ? (
+                    <span className="ml-2 text-red-600 font-bold">{file}</span>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 {item.badge && (
                   <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
@@ -161,8 +188,9 @@ export default function ClientSidebar() {
               </div>
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-900">{user?.userName}</p>
-            
+              <p className="text-sm font-medium text-gray-900">
+                {user?.userName}
+              </p>
             </div>
           </div>
 
