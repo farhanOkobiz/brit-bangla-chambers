@@ -25,79 +25,78 @@ import {
 
 function StaffProfile() {
   const [staff, setStaff] = useState(null);
+  const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
-useEffect(() => {
-  const fetchStaff = async () => {
-    try {
-      const response = await UseAxios("/staff/profile");
-      setStaff(response.data.staff);
-      console.log("Staff Profile Data:", response);
-    } catch {
-      toast.error("Failed to load staff profile.");
-    }
-  };
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const response = await UseAxios("/staff/profile");
+        setStaff(response.data.staff);
+        console.log("Staff Profile Data:", response);
+      } catch {
+        toast.error("Failed to load staff profile.");
+      }
+    };
 
-  fetchStaff();
-}, []);
+    fetchStaff();
+  }, []);
 
-
-
-const profileFields = [
-  {
-    icon: User,
-    label: "Full Name",
-    value: staff?.fullName,
-    color: "text-blue-600",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: staff?.email,
-    color: "text-green-600",
-  },
-  {
-    icon: Phone,
-    label: "Phone",
-    value: staff?.phone,
-    color: "text-purple-600",
-  },
-  {
-    icon: CreditCard,
-    label: "NID Number",
-    value: staff?.nidNumber,
-    color: "text-orange-600",
-  },
-  {
-    icon: Briefcase,
-    label: "Role",
-    value: staff?.role,
-    color: "text-indigo-600",
-  },
-  {
-    icon: MapPin,
-    label: "Present Address",
-    value: staff?.presentAddress,
-    color: "text-red-600",
-  },
-  {
-    icon: Home,
-    label: "Permanent Address",
-    value: staff?.permanentAddress,
-    color: "text-teal-600",
-  },
-  {
-    icon: Calendar,
-    label: "Joined On",
-    value: staff?.createdAt
-      ? new Date(staff?.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : "N/A",
-    color: "text-pink-600",
-  },
-];
+  const profileFields = [
+    {
+      icon: User,
+      label: "Full Name",
+      value: staff?.fullName,
+      color: "text-blue-600",
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      value: staff?.email,
+      color: "text-green-600",
+    },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: staff?.phone,
+      color: "text-purple-600",
+    },
+    {
+      icon: CreditCard,
+      label: "NID Number",
+      value: staff?.nidNumber,
+      color: "text-orange-600",
+    },
+    {
+      icon: Briefcase,
+      label: "Role",
+      value: staff?.role,
+      color: "text-indigo-600",
+    },
+    {
+      icon: MapPin,
+      label: "Present Address",
+      value: staff?.presentAddress,
+      color: "text-red-600",
+    },
+    {
+      icon: Home,
+      label: "Permanent Address",
+      value: staff?.permanentAddress,
+      color: "text-teal-600",
+    },
+    {
+      icon: Calendar,
+      label: "Joined On",
+      value: staff?.createdAt
+        ? new Date(staff?.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        : "N/A",
+      color: "text-pink-600",
+    },
+  ];
 
   if (!staff) return null;
 
@@ -105,9 +104,20 @@ const profileFields = [
     <div className="max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow border border-gray-100">
       {/* Header Section */}
       <div className="text-center mb-8">
-        <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <User className="w-12 h-12 text-white" />
+        <div className="w-24 h-24 mx-auto mb-4 shadow-lg rounded-full overflow-hidden border-4 border-white">
+          {staff?.image ? (
+            <img
+              src={`${imageUrl}${staff.image}`}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+              <User className="w-12 h-12 text-white" />
+            </div>
+          )}
         </div>
+
         <h2 className="text-3xl font-bold text-gray-800 mb-2">Staff Profile</h2>
         <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
       </div>

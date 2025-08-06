@@ -24,6 +24,7 @@ function StaffEdit() {
     salaryStructure: "",
     jobResponsibilities: "",
     role: "staff",
+    image: null,
   });
 
   const [loading, setLoading] = useState(true);
@@ -105,37 +106,49 @@ function StaffEdit() {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitLoading(true);
-  setError(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitLoading(true);
+    setError(null);
 
-  const dataToSend = { ...formData };
-  if (!dataToSend.password) delete dataToSend.password;
+    try {
+      const form = new FormData();
 
-  const toastId = toast.loading("Updating staff...");
+      // Append all fields to FormData
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "education") {
+          form.append(key, JSON.stringify(value)); // Serialize education array
+        } else if (key === "profilePicture" && value) {
+          form.append("image", value); // Key should match multer field name
+        } else if (key !== "profilePicture") {
+          form.append(key, value);
+        }
+      });
 
-  try {
-    const res = await UseAxios(`/staff/${id}`, {
-      method: "PUT",
-      data: dataToSend,
-    });
+      const res = await UseAxios(`/staff/${id}`, {
+        method: "PUT",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    setSubmitLoading(false);
+      setSubmitLoading(false);
 
-    if (res.ok) {
-      toast.success("Staff updated successfully", { id: toastId });
-      navigate("/admin/staff/manage");
-    } else {
-      toast.error(res.data?.message || "Failed to update staff", { id: toastId });
-      setError(res.data?.message || "Failed to update staff");
+      if (res.ok) {
+        toast.success("Staff updated successfully");
+        navigate("/admin/staff/manage");
+      } else {
+        toast.error(res.data?.message || "Failed to update staff");
+        setError(res.data?.message || "Failed to update staff");
+      }
+    } catch (err) {
+      console.error(err);
+      setSubmitLoading(false);
+      toast.error("Something went wrong");
+      setError("Something went wrong");
     }
-  } catch {
-    setSubmitLoading(false);
-    toast.error("Something went wrong", { id: toastId });
-    setError("Something went wrong");
-  }
-};
+  };
 
   if (loading) return <p>Loading staff data...</p>;
 
@@ -287,6 +300,63 @@ const handleSubmit = async (e) => {
             />
           </div>
 
+          {/* Education section (outside grid to span full width) */}
+          <div>
+            <label className="block font-medium mb-2">Education</label>
+            {formData.education.map((edu, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-2"
+              >
+                <input
+                  type="text"
+                  placeholder="Degree"
+                  value={edu.degree}
+                  onChange={(e) =>
+                    handleEducationChange(idx, "degree", e.target.value)
+                  }
+                  className="flex-1 border px-3 py-2 rounded"
+                />
+                <input
+                  type="text"
+                  placeholder="Passing Year"
+                  value={edu.passingYear}
+                  onChange={(e) =>
+                    handleEducationChange(idx, "passingYear", e.target.value)
+                  }
+                  className="w-32 border px-3 py-2 rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeEducationField(idx)}
+                  className="text-red-600 px-2"
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addEducationField}
+              className="bg-gray-300 px-4 py-1 rounded"
+            >
+              + Add Education
+            </button>
+          </div>
+          <div>
+            <label className="block font-medium">Profile Picture</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  profilePicture: e.target.files?.[0] || null,
+                }))
+              }
+              className="w-full border px-4 py-2 rounded"
+            />
+          </div>
           <div>
             <label className="block font-medium">Job Responsibilities</label>
             <textarea
@@ -309,50 +379,6 @@ const handleSubmit = async (e) => {
               <option value="staff">Staff</option>
             </select>
           </div>
-        </div>
-
-        {/* Education section (outside grid to span full width) */}
-        <div>
-          <label className="block font-medium mb-2">Education</label>
-          {formData.education.map((edu, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-2"
-            >
-              <input
-                type="text"
-                placeholder="Degree"
-                value={edu.degree}
-                onChange={(e) =>
-                  handleEducationChange(idx, "degree", e.target.value)
-                }
-                className="flex-1 border px-3 py-2 rounded"
-              />
-              <input
-                type="text"
-                placeholder="Passing Year"
-                value={edu.passingYear}
-                onChange={(e) =>
-                  handleEducationChange(idx, "passingYear", e.target.value)
-                }
-                className="w-32 border px-3 py-2 rounded"
-              />
-              <button
-                type="button"
-                onClick={() => removeEducationField(idx)}
-                className="text-red-600 px-2"
-              >
-                &times;
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addEducationField}
-            className="bg-gray-300 px-4 py-1 rounded"
-          >
-            + Add Education
-          </button>
         </div>
 
         {/* Submit Button */}

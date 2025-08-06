@@ -17,7 +17,6 @@ const staffSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
   },
   nidNumber: {
     type: String,
@@ -73,7 +72,11 @@ const staffSchema = new Schema({
   role: {
     type: String,
     default: 'staff'
-  }
+  },
+  image: {
+    type: String,
+    default: null
+  },
 
 }, {
   timestamps: true
