@@ -8,6 +8,7 @@ import {
   FaGavel,
   FaSignOutAlt,
   FaCog,
+  FaUser,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -16,6 +17,8 @@ import { logout } from "../auth/api";
 
 const menuItems = [
   { label: "Dashboard", path: "/staff/dashboard", icon: <FaTachometerAlt /> },
+
+  { label: "Profile", path: "/staff/profile", icon: <FaUser /> },
  
   { label: "Case file", path: "/staff/case-file", icon: <FaCog /> },
 

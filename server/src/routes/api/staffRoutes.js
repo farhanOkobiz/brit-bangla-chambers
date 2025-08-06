@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { createStaff, deleteStaff, getAllStaff, getStaffById, updateStaff } from "../../controllers/staffController.js";
-import { checkAdmin } from "../../middleware/authMiddleware.js";
+import { createStaff, deleteStaff, getAllStaff, getStaffById, getStaffProfile, updateStaff } from "../../controllers/staffController.js";
+import { checkAdmin, checkStaff } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
 
 router.post("/", checkAdmin, createStaff)
-router.get('/', checkAdmin, getAllStaff);   
+router.get('/', checkAdmin, getAllStaff);  
+router.get('/profile', checkStaff, getStaffProfile); 
 router.get('/:id', checkAdmin, getStaffById); 
 router.put('/:id', checkAdmin, updateStaff);
 router.delete('/:id', checkAdmin, deleteStaff);
