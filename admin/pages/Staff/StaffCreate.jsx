@@ -49,7 +49,6 @@ const handleSubmit = async (e) => {
     <div className=" mx-auto p-6 bg-white rounded shadow">
       <h2 className="text-xl font-semibold mb-4">Create New Staff</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-
         <div>
           <label className="block font-medium">Full Name</label>
           <input

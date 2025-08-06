@@ -51,7 +51,8 @@ export const createStaff = async (req, res) => {
       permanentAddress,
       presentAddress,
       phone,
-      role: "staff"
+      role: "staff",
+      user_id: newUser._id,
     });
 
     await newStaff.save(); // Then save the staff profile
@@ -82,6 +83,24 @@ export const getStaffById = async (req, res) => {
     const { id } = req.params;
     const staff = await Staff.findById(id);
 
+    if (!staff) {
+      return res.status(404).json({ message: 'Staff not found' });
+    }
+
+    res.status(200).json({ staff });
+  } catch (error) {
+    console.error('Get staff by ID error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Specific ID diya staff info anar jonno
+export const getStaffProfile = async (req, res) => {
+
+  try {
+    const id = req.user.id; // Assuming the ID is passed in the request object (e.g., from a token)
+    
+   const staff = await Staff.findOne({ user_id: id });
     if (!staff) {
       return res.status(404).json({ message: 'Staff not found' });
     }
