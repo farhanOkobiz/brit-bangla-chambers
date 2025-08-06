@@ -64,7 +64,7 @@ function Blogs() {
 
   return (
     <section
-      className="relative py-2 md:p-10 bg-center bg-cover overflow-hidden text-white flex items-center justify-center"
+      className="relative min-h-screen py-2 md:p-10 bg-center bg-cover overflow-hidden text-white flex  justify-center"
       style={{ backgroundImage: `url('/images/blogs/blog.jpg')` }}
     >
       <div className="absolute inset-0 bg-white/90 bg-opacity-60" />
