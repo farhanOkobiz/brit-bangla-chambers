@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { DatePicker } from "antd";
 import { UseAxios } from "../../../services/UseAxios";
+import { UseAuth } from "../../../auth/AuthContext";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -12,6 +13,8 @@ export default function AdminEditCaseFile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const {role} = UseAuth()
+  const base = role === "admin" ? "/admin" : "/staff";
 
   useEffect(() => {
     const fetchCase = async () => {
@@ -77,7 +80,7 @@ export default function AdminEditCaseFile() {
       });
 
       message.success("Case updated successfully!");
-      navigate("/admin/case-file");
+      navigate(`${base}/case-file`);
     } catch (err) {
       console.error(err);
       message.error("Failed to update case.");
