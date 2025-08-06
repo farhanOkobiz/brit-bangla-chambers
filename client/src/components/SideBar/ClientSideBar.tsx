@@ -8,7 +8,6 @@ import {
   Home,
   User,
   FileText,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -67,8 +66,6 @@ export default function ClientSidebar() {
       toast.error("Logout failed");
     }
   };
-
-
 
   const fetchRequests = async () => {
     try {
