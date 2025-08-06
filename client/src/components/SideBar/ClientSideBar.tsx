@@ -67,8 +67,6 @@ export default function ClientSidebar() {
     }
   };
 
-
-
   const fetchRequests = async () => {
     try {
       const response = await apiFetch(`/file-request/clientId`, {
