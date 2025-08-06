@@ -74,6 +74,7 @@ export const createFileRequest = async (req, res) => {
       description,
       documents,
     });
+    console.log("New file request created:", newRequest);
 
     // 🔔
     await Notification.create({

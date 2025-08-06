@@ -174,45 +174,50 @@ export const sendOtp = async (req, res) => {
 
 // Verify OTP
 export const verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const { email, otp } = req.body;
 
-  if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await User.findOne({ email });
+    console.log("Verifying OTP for user:", user);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-  if (user.otp === otp && user.otp_expiry > Date.now()) {
-    user.otp_verified = true;
-    user.otp = undefined;
-    user.otp_expiry = undefined;
-    await user.save();
+    if (user.otp === otp && user.otp_expiry > Date.now()) {
+      user.otp_verified = true;
+      user.otp = undefined;
+      user.otp_expiry = undefined;
+      await user.save();
 
-    // Issue tokens
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "30m",
-    });
-    const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
-      expiresIn: "30d",
-    });
+      // Issue tokens
+      const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+        expiresIn: "30m",
+      });
+      const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
+        expiresIn: "30d",
+      });
 
-    // Set cookies
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 60 * 1000, // 30 minute
-    });
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
+      // Set cookies
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 60 * 1000, // 30 minute
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
 
-    return res.json({ message: "OTP verified successfully", user });
-  } else {
-    return res.status(400).json({ message: "Invalid or expired OTP" });
+      return res.json({ message: "OTP verified successfully", user });
+    } else {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+  } catch (err) {
+    console.error("OTP verification error:", err);
+    return res.status(500).json({ message: "Server error during OTP verification" });
   }
-};
-
+}
 //return role
 export const checkAuth = async (req, res) => {
   const token = req.cookies?.token;
