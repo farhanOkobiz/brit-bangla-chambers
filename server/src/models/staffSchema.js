@@ -73,7 +73,10 @@ const staffSchema = new Schema({
   role: {
     type: String,
     default: 'staff'
-  }
+  },
+   image: {
+    type: String,
+  },
 
 }, {
   timestamps: true

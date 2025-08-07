@@ -358,18 +358,35 @@ const ServiceForm = () => {
   };
 
   // Show loading state if categories or subcategories are not loaded yet
-  if (categories.length === 0 || subcategories.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">
-            Loading categories and subcategories...
-          </p>
+    if (categories.length === 0 || subcategories.length === 0) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
+          <div className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full text-center">
+            <svg
+              className="mx-auto mb-4 h-12 w-12 text-red-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.172 9.172a4 4 0 015.656 5.656M15 11a3 3 0 11-6 0 3 3 0 016 0zM12 21v-2m0-4v-4m0-4v-2"
+              />
+            </svg>
+            <h2 className="text-2xl font-semibold text-red-600 mb-2">Category Not Found</h2>
+            <p className="text-gray-600">
+              Sorry, we couldn&apos;t find any categories or subcategories.
+            </p>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">

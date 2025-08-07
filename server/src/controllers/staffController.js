@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import Staff from "../models/staffSchema.js";
 import User from "../models/userSchema.js"
+import { deleteUploadedFile } from "../utils/deleteUploadedFile.js";
 
 // Create a new staff with basic info
 export const createStaff = async (req, res) => {
@@ -116,16 +117,37 @@ export const getStaffProfile = async (req, res) => {
 export const updateStaff = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Parse education string if needed
+    if (typeof req.body.education === 'string') {
+      req.body.education = JSON.parse(req.body.education);
+    }
+
     const updateData = req.body;
 
     const staff = await Staff.findById(id);
-
     if (!staff) {
       return res.status(404).json({ message: "Staff not found" });
     }
 
-    // Update the fields dynamically
-    Object.keys(updateData).forEach(key => {
+    // If a new image is uploaded
+    if (req.file) {
+      const newImage = `/uploads/${req.file.filename}`;
+
+      // Delete the old image from server
+      if (staff.image) {
+        const filename = staff.image.startsWith("/uploads/")
+          ? staff.image.slice("/uploads/".length)
+          : staff.image;
+        deleteUploadedFile(filename); // Ensure this handles errors
+      }
+
+      // Save new image filename
+      updateData.image = newImage;
+    }
+
+    // Update fields
+    Object.keys(updateData).forEach((key) => {
       staff[key] = updateData[key];
     });
 
@@ -133,14 +155,14 @@ export const updateStaff = async (req, res) => {
 
     return res.status(200).json({
       message: "Staff updated successfully",
-      staff
+      staff,
     });
-
   } catch (error) {
     console.error("Update staff error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
+
 // delete staff by ID 
 export const deleteStaff = async (req, res) => {
   try {

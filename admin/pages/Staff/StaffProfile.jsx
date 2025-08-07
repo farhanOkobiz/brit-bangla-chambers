@@ -15,6 +15,7 @@ import {
 
 function StaffProfile() {
   const [staff, setStaff] = useState(null);
+  const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
 useEffect(() => {
   const fetchStaff = async () => {
@@ -95,12 +96,17 @@ const profileFields = [
     <div className="max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow border border-gray-100">
       {/* Header Section */}
       <div className="text-center mb-8">
-        <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <User className="w-12 h-12 text-white" />
+        <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg overflow-hidden">
+          <img
+            src={`${imageUrl}${staff.image}`}
+            alt="Staff"
+            className="w-full h-full object-cover rounded-full"
+          />
         </div>
         <h2 className="text-3xl font-bold text-gray-800 mb-2">Staff Profile</h2>
         <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
       </div>
+
 
       {/* Profile Information Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
