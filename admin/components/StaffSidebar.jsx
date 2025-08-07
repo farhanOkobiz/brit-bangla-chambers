@@ -9,6 +9,13 @@ import {
   FaSignOutAlt,
   FaCog,
   FaUser,
+  FaUsers,
+  FaClipboardList,
+  FaConciergeBell,
+  FaTags,
+  FaBlogger,
+  FaEnvelope,
+  FaQuestion,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -17,11 +24,29 @@ import { logout } from "../auth/api";
 
 const menuItems = [
   { label: "Dashboard", path: "/staff/dashboard", icon: <FaTachometerAlt /> },
-
   { label: "Profile", path: "/staff/profile", icon: <FaUser /> },
- 
+  {
+      label: "User Management",
+      path: "/staff/user-management",
+      icon: <FaUsers />,
+  },
+  {
+    label: "Specialization",
+    path: "/staff/specialization",
+    icon: <FaClipboardList />,
+  },
+  {
+    label: "Service Requests",
+    path: "/staff/messages/service",
+    icon: <FaConciergeBell />,
+  },
+  {
+    label: "Subcategories",
+    path: "/staff/sub-categories",
+    icon: <FaTags />,
+  },
+  { label: "Services", path: "/staff/services", icon: <FaCog /> },
   { label: "Case file", path: "/staff/case-file", icon: <FaCog /> },
-
   {
     label: "Advocates",
     isDropdown: true,
@@ -32,6 +57,34 @@ const menuItems = [
       { label: "Create Advocate", path: "/staff/advocates/create" },
     ],
   },
+    {
+      label: "Blogs",
+      isDropdown: true,
+      icon: <FaBlogger />,
+      subItems: [
+        {
+          label: "All Blogs",
+          path: "/staff/dashboard/blogs",
+          icon: <FaBlogger />,
+        },
+        {
+          label: "Create Blog",
+          path: "/staff/dashboard/create-blog",
+          icon: <FaBlogger />,
+        },
+      ],
+    },
+    {
+      label: "Contact Messages",
+      path: "/staff/messages/contact",
+      icon: <FaEnvelope />,
+    },
+    {
+      label: "Help & Support",
+      path: "/staff/help-and-support",
+      icon: <FaQuestion />,
+    },
+    { label: "Settings", path: "/staff/settings", icon: <FaCog /> },
 
 ];
 

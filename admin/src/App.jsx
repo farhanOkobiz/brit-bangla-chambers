@@ -141,6 +141,12 @@ export default function App() {
         >
           <Route path="dashboard" element={<StaffDashboard />} />
           <Route path="profile" element={<StaffProfile />} />
+          <Route path="users" element={<Users />} />
+          <Route path="user-management" element={<UserManagement />} />
+          <Route path="specialization" element={<SpecializationForm />} />
+          <Route path="sub-categories" element={<SubcategoryForm />} />
+          <Route path="services" element={<ServiceForm />} />
+          <Route path="messages/service" element={<RequestForService />} />
           {/* advocate  */}
           <Route path="advocates" element={<AdvocateForm />} />
           <Route path="advocates/showcase" element={<AdvocateShowcase />} />
@@ -155,6 +161,17 @@ export default function App() {
             element={<AdminDetailsCaseFile />}
           />
           <Route path="edit-case-file/:id" element={<AdminEditCaseFile />} />
+          {/* blogs  */}
+          <Route path="dashboard/blogs" element={<Blogs />} />
+          <Route path="dashboard/create-blog" element={<CreateBlog />} />
+          <Route path="dashboard/edit-blog/:id" element={<EditBlog />} />
+          <Route path="dashboard/details-blog/:id" element={<DetailsBlog />} />
+          {/* constact us  */}
+          <Route path="messages/contact" element={<ContactMessage />} />
+          {/* help  */}
+          <Route path="/staff/help-and-support" element={<HelpAndSupport />} />
+          {/* Settings */}
+          <Route path="/staff/Settings" element={<AdminSettings />} />
           {/* Add more child routes here as needed */}
         </Route>
         <Route path="*" element={<Login />} />

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import DataList from "../common/DataList";
 import FormModal from "../common/FormModal";
+import { toast } from "react-toastify";
 
 const ServiceForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -84,11 +85,11 @@ const ServiceForm = () => {
         setCategories(res.data || []);
       } else {
         console.error("Failed to fetch categories:", res.data);
-        alert("Failed to fetch categories. Please try again.");
+        toast.warning("Failed to fetch categories. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
-      alert("Error fetching categories. Please check your connection.");
+      toast.error("Error fetching categories. Please check your connection.");
     }
   };
 
@@ -102,11 +103,11 @@ const ServiceForm = () => {
         setSubcategories(res.data || []);
       } else {
         console.error("Failed to fetch subcategories:", res.data);
-        alert("Failed to fetch subcategories. Please try again.");
+        toast.warning("Failed to fetch subcategories. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching subcategories:", error);
-      alert("Error fetching subcategories. Please check your connection.");
+      toast.warning("Error fetching subcategories. Please check your connection.");
     }
   };
 
@@ -121,11 +122,11 @@ const ServiceForm = () => {
         setServices(res.data || []);
       } else {
         console.error("Failed to fetch services:", res.data);
-        alert("Failed to fetch services. Please try again.");
+        toast.warning("Failed to fetch services. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching services:", error);
-      alert("Failed to fetch services. Please check your connection.");
+      toast.warning("Failed to fetch services. Please check your connection.");
     } finally {
       setLoadingServices(false);
     }
@@ -164,7 +165,7 @@ const ServiceForm = () => {
       }
 
       if (missingFields.length > 0) {
-        alert(`Please fill in required fields: ${missingFields.join(", ")}`);
+        toast.warning(`Please fill in required fields: ${missingFields.join(", ")}`);
         return false;
       }
 
@@ -179,7 +180,7 @@ const ServiceForm = () => {
       });
 
       if (res.ok) {
-        alert(
+        toast.success(
           editingService
             ? "Service updated successfully!"
             : "Service created successfully!"
@@ -193,12 +194,12 @@ const ServiceForm = () => {
         console.error("Service submission failed:", res);
         const errorMessage =
           res.data?.message || res.data?.error || "Something went wrong!";
-        alert(errorMessage);
+        toast.warning(errorMessage);
         return false;
       }
     } catch (error) {
       console.error("Error submitting service:", error);
-      alert("Failed to submit service. Please try again.");
+      toast.warning("Failed to submit service. Please try again.");
       return false;
     } finally {
       setIsLoading(false);
@@ -236,17 +237,17 @@ const ServiceForm = () => {
       });
 
       if (res.ok) {
-        alert("Service deleted successfully!");
+        toast.warning("Service deleted successfully!");
         await fetchServices();
       } else {
         console.error("Delete failed:", res.data);
-        alert(
+        toast.warning(
           res.data?.error || res.data?.message || "Failed to delete service"
         );
       }
     } catch (error) {
       console.error("Error deleting service:", error);
-      alert("Failed to delete service. Please try again.");
+      toast.warning("Failed to delete service. Please try again.");
     }
   };
 
@@ -363,7 +364,7 @@ const ServiceForm = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
           <div className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full text-center">
             <svg
-              className="mx-auto mb-4 h-12 w-12 text-red-500"
+              className="mx-auto mb-4 h-12 w-12 "
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -377,7 +378,7 @@ const ServiceForm = () => {
                 d="M9.172 9.172a4 4 0 015.656 5.656M15 11a3 3 0 11-6 0 3 3 0 016 0zM12 21v-2m0-4v-4m0-4v-2"
               />
             </svg>
-            <h2 className="text-2xl font-semibold text-red-600 mb-2">Category Not Found</h2>
+            <h2 className="text-2xl font-semibold  mb-2">Service Not Found</h2>
             <p className="text-gray-600">
               Sorry, we couldn&apos;t find any categories or subcategories.
             </p>

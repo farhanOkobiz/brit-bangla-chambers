@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { UseAxios } from "../services/UseAxios"; // Fixed: Changed from default import to named import
 import DataList from "./common/DataList";
 import FormModal from "./common/FormModal";
+import { UseAuth } from "../auth/AuthContext";
 
 const SpecializationForm = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -30,7 +30,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.post("/refresh", refresh);
 router.get("/check", checkAuth);
-router.get("/users", protect(["admin", "client"]), showAllUsers);
+router.get("/users", protect(["admin", "client", "staff"]), showAllUsers);
 router.get("/user/:id", getUserById);
 router.put(
   "/change-password",

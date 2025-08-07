@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import { CheckCircle, Trash2, Clock } from "lucide-react";
+import { UseAuth } from "../../auth/AuthContext";
 
 const HelpAndSupport = () => {
     const [data, setData] = useState([]);
+      const { role } = UseAuth()
 
     const fetchData = async () => {
         try {
@@ -90,6 +92,7 @@ const HelpAndSupport = () => {
                                 </div>
                                 <p className="text-gray-700">{req.message}</p>
                                 <p className="text-sm text-gray-500 mt-2">From: {req.userId?.full_name || "Unknown"}</p>
+                                { role === "admin" && (
                                 <button
                                     onClick={() => handleDelete(req._id)}
                                     className="mt-4 inline-flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-all"
@@ -97,6 +100,8 @@ const HelpAndSupport = () => {
                                     <Trash2 size={16} className="mr-2" />
                                     Delete
                                 </button>
+                                )}
+                           
                             </div>
                         ))}
                     </div>

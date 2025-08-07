@@ -4,9 +4,12 @@ import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
 import { UseAxios } from "../../services/UseAxios";
 import { toast } from "react-toastify";
+import { UseAuth } from "../../auth/AuthContext";
 
 function EditBlog() {
   const { id } = useParams();
+  const { role } = UseAuth()
+  const base = role === "admin" ? "/admin" : "/staff";
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -86,7 +89,7 @@ function EditBlog() {
 
       if (res.ok) {
         Swal.fire("Success", "Blog updated successfully", "success");
-        navigate("/admin/dashboard/blogs");
+        navigate(`${base}/dashboard/blogs`);
       }
       // Reset form
       // Reset form
