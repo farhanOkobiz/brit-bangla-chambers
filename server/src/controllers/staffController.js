@@ -117,6 +117,12 @@ export const getStaffProfile = async (req, res) => {
 export const updateStaff = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Parse education string if needed
+    if (typeof req.body.education === 'string') {
+      req.body.education = JSON.parse(req.body.education);
+    }
+
     const updateData = req.body;
 
     // Find staff first
@@ -125,25 +131,23 @@ export const updateStaff = async (req, res) => {
       return res.status(404).json({ message: "Staff not found" });
     }
 
-    // Handle image upload and deletion
+    // If a new image is uploaded
     if (req.file) {
-      const newImagePath = `/uploads/${req.file.filename}`;
+      const newImage = `/uploads/${req.file.filename}`;
 
-      // Delete old image if it exists
+      // Delete the old image from server
       if (staff.image) {
-        const oldFilename = staff.image.replace("/uploads/", "");
-        deleteUploadedFile(oldFilename); // your own utility function
+        const filename = staff.image.startsWith("/uploads/")
+          ? staff.image.slice("/uploads/".length)
+          : staff.image;
+        deleteUploadedFile(filename); // Ensure this handles errors
       }
 
-      updateData.image = newImagePath;
+      // Save new image filename
+      updateData.image = newImage;
     }
 
-    // Handle education parsing (if sent as stringified JSON)
-    if (typeof updateData.education === "string") {
-      updateData.education = JSON.parse(updateData.education);
-    }
-
-    // Update all other fields
+    // Update fields
     Object.keys(updateData).forEach((key) => {
       staff[key] = updateData[key];
     });
@@ -159,8 +163,6 @@ export const updateStaff = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 // delete staff by ID 
 export const deleteStaff = async (req, res) => {

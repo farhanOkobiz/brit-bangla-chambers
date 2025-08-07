@@ -6,8 +6,9 @@ import { toast } from "react-toastify";
 function StaffEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
-  // Initialize state for all fields
+  // Initialize state for all fields + image + preview
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -24,9 +25,10 @@ function StaffEdit() {
     salaryStructure: "",
     jobResponsibilities: "",
     role: "staff",
-    image: null,
+    image: "", // <-- new field for image filename or URL
   });
 
+  const [preview, setPreview] = useState(null); // preview image url
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -58,7 +60,11 @@ function StaffEdit() {
           salaryStructure: staff.salaryStructure || "",
           jobResponsibilities: staff.jobResponsibilities || "",
           role: staff.role || "staff",
+          image: staff.image || "", // set existing image if any
         });
+
+        // Set preview if image url exists
+        if (staff.image) setPreview(staff.image);
       } else {
         setError("Failed to load staff data");
       }
@@ -106,31 +112,63 @@ function StaffEdit() {
     }));
   };
 
+  // Handle image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+
+      // Show preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoading(true);
     setError(null);
 
     try {
-      const form = new FormData();
+      // Prepare form data for sending, including image file if updated
+      const formPayload = new FormData();
 
-      // Append all fields to FormData
-      Object.entries(formData).forEach(([key, value]) => {
+      // Append all form fields except image first
+      for (const key in formData) {
         if (key === "education") {
-          form.append(key, JSON.stringify(value)); // Serialize education array
-        } else if (key === "profilePicture" && value) {
-          form.append("image", value); // Key should match multer field name
-        } else if (key !== "profilePicture") {
-          form.append(key, value);
+          formPayload.append(key, JSON.stringify(formData[key]));
+        } else if (key !== "image") {
+          formPayload.append(key, formData[key]);
         }
-      });
+      }
 
+      
+
+      // Append image if it's a File (newly selected)
+      if (formData.image && formData.image instanceof File) {
+        formPayload.append("image", formData.image);
+      }
+
+      // For password: if empty, don't send (optional)
+      if (!formData.password) {
+        formPayload.delete("password"); // ensure not sent if empty
+      }
+
+
+
+      // UseAxios should be able to send FormData
       const res = await UseAxios(`/staff/${id}`, {
         method: "PUT",
-        data: form,
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        data: formPayload,
       });
 
       setSubmitLoading(false);
@@ -142,8 +180,7 @@ function StaffEdit() {
         toast.error(res.data?.message || "Failed to update staff");
         setError(res.data?.message || "Failed to update staff");
       }
-    } catch (err) {
-      console.error(err);
+    } catch  {
       setSubmitLoading(false);
       toast.error("Something went wrong");
       setError("Something went wrong");
@@ -153,13 +190,35 @@ function StaffEdit() {
   if (loading) return <p>Loading staff data...</p>;
 
   return (
-    <div className=" p-6 bg-white rounded shadow">
+    <div className="p-6 bg-white rounded shadow py-4 md:py-8 lg:py-16">
       <h2 className="text-xl font-semibold mb-4">Edit Staff</h2>
       {error && <p className="mb-4 text-red-600 font-medium">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-2">
         {/* Grid wrapper for most fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Each input group goes inside here */}
+          {/* Profile Image Upload */}
+          <div className="flex flex-col items-center ">
+            <label className="block font-medium mb-1">Profile Image</label>
+            {preview ? (
+              <img
+                src={`${imageUrl}${preview}`}
+                alt="Preview"
+                className="w-24 h-24 object-cover rounded-full mb-2 border border-gray-300"
+              />
+            ) : (
+              <div className="w-24 h-24 bg-gray-200 rounded-full mb-2 flex items-center justify-center text-gray-400">
+                No Image
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block cursor-pointer"
+            />
+          </div>
+
+          {/* Other fields */}
           <div>
             <label className="block font-medium">Full Name</label>
             <input
@@ -168,7 +227,7 @@ function StaffEdit() {
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none  px-4 py-2 rounded"
             />
           </div>
 
@@ -180,10 +239,11 @@ function StaffEdit() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none px-4 py-2 rounded"
             />
           </div>
 
+          {/* Password field */}
           <div>
             <label className="block font-medium">
               Password (leave blank to keep unchanged)
@@ -193,7 +253,7 @@ function StaffEdit() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none px-4 py-2 rounded"
             />
           </div>
 
@@ -205,7 +265,7 @@ function StaffEdit() {
               value={formData.nidNumber}
               onChange={handleChange}
               required
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none px-4 py-2 rounded"
             />
           </div>
 
@@ -217,7 +277,7 @@ function StaffEdit() {
               value={formData.permanentAddress}
               onChange={handleChange}
               required
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none px-4 py-2 rounded"
             />
           </div>
 
@@ -229,7 +289,7 @@ function StaffEdit() {
               value={formData.presentAddress}
               onChange={handleChange}
               required
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none px-4 py-2 rounded"
             />
           </div>
 
@@ -241,7 +301,7 @@ function StaffEdit() {
               value={formData.phone}
               onChange={handleChange}
               required
-              className="w-full border px-4 py-2 rounded"
+              className="w-full border border-blue-200 focus:outline-none px-4 py-2 rounded"
             />
           </div>
 
@@ -300,6 +360,18 @@ function StaffEdit() {
             />
           </div>
 
+          <div>
+            <label className="block font-medium">Role</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded"
+            >
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+
           {/* Education section (outside grid to span full width) */}
           <div>
             <label className="block font-medium mb-2">Education</label>
@@ -344,20 +416,6 @@ function StaffEdit() {
             </button>
           </div>
           <div>
-            <label className="block font-medium">Profile Picture</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  profilePicture: e.target.files?.[0] || null,
-                }))
-              }
-              className="w-full border px-4 py-2 rounded"
-            />
-          </div>
-          <div>
             <label className="block font-medium">Job Responsibilities</label>
             <textarea
               name="jobResponsibilities"
@@ -366,18 +424,6 @@ function StaffEdit() {
               rows={3}
               className="w-full border px-4 py-2 rounded"
             />
-          </div>
-
-          <div>
-            <label className="block font-medium">Role</label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded"
-            >
-              <option value="staff">Staff</option>
-            </select>
           </div>
         </div>
 

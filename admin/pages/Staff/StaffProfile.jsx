@@ -112,6 +112,7 @@ function StaffProfile() {
         <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
       </div>
 
+
       {/* Profile Information Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {profileFields?.map((field, index) => {

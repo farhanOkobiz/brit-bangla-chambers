@@ -73,9 +73,8 @@ const staffSchema = new Schema({
     type: String,
     default: 'staff'
   },
-  image: {
+   image: {
     type: String,
-    default: null
   },
 
 }, {
