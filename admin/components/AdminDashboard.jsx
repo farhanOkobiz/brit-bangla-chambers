@@ -54,6 +54,7 @@ const AdminDashboard = () => {
 
   const statCards = [
     { label: "Total Users", value: data.totalUsers },
+    { label: "Staff", value: data.totalStaff },
     { label: "Advocates", value: data.totalAdvocates },
     { label: "Clients", value: data.totalClients },
     { label: "Advocate Requests", value: data.totalRequestsForAdvocate },
