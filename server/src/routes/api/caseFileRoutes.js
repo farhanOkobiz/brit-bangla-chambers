@@ -3,7 +3,6 @@ import {
   addDocumentToCaseFile,
   changeCaseFileStatus,
   createCaseFile,
-  deleteCaseFile,
   getAllCaseFilesForAdmin,
   getAllCaseFilesForAdvocate,
   getCaseFileForClient,
@@ -12,6 +11,7 @@ import {
   deleteDocumentFromCaseFile,
   updateDocumentTitleInCaseFile,
   getDocumentsFromCaseFile,
+  deleteCaseFile,
 } from "../../controllers/caseFileController.js";
 import {
   checkAdmin,
@@ -32,7 +32,7 @@ router.put(
   protect(["admin", "staff", "advocate"]),
   updateCaseFile
 ); // Update case
-router.delete("/deleteCaseFile/:id", checkAdvocate, deleteCaseFile); // Delete case
+router.delete("/deleteCaseFile/:id", checkAdmin, deleteCaseFile); // Delete case
 router.post("/changeStatus/:id", changeCaseFileStatus);
 router.post("/document/:id/add-document", addDocumentToCaseFile); // Add document to case file
 router.get("/document/:id", getDocumentsFromCaseFile); // Get single case file with documents

@@ -105,7 +105,7 @@ useEffect(() => {
               <User className="w-12 h-12 text-white" />
             </div>
           )}
-        </div>
+      </div>
         {/* <h2 className="text-3xl font-bold text-gray-800 mb-2">Staff Profile</h2> */}
         {/* <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div> */}
       </div>
