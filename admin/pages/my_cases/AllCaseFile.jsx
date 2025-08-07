@@ -23,6 +23,7 @@ function AllCaseFile() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
+
   useEffect(() => {
     const fetchCaseFiles = async () => {
       try {
@@ -238,6 +239,13 @@ function AllCaseFile() {
                   {/* Card Header */}
                   <div className="p-6 relative">
                     <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
+                      <Link
+                        to={`/advocate/dashboard/detail-case-file/${file._id}`}
+                        className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
+                        title="View Details"
+                      >
+                        <FaEye className="text-sm" />
+                      </Link>
                       <Link
                         to={`/advocate/dashboard/request-file/${file._id}`}
                         className="p-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 rounded-lg transition-colors duration-200"

@@ -9,9 +9,11 @@ import {
   FaFilter,
   FaEye,
   FaEdit,
+  FaTrash
 } from "react-icons/fa";
 import { UseAxios } from "../../../services/UseAxios";
 import { UseAuth } from "../../../auth/AuthContext";
+import Swal from "sweetalert2"; 
 
 function AdminAllCaseFile() {
   const [caseFiles, setCaseFiles] = useState([]);
@@ -19,7 +21,7 @@ function AdminAllCaseFile() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const { role } = UseAuth()
+  const { role } = UseAuth();
   const base = role === "admin" ? "/admin" : "/staff";
 
   useEffect(() => {
@@ -38,6 +40,32 @@ function AdminAllCaseFile() {
     fetchCaseFiles();
   }, []);
 
+  // 👇 Function to delete a case file
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This case file will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await UseAxios(`showOwnCaseFile/deleteCaseFile/${id}`, {
+          method: "DELETE",
+        });
+        setCaseFiles((prev) => prev.filter((file) => file._id !== id));
+        Swal.fire("Deleted!", "The case file has been deleted.", "success");
+      } catch (err) {
+        console.error("Delete error:", err);
+        Swal.fire("Error", "Failed to delete case file", "error");
+      }
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
@@ -51,18 +79,18 @@ function AdminAllCaseFile() {
     }
   };
 
-const filteredCases = caseFiles.filter((file) => {
-  const term = searchTerm.toLowerCase().trim();
-  const matchesSearch =
-    (file.title || "").toLowerCase().includes(term) ||
-    (file.case_number || "").toLowerCase().includes(term) ||
-    (file.client_name || "").toLowerCase().includes(term);
+  const filteredCases = caseFiles.filter((file) => {
+    const term = searchTerm.toLowerCase().trim();
+    const matchesSearch =
+      (file.title || "").toLowerCase().includes(term) ||
+      (file.case_number || "").toLowerCase().includes(term) ||
+      (file.client_name || "").toLowerCase().includes(term);
 
-  const matchesFilter =
-    filterStatus === "all" || file.status === filterStatus;
+    const matchesFilter =
+      filterStatus === "all" || file.status === filterStatus;
 
-  return matchesSearch && matchesFilter;
-});
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
@@ -177,7 +205,7 @@ const filteredCases = caseFiles.filter((file) => {
             >
               {/* Card Header */}
               <div className="p-6 relative">
-                <div className="absolute  lg:top-6 right-4 flex items-center space-x-2  transition-opacity duration-200 ">
+                <div className="absolute lg:top-6 right-4 flex flex-col lg:flex-row lg:items-center space-y-2 lg:space-y-0 lg:space-x-2 space-x-0 transition-opacity duration-200">
                   <Link
                     to={`${base}/detail-case-file/${file._id}`}
                     className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors duration-200"
@@ -192,6 +220,17 @@ const filteredCases = caseFiles.filter((file) => {
                   >
                     <FaEdit className="text-sm" />
                   </Link>
+                  {
+                    base === "/admin" && (
+                        <button
+                        onClick={() => handleDelete(file._id)}
+                        className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-700 rounded-lg transition-colors duration-200 cursor-pointer"
+                        title="Delete Case"
+                      >
+                        <FaTrash className="text-sm" />
+                      </button>
+                    )
+                  }
                 </div>
 
                 <div className="flex items-start gap-2">

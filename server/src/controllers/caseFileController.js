@@ -140,6 +140,7 @@ export const updateCaseFile = async (req, res) => {
 
 // ✅ Delete Case File
 export const deleteCaseFile = async (req, res) => {
+
   try {
     const deleted = await CaseFile.findByIdAndDelete(req.params.id);
     if (!deleted) {
