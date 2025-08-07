@@ -21,6 +21,8 @@ useEffect(() => {
   const fetchStaff = async () => {
     try {
       const response = await UseAxios("/staff/profile");
+      console.log(response);
+      
       setStaff(response.data.staff);
       console.log("Staff Profile Data:", response);
     } catch {
