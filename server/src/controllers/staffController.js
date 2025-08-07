@@ -101,11 +101,11 @@ export const getStaffProfile = async (req, res) => {
   try {
     const id = req.user.id; // Assuming the ID is passed in the request object (e.g., from a token)
     
-   const staff = await Staff.findOne({ user_id: id });
+   const staff = await Staff.findOne({ user_id: id }).populate("user_id");
     if (!staff) {
       return res.status(404).json({ message: 'Staff not found' });
     }
-
+    
     res.status(200).json({ staff });
   } catch (error) {
     console.error('Get staff by ID error:', error);
