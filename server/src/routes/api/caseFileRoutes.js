@@ -12,6 +12,7 @@ import {
   deleteDocumentFromCaseFile,
   updateDocumentTitleInCaseFile,
   getDocumentsFromCaseFile,
+  uploadDocumet,
 } from "../../controllers/caseFileController.js";
 import {
   checkAdmin,
@@ -19,12 +20,17 @@ import {
   checkClient,
   protect,
 } from "../../middleware/authMiddleware.js";
+import upload from "../../middleware/multerMiddleware.js";
 
 const router = express.Router();
 
 router.post("/createCaseFile", protect(["advocate", "client"]), createCaseFile); // Create case
 router.get("/allCaseFile", checkAdvocate, getAllCaseFilesForAdvocate); // Get all cases
-router.get("/allCaseFile/for-admin", protect(["admin", "staff"]), getAllCaseFilesForAdmin); // Get all cases for admin
+router.get(
+  "/allCaseFile/for-admin",
+  protect(["admin", "staff"]),
+  getAllCaseFilesForAdmin
+); // Get all cases for admin
 router.get("/allCaseFile/for-client", checkClient, getCaseFileForClient); // Get single case for client
 router.get("/singleCaseFile/:id", getSingleCaseFileById);
 router.put(
@@ -45,5 +51,11 @@ router.put(
   "/updateDocument/:id/documents/:docId",
   updateDocumentTitleInCaseFile
 ); // Update document title in case file
+
+router.use(
+  "/uploadDocument/:id",
+  protect(["admin", "staff", "advocate"]),upload.single("file"), // Use multer middleware to handle file uploads
+  uploadDocumet
+);
 
 export default router;
