@@ -220,13 +220,17 @@ function AdminAllCaseFile() {
                   >
                     <FaEdit className="text-sm" />
                   </Link>
-                  <button
-                    onClick={() => handleDelete(file._id)}
-                    className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-700 rounded-lg transition-colors duration-200 cursor-pointer"
-                    title="Delete Case"
-                  >
-                    <FaTrash className="text-sm" />
-                  </button>
+                  {
+                    base === "/admin" && (
+                        <button
+                        onClick={() => handleDelete(file._id)}
+                        className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-700 rounded-lg transition-colors duration-200 cursor-pointer"
+                        title="Delete Case"
+                      >
+                        <FaTrash className="text-sm" />
+                      </button>
+                    )
+                  }
                 </div>
 
                 <div className="flex items-start gap-2">
