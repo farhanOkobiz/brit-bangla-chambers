@@ -174,7 +174,7 @@ function AdminDetailsCaseFile() {
     try {
       // Optimistic update
 
-      setFile((prev) => ({ ...prev }));
+      setFile((prev) => ({ ...prev, status: newStatus }));
 
       await UseAxios(`/showOwnCaseFile/changeStatus/${id}`, {
         method: "POST",
