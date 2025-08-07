@@ -47,5 +47,6 @@ router.use("/advocate-dashboard", advocateDashboardRoutes); // Ensure this is im
 router.use("/admin-dashboard", adminDashboardRoutes); // Ensure this is imported correctly
 router.use("/admin-dashboard", adminDashboardRoutes); // Ensure this is imported correctly
 router.use("/staff",  staffRoutes);
+router.use("/support", helpAndSupportRoutes); // Ensure this is imported correctly
 
 export default router;

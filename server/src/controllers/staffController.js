@@ -169,6 +169,15 @@ export const deleteStaff = async (req, res) => {
   try {
     const { id } = req.params;
 
+    const staff = await Staff.findById(id);
+    if(!staff) {
+      return res.status(404).json({ message: "Staff not found" });
+    } 
+    const deleteUser = await User.findByIdAndDelete(staff.user_id);
+    if (!deleteUser) {
+      return res.status(404).json({ message: "User not found" });
+    } 
+
     const deletedStaff = await Staff.findByIdAndDelete(id);
 
     if (!deletedStaff) {
