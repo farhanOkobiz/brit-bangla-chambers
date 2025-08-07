@@ -12,16 +12,6 @@ import {
   Calendar,
 } from "lucide-react";
 
-// type StaffProfileInterface = {
-//   fullName: string;
-//   email: string;
-//   phone: string;
-//   nidNumber: string;
-//   role: string;
-//   presentAddress: string;
-//   permanentAddress: string;
-//   createdAt: string;
-// };
 
 function StaffProfile() {
   const [staff, setStaff] = useState(null);
