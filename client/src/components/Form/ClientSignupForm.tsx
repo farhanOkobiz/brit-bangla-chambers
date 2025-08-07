@@ -231,7 +231,7 @@ export default function ClientSignupForm() {
           <label htmlFor="terms" className="text-sm text-gray-600">
             I agree to the{" "}
             <a
-              href="/terms"
+              href="/terms-and-conditions"
               className="text-blue-600 underline"
               target="_blank"
               rel="noopener noreferrer"

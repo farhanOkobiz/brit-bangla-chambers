@@ -384,14 +384,6 @@ const FileRequestForm = () => {
                     <FiRefreshCw className="mr-2" />
                     Refresh Page
                   </button>
-                  <button
-                    onClick={() => {
-                      /* Add contact support functionality */
-                    }}
-                    className="px-5 py-2.5 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium transition-colors"
-                  >
-                    Contact Support
-                  </button>
                 </div>
               </div>
             </div>
