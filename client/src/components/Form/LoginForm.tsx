@@ -79,7 +79,11 @@ function LoginForm() {
             ? `${ADMIN_URL}/admin/dashboard`
             : `${ADVOCATE_URL}/advocate/dashboard`;
         window.location.href = targetUrl;
-      } else {
+      }else if(user?.role === 'staff') {
+        const targetUrl = `${ADMIN_URL}/staff/dashboard`;
+        window.location.href = targetUrl;
+      }
+       else {
         router.push("/");
       }
     } catch (err) {
