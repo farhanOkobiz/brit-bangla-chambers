@@ -172,8 +172,8 @@ function DetailsFile() {
 
     try {
       // Optimistic update
-      const originalStatus = file.status;
-      setFile((prev) => ({ ...prev, status: newStatus }));
+
+      setFile((prev) => ({ ...prev }));
 
       await UseAxios(`/showOwnCaseFile/changeStatus/${id}`, {
         method: "POST",
@@ -184,7 +184,7 @@ function DetailsFile() {
       toast.success(`Case ${action}ed successfully!`);
     } catch (error) {
       console.error("Toggle status error:", error);
-      setFile((prev) => ({ ...prev, status: originalStatus }));
+      setFile((prev) => ({ ...prev }));
       toast.error(`Failed to ${action} case`);
     }
   };
@@ -711,7 +711,6 @@ const DocumentCard = ({
         ) : (
           <a
             href={`${imageUrl}${doc.documentUrl}`}
-            download
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full text-center"
