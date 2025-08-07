@@ -17,16 +17,15 @@ function StaffProfile() {
   const [staff, setStaff] = useState(null);
   const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
-  useEffect(() => {
-    const fetchStaff = async () => {
-      try {
-        const response = await UseAxios("/staff/profile");
-        setStaff(response.data.staff);
-        console.log("Staff Profile Data:", response);
-      } catch {
-        toast.error("Failed to load staff profile.");
-      }
-    };
+useEffect(() => {
+  const fetchStaff = async () => {
+    try {
+      const response = await UseAxios("/staff/profile");
+      setStaff(response.data.staff);
+    } catch {
+      toast.error("Failed to load staff profile.");
+    }
+  };
 
     fetchStaff();
   }, []);
@@ -107,9 +106,8 @@ function StaffProfile() {
             </div>
           )}
         </div>
-
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Staff Profile</h2>
-        <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
+        {/* <h2 className="text-3xl font-bold text-gray-800 mb-2">Staff Profile</h2> */}
+        {/* <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div> */}
       </div>
 
 
