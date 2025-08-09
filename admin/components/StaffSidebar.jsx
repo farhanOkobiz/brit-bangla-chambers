@@ -148,29 +148,14 @@ const StaffSidebar = () => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <div className="relative">
-              <button className="p-2 text-gray-400 hover:text-gray-600 relative">
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 17h5l-5 5-5-5h5v-12"
-                  />
-                </svg>
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
-              </button>
-            </div>
+          
             <img
-              className="h-8 w-8 rounded-full object-cover"
-              src="/placeholder.svg?height=32&width=32"
-              alt="Admin"
-            />
+                className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
+                src={`${IMAGE_URL}${
+                  profilePhoto || "/placeholder.svg?height=32&width=32"
+                }`}
+                alt="Admin"
+              />
           </div>
         </div>
       </div>

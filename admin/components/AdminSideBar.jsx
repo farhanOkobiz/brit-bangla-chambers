@@ -17,6 +17,7 @@ import {
   FaBlogger,
   FaQuestion,
   FaUserTie,
+  FaUser,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -57,10 +58,10 @@ const menuItems = [
       { label: "Create Advocate", path: "/admin/advocates/create" },
     ],
   },
-    {
+  {
     label: "Staff",
     isDropdown: true,
-     icon: <FaUserTie />,
+    icon: <FaUserTie />,
     subItems: [
       { label: "Manage Staff", path: "/admin/staff/manage" },
       { label: "Create Staff", path: "/admin/staff/create" },
@@ -116,7 +117,6 @@ const AdminSidebar = () => {
     setUserName,
     setProfilePhoto,
     userName,
-    profilePhoto,
   } = UseAuth();
 
   const handleLogOut = () => {
@@ -175,11 +175,7 @@ const AdminSidebar = () => {
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
               </button>
             </div>
-            <img
-              className="h-8 w-8 rounded-full object-cover"
-              src="/placeholder.svg?height=32&width=32"
-              alt="Admin"
-            />
+            <FaUser/>
           </div>
         </div>
       </div>
@@ -364,13 +360,7 @@ const AdminSidebar = () => {
           {/* Desktop User Profile */}
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-              <img
-                className="h-8 w-8 rounded-full border border-white shadow-sm object-cover"
-                src={`${IMAGE_URL}${
-                  profilePhoto || "/placeholder.svg?height=32&width=32"
-                }`}
-                alt="Admin"
-              />
+              <FaUser/>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-gray-800 truncate">
                   Admin User
