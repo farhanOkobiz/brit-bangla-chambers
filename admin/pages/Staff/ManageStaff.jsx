@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { UseAxios } from "../../services/UseAxios";
 import Swal from "sweetalert2";
 
+
 function ManageStaff() {
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -245,7 +247,15 @@ function ManageStaff() {
                       <tr key={staff._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-gray-200 border-2 border-dashed rounded-xl" />
+                            <div className="">
+                              <img
+                                src={
+                                  `${imageUrl}${staff.image}` 
+                                }
+                                alt={staff.fullName}
+                                className="h-10 w-10 rounded-full"
+                              />
+                            </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">
                                 {staff.fullName}

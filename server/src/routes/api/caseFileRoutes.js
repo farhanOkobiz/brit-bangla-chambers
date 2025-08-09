@@ -24,15 +24,31 @@ import upload from "../../middleware/multerMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createCaseFile", protect(["advocate", "client"]), createCaseFile); // Create case
-router.get("/allCaseFile", protect(['admin', 'Staff', "advocate"]), getAllCaseFilesForAdvocate); // Get all cases
+router.post(
+  "/createCaseFile",
+  protect(["advocate", "staff", "advocate"]),
+  createCaseFile
+); // Create case
+router.get(
+  "/allCaseFile",
+  protect(["admin", "Staff", "advocate"]),
+  getAllCaseFilesForAdvocate
+); // Get all cases
 router.get(
   "/allCaseFile/for-admin",
   protect(["admin", "staff"]),
   getAllCaseFilesForAdmin
 ); // Get all cases for admin
-router.get("/allCaseFile/for-client", checkClient, getCaseFileForClient); // Get single case for client
-router.get("/singleCaseFile/:id",protect(['admin', 'Staff', "advocate"]), getSingleCaseFileById);
+router.get(
+  "/allCaseFile/for-client",
+  protect(["admin", "Staff", "advocate", "client"]),
+  getCaseFileForClient
+); // Get single case for client
+router.get(
+  "/singleCaseFile/:id",
+  protect(["admin", "Staff", "advocate", "client"]),
+  getSingleCaseFileById
+);
 router.put(
   "/updateCaseFile/:id",
   protect(["admin", "staff", "advocate"]),
@@ -42,8 +58,12 @@ router.delete("/deleteCaseFile/:id", checkAdmin, deleteCaseFile); // Delete case
 router.post("/changeStatus/:id", changeCaseFileStatus);
 router.post("/document/:id/add-document", addDocumentToCaseFile); // Add document to case file
 router.get("/document/:id", getDocumentsFromCaseFile); // Get single case file with documents
-router.delete("/deleteCaseFile/:id", protect(['admin']), deleteCaseFile); // Delete case
-router.post("/changeStatus/:id",protect(['admin', 'Staff', "advocate"]), changeCaseFileStatus);
+router.delete("/deleteCaseFile/:id", protect(["admin"]), deleteCaseFile); // Delete case
+router.post(
+  "/changeStatus/:id",
+  protect(["admin", "Staff", "advocate"]),
+  changeCaseFileStatus
+);
 router.post(
   "/document/:id/add-document",
   protect(["admin", "Staff", "advocate"]),
@@ -68,7 +88,8 @@ router.put(
 
 router.use(
   "/uploadDocument/:id",
-  protect(["admin", "staff", "advocate"]),upload.single("file"), // Use multer middleware to handle file uploads
+  protect(["admin", "staff", "advocate"]),
+  upload.single("file"), // Use multer middleware to handle file uploads
   uploadDocumet
 );
 
