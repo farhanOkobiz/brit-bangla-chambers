@@ -46,7 +46,7 @@ router.get(
 ); // Get single case for client
 router.get(
   "/singleCaseFile/:id",
-  protect(["admin", "Staff", "advocate", "client"]),
+  protect(["admin", "staff", "advocate", "client"]),
   getSingleCaseFileById
 );
 router.put(
@@ -61,28 +61,28 @@ router.get("/document/:id", getDocumentsFromCaseFile); // Get single case file w
 router.delete("/deleteCaseFile/:id", protect(["admin"]), deleteCaseFile); // Delete case
 router.post(
   "/changeStatus/:id",
-  protect(["admin", "Staff", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   changeCaseFileStatus
 );
 router.post(
   "/document/:id/add-document",
-  protect(["admin", "Staff", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   addDocumentToCaseFile
 ); // Add document to case file
 router.get(
   "/document/:id",
-  protect(["admin", "Staff", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   getDocumentsFromCaseFile
 ); // Get single case file with documents
 router.delete(
   "/deleteDocument/:id/documents/:docId",
-  protect(["admin", "Staff", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   deleteDocumentFromCaseFile
 ); // Delete document from case file
 //update document title
 router.put(
   "/updateDocument/:id/documents/:docId",
-  protect(["admin", "Staff", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   updateDocumentTitleInCaseFile
 ); // Update document title in case file
 
