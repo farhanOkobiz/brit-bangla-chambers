@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
-import { CheckCircle, Trash2, Clock, HelpCircle } from "lucide-react";
+import { CheckCircle, Trash2, Clock, HelpCircle, User } from "lucide-react";
 import { UseAuth } from "../../auth/AuthContext";
 
 const HelpAndSupport = () => {
@@ -9,6 +9,7 @@ const HelpAndSupport = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("pending");
     const [expandedRequestId, setExpandedRequestId] = useState(null);
+
 
   const fetchData = async () => {
     setLoading(true);
