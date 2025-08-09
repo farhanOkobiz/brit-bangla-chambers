@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { UseAxios } from "../../../services/UseAxios";
+import { UseAuth } from "../../../auth/AuthContext";
 
 function AdminDetailsCaseFile() {
   const { id } = useParams();
@@ -31,6 +32,9 @@ function AdminDetailsCaseFile() {
   const [uploadTitle, setUploadTitle] = useState("");
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const { role } = UseAuth(); // Assuming UseAuth provides the current user's role
+  const base = role === "admin" ? "/admin" : "/staff";
 
   // Status color mapping
   const statusColors = {
@@ -283,7 +287,7 @@ function AdminDetailsCaseFile() {
           <div className="p-6 border-b border-gray-200 relative">
             <div className="absolute top-6 right-6 flex flex-col sm:flex-row gap-2">
               <Link
-                to={`/advocate/dashboard/request-file/${file._id}`}
+                to={`${base}/dashboard/request-file/${file._id}`}
                 className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors"
                 aria-label="Request file"
               >
@@ -291,7 +295,7 @@ function AdminDetailsCaseFile() {
               </Link>
 
               <Link
-                to={`/advocate/dashboard/edit-case-file/${file._id}`}
+                to={`${base}/edit-case-file/${file._id}`}
                 className="p-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg transition-colors"
                 aria-label="Edit case"
               >
@@ -311,14 +315,15 @@ function AdminDetailsCaseFile() {
                   }`}
                 />
               </button>
-
-              <button
-                onClick={handleDelete}
-                className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors"
-                aria-label="Delete case"
-              >
-                <FaTrash />
-              </button>
+              {role === "admin" && (
+                <button
+                  onClick={handleDelete}
+                  className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors"
+                  aria-label="Delete case"
+                >
+                  <FaTrash />
+                </button>
+              )}
             </div>
 
             <div className="flex items-center gap-2 mb-2">

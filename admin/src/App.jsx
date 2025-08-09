@@ -9,7 +9,7 @@ import SubcategoryForm from "../components/subCategoryForm";
 import AdminDashboard from "../components/AdminDashboard";
 import AdvocateDashboard from "../components/AdvocateDashboard";
 import Blogs from "../pages/blog/Blogs";
-import CreateBlog from "../pages/blog/CreateBlog";
+import CreateBlog from "../pages/blog/CreateBlog";    
 import ContactMessage from "../components/request/ContactMessage";
 // import Users from "../pages/Admin/Users";
 import Users from "../pages/Admin/Users";
@@ -94,6 +94,10 @@ export default function App() {
             </ProtectedRoute>
           }
         >
+          <Route
+            path="dashboard/request-file/:id"
+            element={<AdvocateFileRequestForm />}
+          />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="specialization" element={<SpecializationForm />} />
           <Route path="sub-categories" element={<SubcategoryForm />} />
@@ -139,6 +143,10 @@ export default function App() {
             </ProtectedRoute>
           }
         >
+          <Route
+            path="dashboard/request-file/:id"
+            element={<AdvocateFileRequestForm />}
+          />
           <Route path="dashboard" element={<StaffDashboard />} />
           <Route path="profile" element={<StaffProfile />} />
           <Route path="users" element={<Users />} />
@@ -158,6 +166,7 @@ export default function App() {
           <Route path="case-file" element={<AdminAllCaseFile />} />
           <Route
             path="detail-case-file/:id"
+            
             element={<AdminDetailsCaseFile />}
           />
           <Route path="edit-case-file/:id" element={<AdminEditCaseFile />} />

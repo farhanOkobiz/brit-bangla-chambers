@@ -15,6 +15,7 @@ import {
   FaRegFileAlt,
 } from "react-icons/fa";
 import { RiFileCloseFill } from "react-icons/ri";
+import { UseAuth } from "../../auth/AuthContext";
 
 function AllCaseFile() {
   const [caseFiles, setCaseFiles] = useState([]);
@@ -22,6 +23,7 @@ function AllCaseFile() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const {role} = UseAuth();
 
 
   useEffect(() => {
@@ -247,7 +249,7 @@ function AllCaseFile() {
                         <FaEye className="text-sm" />
                       </Link>
                       <Link
-                        to={`/advocate/dashboard/request-file/${file._id}`}
+                        to={`/${role}/dashboard/request-file/${file._id}`}
                         className="p-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 rounded-lg transition-colors duration-200"
                       >
                         <FaRegFileAlt className="text-sm" />

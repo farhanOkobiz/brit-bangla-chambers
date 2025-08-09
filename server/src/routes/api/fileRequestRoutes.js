@@ -15,7 +15,12 @@ import { checkClient, protect } from "../../middleware/authMiddleware.js";
 const router = Router();
 
 // Specific routes FIRST
-router.post("/",protect(["admin", "advocate"]), upload.array("files"), createFileRequest);
+router.post(
+  "/",
+  protect(["admin", "staff", "advocate"]),
+  upload.array("files"),
+  createFileRequest
+);
 router.put(
   "/:id/upload",
   checkClient,
@@ -28,7 +33,11 @@ router.get("/case/:_id", getFileRequestByCaseId);
 router.get("/", getAllFileRequests);
 router.get("/clientId", checkClient, getFileRequestByClintId);
 router.put("/:id", upload.array("files"), updateFileRequest);
-router.delete("/:id",protect(["admin", "advocate", "staff"]), deleteFileRequest);
+router.delete(
+  "/:id",
+  protect(["admin", "advocate", "staff"]),
+  deleteFileRequest
+);
 router.delete("/:_id/file", deleteSingleDocumentsFromRequest);
 
 export default router;
