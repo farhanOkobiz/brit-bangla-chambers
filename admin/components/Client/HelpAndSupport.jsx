@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
-import {
-  CheckCircle,
-  Trash2,
-  Clock,
-  HelpCircle,
-  Mail,
-  Phone,
-  User,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-} from "lucide-react";
+import { CheckCircle, Trash2, Clock, HelpCircle } from "lucide-react";
+import { UseAuth } from "../../auth/AuthContext";
 
 const HelpAndSupport = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [expandedRequestId, setExpandedRequestId] = useState(null);
-  const [activeTab, setActiveTab] = useState("pending"); // 'pending' or 'resolved'
+    const [data, setData] = useState([]);
+    const { role } = UseAuth()
+    const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("pending");
+    const [expandedRequestId, setExpandedRequestId] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -65,9 +56,73 @@ const HelpAndSupport = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
-      </div>
+        <div className="max-w-8xl mx-auto p-6">
+            <h1 className="text-3xl font-bold mb-2">Help & Support</h1>
+            <p className="text-gray-600 mb-6">Manage user support requests efficiently.</p>
+
+            {pendingRequests.length > 0 && (
+                <div>
+                    <h2 className="text-xl font-semibold mb-3 text-yellow-600">Pending Help Requests</h2>
+                    <div className="space-y-4">
+                        {pendingRequests.map((req) => (
+                            <div key={req._id} className="bg-white border border-yellow-300 rounded-lg p-5 shadow-md">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-lg font-semibold text-gray-800">{req.subject}</h3>
+                                    <span className="flex items-center gap-1 text-sm text-yellow-600 font-medium bg-yellow-100 px-2 py-0.5 rounded">
+                                        <Clock size={14} />
+                                        Pending
+                                    </span>
+                                </div>
+                                <p className="text-gray-700">{req.message}</p>
+                                <p className="text-sm text-gray-500 mt-2">From: {req.userId?.full_name || "Unknown"}</p>
+                                <button
+                                    onClick={() => handleChangeStatus(req._id)}
+                                    className="mt-4 inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-all"
+                                >
+                                    <CheckCircle size={16} className="mr-2" />
+                                    Mark as Resolved
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {resolvedRequests.length > 0 && (
+                <div className="mt-10">
+                    <h2 className="text-xl font-semibold mb-3 text-green-600">Resolved Requests</h2>
+                    <div className="space-y-4">
+                        {resolvedRequests.map((req) => (
+                            <div key={req._id} className="bg-gray-50 border border-gray-300 rounded-lg p-5 shadow-sm">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-lg font-semibold text-gray-800">{req.subject}</h3>
+                                    <span className="flex items-center gap-1 text-sm text-green-600 font-medium bg-green-100 px-2 py-0.5 rounded">
+                                        <CheckCircle size={14} />
+                                        Resolved
+                                    </span>
+                                </div>
+                                <p className="text-gray-700">{req.message}</p>
+                                <p className="text-sm text-gray-500 mt-2">From: {req.userId?.full_name || "Unknown"}</p>
+                                { role === "admin" && (
+                                <button
+                                    onClick={() => handleDelete(req._id)}
+                                    className="mt-4 inline-flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-all"
+                                >
+                                    <Trash2 size={16} className="mr-2" />
+                                    Delete
+                                </button>
+                                )}
+                           
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {pendingRequests.length === 0 && resolvedRequests.length === 0 && (
+                <div className="text-center text-gray-500 mt-10">No support requests found.</div>
+            )}
+        </div>
     );
   }
 

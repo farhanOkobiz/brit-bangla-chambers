@@ -19,9 +19,9 @@ const router = Router();
 router.get('/profile', checkClient, showProfile);
 router.get('/profile/:id', checkAdmin, showProfileByUserId);
 router.get('/profile/client/:id', checkAdmin, showProfileByClientId);
-router.get('/all', checkAdmin, showAllClients);
+router.get('/all', protect(['admin', 'staff']) , showAllClients);
 
 router.post('/create', checkAdmin, createClientProfile);
-router.put('/update/:id', protect(['admin', 'client']) , upload.single("profilePhoto")  , updateClientProfile);
+router.put('/update/:id', protect(['admin', 'client', 'staff']) , upload.single("profilePhoto")  , updateClientProfile);
 router.delete('/profile/:id', checkAdmin, deleteClientProfile)
 export default router;

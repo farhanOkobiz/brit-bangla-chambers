@@ -1,6 +1,6 @@
 import { Router } from "express";
 const router = Router();
-import { checkClient } from "../../middleware/authMiddleware.js";
+import { checkAdmin, checkAdvocate, checkClient } from "../../middleware/authMiddleware.js";
 import upload from "../../middleware/multerMiddleware.js";
 import {
   acceptedRequestStatus,
@@ -18,8 +18,8 @@ router.post(
   createRequestService
 );
 router.get("/", getAllRequestServices);
-router.patch("/accepted/:id", acceptedRequestStatus);
-router.patch("/rejected/:id", rejectedRequestStatus);
-router.delete("/:id", deleteRequestService);
+router.patch("/accepted/:id", checkAdvocate, acceptedRequestStatus);
+router.patch("/rejected/:id", checkAdvocate, rejectedRequestStatus);
+router.delete("/:id", checkAdmin, deleteRequestService);
 
 export default router;

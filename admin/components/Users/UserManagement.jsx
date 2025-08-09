@@ -7,6 +7,7 @@ import UserFilters from "./UserFilters";
 import UserTable from "./UserTable";
 import UserDetailsModal from "./UserDetailsModal";
 import UserUpdateModal from "./UserUpdateModal";
+import { UseAuth } from "../../auth/AuthContext";
 
 const UserManagement = () => {
   const [userType, setUserType] = useState("client"); // client or advocate
@@ -16,6 +17,7 @@ const UserManagement = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [filter, setFilter] = useState("all"); // all, active, inactive, banned, pending, approved, rejected
+
 
   const fetchUsers = async () => {
     try {

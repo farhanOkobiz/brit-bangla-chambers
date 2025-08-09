@@ -18,6 +18,7 @@ import {
   FiSend,
   FiUserCheck,
 } from "react-icons/fi";
+import { UseAuth } from "../../auth/AuthContext";
 
 const getStatusConfig = (status) => {
   const configs = {
@@ -110,6 +111,8 @@ function RequestForService() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const BASE_URL = import.meta.env.VITE_API_IMAGE_URL;
+  const {role} = UseAuth();
+
   const fetchRequests = async () => {
     try {
       setLoading(true);
@@ -444,6 +447,7 @@ function RequestForService() {
                         >
                           <FiEye className="w-4 h-4" />
                         </button> */}
+                        {role === "admin" && (  
                         <button
                           onClick={() => handleDelete(item._id)}
                           disabled={isDeleting}
@@ -451,7 +455,7 @@ function RequestForService() {
                           title="Delete request"
                         >
                           <FiTrash2 className="w-4 h-4" />
-                        </button>
+                        </button> )}
                       </div>
                     </div>
                   </div>

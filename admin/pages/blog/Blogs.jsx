@@ -10,7 +10,6 @@ function Blogs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { role } = UseAuth();
-
   const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
   useEffect(() => {
@@ -116,6 +115,18 @@ function Blogs() {
                     </button>
                   </div>
                 )}
+                 {/* Edit/Delete Icons on top-right */}
+                {role === "staff" && (
+                  <div className="absolute top-2 right-2 flex gap-2 z-10">
+                    <Link
+                      to={`/staff/dashboard/edit-blog/${blog._id}`}
+                      title="Edit"
+                      className="p-1 rounded-full shadow text-blue-600 cursor-pointer"
+                    >
+                      <FiEdit size={18} />
+                    </Link>
+                  </div>
+                )}
               </div>
 
               {/* Blog Content */}
@@ -160,6 +171,14 @@ function Blogs() {
                       Read More
                     </Link>
                   )}
+                  {role === "staff" && (
+                  <Link
+                    to={`/staff/dashboard/details-blog/${blog._id}`}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    Read More
+                  </Link>
+                )}
                 </div>
               </div>
             </div>
