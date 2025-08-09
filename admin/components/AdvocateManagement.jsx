@@ -23,6 +23,7 @@ const AdvocateManagement = () => {
   const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
   // const { role } = UseAuth()
   // const base = role === "admin" ? "/admin" : "/staff";
+  const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
   const UseAxiosHook = UseAxios;
 
@@ -270,8 +271,7 @@ const AdvocateManagement = () => {
                                 <img
                                   className="h-10 w-10 rounded-full object-cover"
                                   src={
-                                    advocate.profile_photo_url ||
-                                    "/placeholder.svg"
+                                    `${imageUrl}${advocate.profile_photo_url}` 
                                   }
                                   alt={advocate.user_id?.full_name}
                                 />
