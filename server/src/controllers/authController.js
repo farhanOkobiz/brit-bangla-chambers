@@ -245,8 +245,8 @@ export const checkAuth = async (req, res) => {
         profilePhoto = profilePhoto.profile_photo_url || null;
       }
     } else if (decoded.role === "staff") {
-      const staff = await Staff.findById(decoded.id).select("profilePhoto");
-      profilePhoto = staff?.profilePhoto || null;
+      const staff = await Staff.findOne({ user_id: decoded.id }).select("image");
+      profilePhoto = staff?.image || null;
     }
     else {
       profilePhoto = { profile_photo: null }; // Default if no profile found
