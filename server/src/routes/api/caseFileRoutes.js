@@ -31,7 +31,7 @@ router.post(
 ); // Create case
 router.get(
   "/allCaseFile",
-  protect(["admin", "Staff", "advocate"]),
+  protect(["admin", "staff", "advocate"]),
   getAllCaseFilesForAdvocate
 ); // Get all cases
 router.get(
@@ -41,7 +41,7 @@ router.get(
 ); // Get all cases for admin
 router.get(
   "/allCaseFile/for-client",
-  protect(["admin", "Staff", "advocate", "client"]),
+  protect(["admin", "staff", "advocate", "client"]),
   getCaseFileForClient
 ); // Get single case for client
 router.get(

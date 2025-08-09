@@ -28,7 +28,7 @@ router.get("/case/:_id", getFileRequestByCaseId);
 router.get("/", getAllFileRequests);
 router.get("/clientId", checkClient, getFileRequestByClintId);
 router.put("/:id", upload.array("files"), updateFileRequest);
-router.delete("/:id",protect(["admin", "advocate"]), deleteFileRequest);
+router.delete("/:id",protect(["admin", "advocate", "staff"]), deleteFileRequest);
 router.delete("/:_id/file", deleteSingleDocumentsFromRequest);
 
 export default router;
