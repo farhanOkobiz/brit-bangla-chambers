@@ -10,7 +10,7 @@ const router = express.Router();
 router.post("/create-service", protect(["admin", "staff"]), upload.single("serviceImage"), createService);
 router.put("/update-service/:id",protect(["admin", "staff"]), upload.single("serviceImage"), updateService);
 router.delete("/delete-service/:id",checkAdmin, deleteService);
-router.get("/get-all-service",protect(["admin", "staff"]),  getAllServices);
-router.get("/get-service/:id", protect(["admin", "staff"]), getServiceById);
+router.get("/get-all-service",  getAllServices);
+router.get("/get-service/:id", getServiceById);
 
 export default router;

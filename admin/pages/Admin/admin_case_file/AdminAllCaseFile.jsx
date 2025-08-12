@@ -20,13 +20,9 @@ function AdminAllCaseFile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-<<<<<<< HEAD
-  const [filterStatus, setFilterStatus] = useState("in_progress");
-=======
   const [filterStatus, setFilterStatus] = useState("all");
   const { role } = UseAuth();
   const base = role === "admin" ? "/admin" : "/staff";
->>>>>>> d281853533b5b3ef650b5ac3a2194159050fb915
 
   useEffect(() => {
     const fetchCaseFiles = async () => {

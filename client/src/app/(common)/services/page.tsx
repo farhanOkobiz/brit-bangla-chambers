@@ -63,7 +63,7 @@ const ServicesDisplay = () => {
       try {
         setLoading(true);
         const response = await apiFetch("/service/get-all-service");
-
+        console.log("klsjdfsdj",response)
         const data: IServicesDisplay[] = response.data || []
         const activeServices = data.filter(
           (service: IServicesDisplay) => service.status === "active"
@@ -128,7 +128,7 @@ const ServicesDisplay = () => {
       month: "short",
       day: "numeric",
     });
-  };
+  }; 
 
   // Group services by category
   const servicesByCategory: Record<string, IServicesDisplay[]> =
@@ -296,8 +296,9 @@ const ServicesDisplay = () => {
                         >
                           {/* Service Image */}
                           <div className="relative h-32 overflow-hidden">
+                            {service.serviceImage}
                             <Image
-                              src={`${image_url}${service.serviceImage}`}
+                              src={`${image_url}${service.serviceImage}` || ""}
                               alt={service.title}
                               fill
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
