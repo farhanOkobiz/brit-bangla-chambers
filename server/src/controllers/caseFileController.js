@@ -25,9 +25,9 @@ export const getAllCaseFilesForAdvocate = async (req, res) => {
   try {
     const id = req?.user?.id;
 
-    const caseFiles = await CaseFile.find({ advocate_id: id }).populate(
-      "advocate_id"
-    );
+    const caseFiles = await CaseFile.find({ advocate_id: id })
+      .populate("advocate_id")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
@@ -42,7 +42,9 @@ export const getAllCaseFilesForAdvocate = async (req, res) => {
 // ✅ Get All Case Files
 export const getAllCaseFilesForAdmin = async (req, res) => {
   try {
-    const caseFiles = await CaseFile.find().populate("advocate_id");
+    const caseFiles = await CaseFile.find()
+      .populate("advocate_id")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: caseFiles });
   } catch (error) {
@@ -59,9 +61,9 @@ export const getCaseFileForClient = async (req, res) => {
   try {
     const client_id = req?.user?.id;
 
-    const caseFile = await CaseFile.find({ client_id: client_id }).populate(
-      "advocate_id client_id"
-    );
+    const caseFile = await CaseFile.find({ client_id: client_id })
+      .populate("advocate_id client_id")
+      .sort({ createdAt: -1 });
     if (!caseFile) {
       return res
         .status(404)
@@ -138,6 +140,7 @@ export const updateCaseFile = async (req, res) => {
 
 // ✅ Delete Case File
 export const deleteCaseFile = async (req, res) => {
+
   try {
     const deleted = await CaseFile.findByIdAndDelete(req.params.id);
     if (!deleted) {
@@ -157,35 +160,13 @@ export const deleteCaseFile = async (req, res) => {
   }
 };
 
-export const addDocumentToCaseFile = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { documentUrl, documentTitle } = req.body;
-
-    const caseFile = await CaseFile.findById(id);
-    if (!caseFile) {
-      return res.status(404).json({ error: "Case file not found" });
-    }
-
-    caseFile.documents.push(documentUrl);
-    caseFile.documentTitle = documentTitle;
-    await caseFile.save();
-    const caseFile2 = await CaseFile.findById(id);
-
-    res.status(200).json({ success: true, data: caseFile });
-  } catch (error) {
-    console.error("Error adding document to case file:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 export const changeCaseFileStatus = async (req, res) => {
-  console.log("hit api change case file status")
+  console.log("hit api change case file status");
   try {
     const { id } = req.params;
-    const { status } = req.body  // Handle undefined req.body
+    const { status } = req.body; // Handle undefined req.body
 
-    console.log("id: ", id)
+    console.log("id: ", id);
 
     // Check if status exists
     if (status === undefined || status === null) {
@@ -230,5 +211,134 @@ export const changeCaseFileStatus = async (req, res) => {
       message: error.message || "Internal server error",
       errorType: error.name,
     });
+  }
+};
+
+export const addDocumentToCaseFile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { documentTitle, documentUrl } = req.body;
+
+    if (!documentTitle || !documentUrl) {
+      return res
+        .status(400)
+        .json({ error: "documentTitle and documentUrl are required." });
+    }
+
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({ error: "Case file not found." });
+    }
+
+    caseFile.documents.push({ documentTitle, documentUrl });
+    await caseFile.save();
+
+    res.status(200).json({ success: true, data: caseFile });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getDocumentsFromCaseFile = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({ error: "Case file not found." });
+    }
+    if (caseFile.documents.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No documents found in case file." });
+    }
+    res.status(200).json({ success: true, data: caseFile.documents });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const deleteDocumentFromCaseFile = async (req, res) => {
+  try {
+    const { id, docId } = req.params;
+
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({ error: "Case file not found." });
+    }
+
+    const initialLength = caseFile.documents.length;
+    caseFile.documents = caseFile.documents.filter(
+      (doc) => doc._id.toString() !== docId
+    );
+
+    if (caseFile.documents.length === initialLength) {
+      return res.status(404).json({ error: "Document not found." });
+    }
+
+    await caseFile.save();
+
+    res.status(200).json({ success: true, data: caseFile });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const updateDocumentTitleInCaseFile = async (req, res) => {
+  try {
+    const { id, docId } = req.params;
+    const { documentTitle } = req.body;
+
+    if (!documentTitle) {
+      return res.status(400).json({ error: "documentTitle is required." });
+    }
+
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({ error: "Case file not found." });
+    }
+
+    const doc = caseFile.documents.id(docId);
+    if (!doc) {
+      return res.status(404).json({ error: "Document not found." });
+    }
+
+    doc.documentTitle = documentTitle;
+    await caseFile.save();
+
+    res.status(200).json({ success: true, data: caseFile });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const uploadDocumet = async (req, res) => {
+  console.log("hit api upload document");
+  try {
+    const { id } = req.params;
+    const documentTitle = req.body.documentTitle;
+    const file = req.file;
+
+    if (!documentTitle || !file) {
+      return res
+        .status(400)
+        .json({ error: "documentTitle and file are required." });
+    }
+
+    // You may want to save file info (e.g. file.path or file.filename)
+    const documentUrl = `/uploads/${file.filename}`;
+
+    const caseFile = await CaseFile.findById(id);
+    if (!caseFile) {
+      return res.status(404).json({ error: "Case file not found." });
+    }
+    caseFile.documents.push({ documentTitle, documentUrl });
+    await caseFile.save();
+    res
+      .status(200)
+      .json({ success: true, document: { documentTitle, documentUrl } });
+  } catch (error) {
+    console.error("Error uploading document:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

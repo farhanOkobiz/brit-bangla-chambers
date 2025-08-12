@@ -18,7 +18,7 @@ router.post(
   protect(["admin", "advocate"]),
   createBlog
 );
-router.get("/get-all-blog", protect(["admin", "advocate"]), getAllBlogs);
+router.get("/get-all-blog", protect(["admin", "advocate", "staff"]), getAllBlogs);
 router.get("/get-blog-published", getBlogsPublished);
 router.get("/get-single-blog/:id", getBlogById);
 router.put("/edit-blog/:id", upload.single("image"), updateBlog);

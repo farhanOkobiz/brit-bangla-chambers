@@ -8,11 +8,14 @@ import specializationSchema from "../models/specializationSchema.js";
 import blogSchema from "../models/blogSchema.js";
 import caseFileSchema from "../models/caseFileSchema.js";
 import serviceSchema from "../models/serviceSchema.js";
+import Staft from "../models/staffSchema.js";
 
 const getAdminDashboardData = async (req, res) => {
   try {
     // Total number of users
     const totalUsers = await userSchema.countDocuments();
+      // Total number of staff
+    const totalStaff = await Staft.countDocuments();
     // Total number of advocates
     const totalAdvocates = await userSchema.countDocuments({ role: "advocate" });
     // Total number of clients
@@ -37,6 +40,7 @@ const getAdminDashboardData = async (req, res) => {
     return res.status(200).json({
       ok: true,
       totalUsers,
+      totalStaff,
       totalAdvocates,
       totalClients,
       totalRequestsForAdvocate,

@@ -18,7 +18,7 @@ function AboutUs() {
         {/* Image */}
         <div className="flex justify-center items-center ">
           <Image
-            src="/Images/aboutus/aboutus.jpg"
+            src="/images/aboutus/aboutus.jpg"
             alt="Legal Professional"
             width={640}
             height={427} // aspect ratio maintain korun

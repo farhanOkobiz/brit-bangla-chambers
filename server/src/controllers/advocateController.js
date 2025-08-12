@@ -11,6 +11,7 @@ import testimonialSchema from "../models/testimonialSchema.js";
 import caseHistory from "../models/caseHistory.js";
 import documentSchema from "../models/documentSchema.js";
 import certificationScema from "../models/certificationSchema.js";
+import { FileRequest } from "../models/fileRequestSchema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -524,6 +525,7 @@ export const deleteAdvocateProfile = async (req, res) => {
   session.startTransaction();
 
   try {
+    console.log("Deleting advocate profile");
     const { id } = req.params;
 
     const advocate = await Advocate.findById(id).session(session);
@@ -550,6 +552,12 @@ export const deleteAdvocateProfile = async (req, res) => {
       }).session(session);
     }
 
+    // === Delete File Request ===
+    const deleteFileRequests = await FileRequest.deleteMany({
+      advocate_id: advocate.user_id,
+    }).session(session);
+    console.log("File requests deleted:", deleteFileRequests);
+
     // === Delete advocate profile ===
     await Advocate.findByIdAndDelete(id).session(session);
 
@@ -563,12 +571,15 @@ export const deleteAdvocateProfile = async (req, res) => {
       return res.status(404).json({ message: "Associated user not found" });
     }
 
+    
+
     await session.commitTransaction();
     session.endSession();
 
     res.status(200).json({
       message:
-        "Advocate profile, user, photo, and related education deleted successfully",
+        "Advocate profile, user, photo, education, and related file requests deleted successfully",
+      deleteFileRequests: deleteFileRequests,
     });
   } catch (error) {
     await session.abortTransaction();

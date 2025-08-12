@@ -9,15 +9,15 @@ export const createAdvocateMessage = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const newMessage = new RequestForAdvocate({
-      userMessage,
-      client_id,
-      advocateId,
-      userMessageId,
-      status: "pending",
-    });
+    // const newMessage = new RequestForAdvocate({
+    //   userMessage,
+    //   client_id,
+    //   advocateId,
+    //   userMessageId,
+    //   status: "pending",
+    // });
 
-    await newMessage.save();
+    // await newMessage.save();
 
     // update requestService to mark as forwarded
     await RequestService.findByIdAndUpdate(userMessageId, {
@@ -26,7 +26,7 @@ export const createAdvocateMessage = async (req, res) => {
       status: "sent_to_advocate",
     });
 
-    res.status(201).json({ success: true, message: newMessage });
+    res.status(201).json({ success: true,  message: "Message forwarded to advocate" } );
   } catch (error) {
     console.error("Error creating advocate message:", error);
     res.status(500).json({ message: "Server error" });

@@ -77,7 +77,7 @@ export default function EditCaseFile() {
       });
 
       message.success("Case updated successfully!");
-      navigate("/advocate/dashboard/all-user-file");
+      navigate("/advocate/dashboard/all-case-file");
     } catch (err) {
       console.error(err);
       message.error("Failed to update case.");
@@ -86,7 +86,9 @@ export default function EditCaseFile() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">Edit Case File</h2>
+      <h2 className="text-2xl md:text-3xl text-gray-900 font-bold mb-6 text-center">
+        Edit Case File
+      </h2>
 
       <div className="p-6 shadow-md rounded-lg">
         <Form

@@ -176,6 +176,7 @@ function CreateBlog() {
           >
             {role === "admin" && <option value="Admin">Admin</option>}
             {role === "advocate" && <option value="Advocate">Advocate</option>}
+             {role === "staff" && <option value="Staff">Staff</option>}
           </select>
         </div>
 

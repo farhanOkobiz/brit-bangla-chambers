@@ -120,15 +120,20 @@ const RequestForAdvocate = () => {
   };
 
   const filteredRequests = request.filter((msg) => {
-    const matchesSearch =
-      msg.userMessage.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      msg.userMessage.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      msg.userMessage.issueType
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || msg.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const name = msg.userMessage?.name || "";
+  const email = msg.userMessage?.email || "";
+  const issueType = msg.userMessage?.issueType || "";
+
+  const matchesSearch =
+    name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    issueType.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const matchesStatus =
+    statusFilter === "all" || msg.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+});
 
   const getUrgencyLevel = (createdDate) => {
     const daysDiff = Math.floor(

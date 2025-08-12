@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FaEdit, FaTrash, FaPlus, FaSearch } from "react-icons/fa";
+import { UseAuth } from "../../auth/AuthContext";
 
 const DataList = ({
   title,
@@ -16,6 +17,7 @@ const DataList = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   console.log("DataList rendered with data:", data);
+  const {role} = UseAuth()
 
   const filteredData = data.filter((item) => {
     if (!searchTerm) return true;
@@ -84,7 +86,7 @@ const DataList = ({
       </div>
 
       {/* List with Fixed Height and Scrollbar */}
-      <div className="h-80 lg:h-96 overflow-y-auto">
+      <div className="h-96 lg:h-3/4 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -136,13 +138,17 @@ const DataList = ({
                     >
                       <FaEdit className="h-4 w-4" />
                     </button>
-                    <button
-                      onClick={() => onDelete(item._id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Delete Item"
-                    >
-                      <FaTrash className="h-4 w-4" />
-                    </button>
+                    {
+                      role === "admin" && (
+                         <button
+                          onClick={() => onDelete(item._id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete Item"
+                        >
+                          <FaTrash className="h-4 w-4" />
+                        </button>
+                      )
+                    }
                   </div>
                 </div>
               </div>

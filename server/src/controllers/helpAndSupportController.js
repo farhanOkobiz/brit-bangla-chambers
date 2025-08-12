@@ -11,10 +11,10 @@ const createHelpRequest = async (req, res) => {
       message: req.body.message,
     });
     await helpRequest.save();
-    res.status(201).json({ success: true, data: helpRequest });
+    res.status(201).json({ ok: true, data: helpRequest });
   } catch (err) {
     console.error("Error creating help request:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ ok: false, error: err.message });
   }
 };
 

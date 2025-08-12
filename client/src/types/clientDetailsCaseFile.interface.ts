@@ -24,4 +24,10 @@ export default interface ClientDetailsCaseFile {
     decision_summary?: string;
     decision_date?: string;
   };
+  documents: {
+    _id?: string;
+    documentUrl: string;
+    uploaded_at: string;
+    documentTitle?: string;
+  }[];
 }

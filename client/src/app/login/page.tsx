@@ -9,6 +9,12 @@ export default function LoginPage() {
           Login
         </h2>
         <LoginForm />
+        <Link
+          href="/resetPassword"
+          className="flex items-center mt-2 text-gray-900"
+        >
+          Reset password
+        </Link>
         <p className="mt-6 text-center text-gray-600 text-sm">
           Don&apos;t have an account?{" "}
           <Link href="/signup" className="text-blue-600 hover:underline">

@@ -9,9 +9,13 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { getStatusColor } from "./userUtils";
+import { UseAuth } from "../../auth/AuthContext";
 
 const UserTable = ({ users, userType, onViewDetails, onEdit, onDelete }) => {
 const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
+  const {role} = UseAuth()
+
+
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
@@ -134,13 +138,17 @@ const IMAGE_URL = import.meta.env.VITE_API_IMAGE_URL;
                     >
                       <FaEdit className="h-4 w-4" />
                     </button>
-                    <button
-                      onClick={() => onDelete(user._id)}
-                      className="text-red-600 hover:text-red-900 p-1"
-                      title="Delete"
-                    >
-                      <FaTrash className="h-4 w-4" />
-                    </button>
+                    {
+                      role === "admin" && (
+                            <button
+                            onClick={() => onDelete(user._id)}
+                            className="text-red-600 hover:text-red-900 p-1"
+                            title="Delete"
+                          >
+                            <FaTrash className="h-4 w-4" />
+                          </button>
+                      )
+                    }
                   </div>
                 </td>
               </tr>

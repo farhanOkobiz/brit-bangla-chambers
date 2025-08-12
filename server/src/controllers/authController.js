@@ -4,6 +4,7 @@ import Client from "../models/clientSchema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Advocate from "../models/advocateSchema.js";
+import Staff from "../models/staffSchema.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "BritBangla_jwt_secret";
 const JWT_REFRESH_SECRET =
@@ -152,6 +153,8 @@ export const refresh = async (req, res) => {
 
 export const sendOtp = async (req, res) => {
   const { email } = req.body;
+  console.log(email);
+
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -171,44 +174,50 @@ export const sendOtp = async (req, res) => {
 
 // Verify OTP
 export const verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ message: "User not found" });
+  try {
+    const { email, otp } = req.body;
 
-  if (user.otp === otp && user.otp_expiry > Date.now()) {
-    user.otp_verified = true;
-    user.otp = undefined;
-    user.otp_expiry = undefined;
-    await user.save();
+    const user = await User.findOne({ email });
+    console.log("Verifying OTP for user:", user);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Issue tokens
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "30m",
-    });
-    const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
-      expiresIn: "30d",
-    });
+    if (user.otp === otp && user.otp_expiry > Date.now()) {
+      user.otp_verified = true;
+      user.otp = undefined;
+      user.otp_expiry = undefined;
+      await user.save();
 
-    // Set cookies
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 60 * 1000, // 30 minute
-    });
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
+      // Issue tokens
+      const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+        expiresIn: "30m",
+      });
+      const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_SECRET, {
+        expiresIn: "30d",
+      });
 
-    return res.json({ message: "OTP verified successfully", user });
-  } else {
-    return res.status(400).json({ message: "Invalid or expired OTP" });
+      // Set cookies
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 60 * 1000, // 30 minute
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+
+      return res.json({ message: "OTP verified successfully", user });
+    } else {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+  } catch (err) {
+    console.error("OTP verification error:", err);
+    return res.status(500).json({ message: "Server error during OTP verification" });
   }
-};
-
+}
 //return role
 export const checkAuth = async (req, res) => {
   const token = req.cookies?.token;
@@ -242,13 +251,11 @@ export const checkAuth = async (req, res) => {
       if (profilePhoto) {
         profilePhoto = profilePhoto.profile_photo_url || null;
       }
-      accountStatus = await Advocate.findOne({ user_id: decoded.id }).select(
-        "status"
-      );
-      if (accountStatus) {
-        accountStatus = accountStatus.status || null;
-      }
-    } else {
+    } else if (decoded.role === "staff") {
+      const staff = await Staff.findOne({ user_id: decoded.id }).select("image");
+      profilePhoto = staff?.image || null;
+    }
+    else {
       profilePhoto = { profile_photo: null }; // Default if no profile found
     }
 
@@ -340,5 +347,40 @@ export const changePassword = async (req, res) => {
     res.json({ message: "Password changed successfully" });
   } catch (err) {
     res.status(500).json({ message: "Failed to change password" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    // Find user by ID
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    console.error("Password reset error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error during password reset",
+    });
   }
 };

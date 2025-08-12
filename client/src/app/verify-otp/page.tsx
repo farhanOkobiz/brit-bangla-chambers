@@ -37,7 +37,7 @@ function VerifyOtpPageInner() {
         method: "POST",
         body: JSON.stringify({ email, otp }),
       });
-
+console.log("OTP verification response:", res);
       if (!res.ok) {
         setError(res.data.message || "OTP verification failed");
         setLoading(false);
@@ -49,13 +49,17 @@ function VerifyOtpPageInner() {
 
       if (user?.role === "client") {
         router.push("/client/dashboard");
-      } else if (user?.role === "admin" || user?.role === "advocate") {
+      } else if (user?.role === "admin" || user?.role === "advocate" ) {
         const targetUrl =
           user.role === "admin"
             ? `${ADMIN_URL}/admin/dashboard`
             : `${ADVOCATE_URL}/advocate/dashboard`;
         window.location.href = targetUrl;
-      } else {
+      } else if (user?.role == "staff") {
+        const target = `${ADMIN_URL}/staff/dashboard`;
+        window.location.href = target;
+      }
+      else {
         setError("Invalid user role");
       }
     } catch {
@@ -144,7 +148,13 @@ function VerifyOtpPageInner() {
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <VerifyOtpPageInner />
     </Suspense>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UseAxios } from "../../services/UseAxios";
 import { useNavigate } from "react-router-dom";
+import { UseAuth } from "../../auth/AuthContext";
 
 export default function CreateAdvocate() {
   const [form, setForm] = useState({
@@ -19,6 +20,8 @@ export default function CreateAdvocate() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { role } = UseAuth()
+  const base = role === "admin" ? "/admin" : "/staff";
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -109,7 +112,7 @@ export default function CreateAdvocate() {
         
         // Redirect after 2 seconds
         setTimeout(() => {
-          navigate("/admin/advocates");
+          navigate(`${base}/advocates`);
         }, 2000);
       } else {
         setError(res.data?.message || "Failed to create advocate.");
